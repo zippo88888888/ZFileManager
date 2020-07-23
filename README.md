@@ -14,7 +14,10 @@
 
 ## 基本使用
 
-##### Step 0. 申明权限
+##### Step 0. 添加依赖 申明权限
+```groovy
+implementation 'com.github.zp:z_file:1.0'
+```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -122,7 +125,8 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
 
 ```
 
-##### UI 自定义 更多可查看 ZFileConfiguration
+##### UI 自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt)
+ 
 ```kotlin
 
     /**
