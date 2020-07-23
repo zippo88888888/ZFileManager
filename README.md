@@ -4,17 +4,30 @@
 
 # 特点
 
-#### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
-#### 2. 支持音频，视频播放，图片查看，zip解压 && 复制、移动、删除、查看详情
-#### 3. 支持查看指定文件类型，支持文件类型拓展
-#### 4. 支持多选，最大数量限制
-#### 5. 支持实时排序、指定文件路径访问
-#### 6. 高度可定制化，兼容AndroidX
+### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
+### 2. 支持音频，视频播放，图片查看，zip解压 && 复制、移动、删除、查看详情
+### 3. 支持查看指定文件类型，支持文件类型拓展
+### 4. 支持多选，最大数量限制
+### 5. 支持实时排序、指定文件路径访问
+### 6. 高度可定制化，兼容AndroidX
 
+#### 即将支持
+
+##### 1. Fragment支持
+##### 2. 支持QQ、微信单独选择
+##### 3. 类似系统文件管理
+
+### 截图
+<div>
+<img src = "app/src/main/assets/s0.jpg" width=240 >
+<img src = "app/src/main/assets/s1.jpg" width=240 >
+<img src = "app/src/main/assets/s2.jpg" width=240 >
+<img src = "app/src/main/assets/s3.jpg" width=240 >
+</div>
 
 ## 基本使用
 
-##### Step 0. 添加依赖 申明权限
+#### Step 0. 添加依赖 申明权限
 ```groovy
 implementation 'com.github.zp:z_file:1.0'
 ```
@@ -22,11 +35,11 @@ implementation 'com.github.zp:z_file:1.0'
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
-##### Step 1. 在Application中或调用前初始化 
+#### Step 1. 在Application中或调用前初始化 
 ```Kotlin
 getZFileHelp().init(MyFileImageListener())
 ```
-##### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
+#### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
 
 ```kotlin
 // 申明数据接收
@@ -36,12 +49,12 @@ getZFileHelp().start(this)
 getZFileHelp().start(this,"指定目录")
 ```
 
-## 进阶 
-> ###### 注意 下面 ":" 为继承
+## 高级用法 
+> ##### 注意 下面 ":" 为继承
 
 ### 文件类型拓展
 
-##### Step 1. 新建一个类：ZFileType，重写里面的openFile()、loadingFile()方法 
+#### Step 1. 新建一个类：ZFileType，重写里面的openFile()、loadingFile()方法 
 
 ```kotlin
 
@@ -74,7 +87,7 @@ class ApkType : ZFileType() {
 
 ```
 
-##### Step 2. 新建一个类：ZFileTypeListener，重写里面的getFileType()方法 （有多个自定义类型，公用即可）
+#### Step 2. 新建一个类：ZFileTypeListener，重写里面的getFileType()方法 （有多个自定义类型，公用即可）
 ```kotlin
 
 class MyFileTypeListener : ZFileTypeListener() {
@@ -88,7 +101,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 
 ```
 
-##### Step 3. 在Application中或调用前赋值  
+#### Step 3. 在Application中或调用前赋值  
 
 ```kotlin
 getZFileHelp().init(MyFileImageListener())
@@ -125,7 +138,7 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
 
 ```
 
-##### UI 自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt)
+#### UI 或操作自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt)
  
 ```kotlin
 
@@ -181,11 +194,11 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
     
 
 ```
-##### 自定义打开文件
+#### 自定义打开文件
 ```kotlin
 
 /**
- * 自定义打开文件
+ * 打开文件
  */
 class MyFileOpenListener : ZMyFileOpenListener() {
 
@@ -226,7 +239,7 @@ class MyFileOpenListener : ZMyFileOpenListener() {
 getZFileHelp().setOpenListener(MyFileOpenListener())
 
 ```
-##### 自定义文件操作
+#### 自定义文件操作
 
 ```kotlin
 
@@ -293,7 +306,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 ```
  
-> #### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  ---------- 溜了溜了
+> ### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
 
 
