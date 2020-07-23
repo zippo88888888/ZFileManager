@@ -1,0 +1,2 @@
+include ':app', ':z_file'
+rootProject.name='ZFileManager'

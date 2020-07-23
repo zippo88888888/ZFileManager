@@ -1,0 +1,296 @@
+[![Travis](https://img.shields.io/badge/ZFile-1.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+
+# 特点
+
+#### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
+#### 2. 支持音频，视频播放，图片查看，zip解压 && 复制、移动、删除、查看详情
+#### 3. 支持查看指定文件类型，支持文件类型拓展
+#### 4. 支持多选，最大数量限制
+#### 5. 支持实时排序、指定文件路径访问
+#### 6. 高度可定制化，兼容AndroidX
+
+
+## 基本使用
+
+##### Step 0. 申明权限
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+##### Step 1. 在Application中或调用前初始化 
+```Kotlin
+getZFileHelp().init(MyFileImageListener())
+```
+##### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
+
+```kotlin
+// 申明数据接收
+getZFileHelp().setFileResultListener(this)
+// 打开文件管理
+getZFileHelp().start(this)
+getZFileHelp().start(this,"指定目录")
+```
+
+## 进阶 
+> ###### 注意 下面 ":" 为继承
+
+### 文件类型拓展
+
+##### Step 1. 新建一个类：ZFileType，重写里面的openFile()、loadingFile()方法 
+
+```kotlin
+
+// 自定义的类型
+const val APK = "apk"
+
+/**
+ * 自定义Apk文件类型
+ */
+class ApkType : ZFileType() {
+
+    /**
+     * 打开文件
+     * @param filePath  文件路径
+     * @param view      当前视图
+     */
+    override fun openFile(filePath: String, view: View) {
+        Toast.makeText(view.context, "打开自定义拓展文件", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 加载文件
+     * @param filePath 文件路径
+     * @param pic      文件展示的图片
+     */
+    override fun loadingFile(filePath: String, pic: ImageView) {
+        pic.setImageResource(R.mipmap.ic_launcher_round)
+    }
+}
+
+```
+
+##### Step 2. 新建一个类：ZFileTypeListener，重写里面的getFileType()方法 （有多个自定义类型，公用即可）
+```kotlin
+
+class MyFileTypeListener : ZFileTypeListener() {
+
+    override fun getFileType(filePath: String) =
+        when (ZFileHelp.getFileTypeBySuffix(filePath)) {
+            APK -> ApkType()
+            else -> super.getFileType(filePath)
+        }
+}
+
+```
+
+##### Step 3. 在Application中或调用前赋值  
+
+```kotlin
+getZFileHelp().init(MyFileImageListener())
+            .setFileTypeListener(MyFileTypeListener())
+
+```
+
+##### 搞定，是不是很简单 ^_^
+
+> ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开(作者你个渣渣)，我只想选择文件，不想要长按事件，你的长按事件弹出的功能有些不是我想要的...
+
+> ###### 扶我起来，我要搞死杠精 
+
+##### 自定义文件获取
+```kotlin
+
+class ZFileDefaultLoadListener : ZFileLoadListener {
+
+    /**
+     * 获取手机里的文件List
+     * @param filePath String?          指定的文件目录访问，空为SD卡根目录
+     * @return MutableList<ZFileBean>?  list
+     */
+    override fun getFileList(context: Context?, filePath: String?) =
+        getDefaultFileList(context, filePath)
+
+    private fun getDefaultFileList(context: Context?, filePath: String?): MutableList<ZFileBean> {
+         
+    }
+}
+
+getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
+
+
+```
+
+##### UI 自定义 更多可查看 ZFileConfiguration
+```kotlin
+
+    /**
+     * 是否需要长按事件
+     */
+    var needLongClick = true
+
+    /**
+     * 默认只有文件才有长按事件
+     */
+    var isOnlyFileHasLongClick = true
+
+    /**
+     * 长按后需要显示的操作类型
+     */
+    var longClickOperateTitles: Array<String>? = null
+
+    // 自定义方式一
+
+    /**
+     * 相关资源配置
+     * @property audioRes Int        音频
+     * @property txtRes Int          文本
+     * @property pdfRes Int          PDF
+     * @property pptRes Int          PPT
+     * @property wordRes Int         Word
+     * @property excelRes Int        Excel
+     * @property zipRes Int          ZIP
+     * @property otherRes Int        其他类型
+     * @property emptyRes Int        空资源
+     * @property folderRes Int       文件夹
+     * @property lineColor Int       列表分割线颜色
+     */
+    @Parcelize
+    data class ZFileResources @JvmOverloads constructor(
+        var audioRes: Int = R.drawable.ic_zfile_audio,
+        var txtRes: Int = R.drawable.ic_zfile_txt,
+        var pdfRes: Int = R.drawable.ic_zfile_pdf,
+        var pptRes: Int = R.drawable.ic_zfile_ppt,
+        var wordRes: Int = R.drawable.ic_zfile_word,
+        var excelRes: Int = R.drawable.ic_zfile_excel,
+        var zipRes: Int = R.drawable.ic_zfile_zip,
+        var otherRes: Int = R.drawable.ic_zfile_other,
+        var emptyRes: Int = R.drawable.ic_zfile_empty,
+        var folderRes: Int = R.drawable.ic_zfile_folder,
+        var lineColor: Int = R.color.zfile_line_color
+    ) : Serializable, Parcelable
+    
+    
+    // 方式二 如：PPT类型展示的图片太丑，继承自PptType，重写方法即可，
+    // 可参照demo里面 diy包下面的实现
+    
+
+```
+##### 自定义打开文件
+```kotlin
+
+/**
+ * 自定义打开文件
+ */
+class MyFileOpenListener : ZMyFileOpenListener() {
+
+    override fun openAudio(filePath: String, view: View) {
+    }
+
+    override fun openImage(filePath: String, view: View) {
+    }
+
+    override fun openVideo(filePath: String, view: View) {
+    }
+
+    override fun openTXT(filePath: String, view: View) {
+    }
+
+    override fun openZIP(filePath: String, view: View) {
+    }
+
+    override fun zipSelect(filePath: String, view: View) {
+    }
+
+    override fun openDOC(filePath: String, view: View) {
+    }
+
+    override fun openXLS(filePath: String, view: View) {
+    }
+
+    override fun openPPT(filePath: String, view: View) {
+    }
+
+    override fun openPDF(filePath: String, view: View) {
+    }
+
+    override fun openOther(filePath: String, view: View) {
+    }
+}
+
+getZFileHelp().setOpenListener(MyFileOpenListener())
+
+```
+##### 自定义文件操作
+
+```kotlin
+
+/**
+ * 文件操作
+ */
+class MyFileOperateListener : ZFileOperateListener() {
+
+    /**
+     * 复制文件
+     * @param sourceFile String     源文件地址
+     * @param targetFile String     目标文件地址
+     * @param context Context       Context
+     * @param block                 文件操作成功或失败后的监听
+     */
+    override fun copyFile(
+        sourceFile: String,
+        targetFile: String,
+        context: Context,
+        block: Boolean.() -> Unit
+    ) {
+    
+    }
+
+    /**
+     * 移动文件
+     */
+    override fun moveFile(
+        sourceFile: String,
+        targetFile: String,
+        context: Context,
+        block: Boolean.() -> Unit
+    ) {
+    
+    }
+
+    /**
+     * 删除文件
+     */
+    override fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
+         
+    }
+
+    /**
+     * 解压文件
+     */
+    override fun zipFile(
+        sourceFile: String,
+        targetFile: String,
+        context: Context,
+        block: Boolean.() -> Unit
+    ) {
+    }
+
+    /**
+     * 文件详情
+     */
+    override fun fileInfo(bean: ZFileBean, context: Context) {
+        
+    }
+}
+
+getZFileHelp().setFileOperateListener(MyFileOperateListener())
+
+```
+ 
+> #### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  ---------- 溜了溜了
+
+
+
+ 

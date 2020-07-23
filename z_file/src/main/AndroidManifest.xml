@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zp.z_file">
+
+    <application>
+        <activity
+            android:name=".ui.ZFileListActivity"
+            android:theme="@style/ZFile_BaseTheme" />
+        <activity android:name=".ui.ZFilePicActivity"
+            android:theme="@style/ZFile_BaseTheme"/>
+        <activity android:name=".ui.ZFileVideoPlayActivity"
+            android:theme="@style/ZFile_BaseTheme"/>
+    </application>
+
+</manifest>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_zfile_down"
+        android:title="@string/zfile_menu_down"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_zfile_px"
+        android:title="@string/zfile_menu_order"
+        app:showAsAction="never" />
+
+    <group
+        android:checkableBehavior="single"
+        app:showAsAction="never">
+
+        <item
+            android:id="@+id/menu_zfile_hidden"
+            android:checked="true"
+            android:title="@string/zifle_menu_hidden" />
+
+        <item
+            android:id="@+id/menu_zfile_show"
+            android:title="@string/zfile_menu_show" />
+
+    </group>
+
+</menu>

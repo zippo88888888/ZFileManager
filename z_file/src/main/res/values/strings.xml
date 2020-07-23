@@ -1,0 +1,32 @@
+<resources>
+    <string name="zfile_sharedElement_pic">zfile_jump_pic</string>
+    <string name="zfile_sharedElement_video">zfile_jump_Video</string>
+    <string name="zfile_menu_down">完成</string>
+    <string name="zfile_menu_order">排序方式</string>
+    <string name="zifle_menu_hidden">不显示隐藏文件</string>
+    <string name="zfile_menu_show">显示隐藏文件</string>
+    <string name="zfile_sort_title">排序方式</string>
+    <string name="zfile_sort_default">&#160;&#160;&#160;默认（无顺序）</string>
+    <string name="zfile_sort_by_name">&#160;&#160;&#160;名称</string>
+    <string name="zfile_sort_by_time">&#160;&#160;&#160;时间</string>
+    <string name="zfile_sort_by_size">&#160;&#160;&#160;大小</string>
+    <string name="zfile_sort_ss">顺序</string>
+    <string name="zfile_sort_sx">&#160;&#160;&#160;升序</string>
+    <string name="zfile_sort_jx">&#160;&#160;&#160;降序</string>
+    <string name="zfile_down">确定</string>
+    <string name="zfile_cancel">取消</string>
+    <string name="zfile_info_title">文件详情</string>
+    <string name="zfile_info_name">文件名称：</string>
+    <string name="zfile_info_type">文件类型：</string>
+    <string name="zfile_info_size">文件大小：</string>
+    <string name="zfile_info_time">修改时间：</string>
+    <string name="zfile_info_path">文件路径：</string>
+    <string name="zfile_info_more">显示更多</string>
+    <string name="zfile_info_duration">媒体时长：</string>
+    <string name="zfile_info_loadding">获取中</string>
+    <string name="zfile_info_wh">宽高比率：</string>
+    <string name="zfile_info_other">其他信息：</string>
+    <string name="zfile_select_forder">请选择文件夹</string>
+
+
+</resources>

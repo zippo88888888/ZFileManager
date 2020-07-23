@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/zfile_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?selectableItemBackground"
+        android:gravity="center|start"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/zfile_default_divider_padding"
+        android:paddingEnd="@dimen/zfile_default_divider_padding">
+
+        <ImageView
+            android:id="@+id/item_zfile_list_folderPic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            tools:src="@drawable/ic_zfile_folder" />
+
+        <TextView
+            android:id="@+id/item_zfile_list_folderNameTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/zfile_default_divider_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/zfile_black"
+            android:textSize="14sp"
+            tools:text="文件夹名称" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/item_zfile_list_folder_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/zfile_default_divider_padding"
+        android:layout_marginEnd="@dimen/zfile_default_divider_padding"
+        tools:background="@color/zfile_line_color" />
+
+
+</FrameLayout>
