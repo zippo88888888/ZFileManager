@@ -19,10 +19,10 @@
 
 ### 截图
 <div>
-<img src = "app/src/main/assets/s0.jpg" width=240 >
-<img src = "app/src/main/assets/s1.jpg" width=240 >
-<img src = "app/src/main/assets/s2.jpg" width=240 >
-<img src = "app/src/main/assets/s3.jpg" width=240 >
+<img src = "app/src/main/assets/s0.jpg" width=180 >
+<img src = "app/src/main/assets/s1.jpg" width=180 >
+<img src = "app/src/main/assets/s2.jpg" width=180 >
+<img src = "app/src/main/assets/s3.jpg" width=180 >
 </div>
 
 ## 基本使用
