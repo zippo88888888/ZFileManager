@@ -112,10 +112,9 @@ getZFileHelp().init(MyFileImageListener())
 ##### 搞定，是不是很简单 ^_^
 
 > ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开(作者你个渣渣)，我只想选择文件，不想要长按事件，你的长按事件弹出的功能有些不是我想要的...
-
 > ###### 扶我起来，我要搞死杠精 
 
-##### 自定义文件获取
+#### 自定义文件获取
 ```kotlin
 
 class ZFileDefaultLoadListener : ZFileLoadListener {
