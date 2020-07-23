@@ -23,30 +23,6 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
         val path = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
         val config = getZFileConfig()
         val list = ArrayList<ZFileBean>()
-
-        /*var listFiles: Array<File>? = null
-        if (Build.VERSION.SDK_INT >= 29) { // Android 10及以上版本
-//            listFiles = DocumentFile.fromTreeUri(context, null).listFiles()
-            val uri = Uri.fromFile(path.toFile())
-            val fromFile = DocumentFile.fromTreeUri(context, uri)
-            val files = fromFile?.listFiles()
-            val size = files?.size
-            print(size)
-
-            val fromFile2 = DocumentFile.fromSingleUri(context, uri)
-            val files2 = fromFile2?.listFiles()
-            val size2 = files2?.size
-            print(size2)
-        } else {
-            listFiles = path.toFile().listFiles(
-                ZFileFilter(
-                    config.fileFilterArray,
-                    config.isOnlyFolder,
-                    config.isOnlyFile
-                )
-            )
-        }*/
-
         val listFiles = path.toFile().listFiles(
             ZFileFilter(
                 config.fileFilterArray,
@@ -54,7 +30,6 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                 config.isOnlyFile
             )
         )
-
         listFiles?.forEach {
             if (config.showHiddenFile) { // 是否显示隐藏文件
                 val bean = ZFileBean(

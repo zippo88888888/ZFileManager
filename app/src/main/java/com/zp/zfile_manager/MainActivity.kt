@@ -15,9 +15,8 @@ class MainActivity : AppCompatActivity(), ZFileSelectListener {
         setContentView(R.layout.activity_main)
         getZFileHelp().setFileResultListener(this)
         main_defaultMangerBtn.setOnClickListener {
-            getZFileHelp().start(this/*, "/storage/emulated/0/压缩包"*/)
+            getZFileHelp().start(this)
         }
-
         main_fileMangerBtn.setOnClickListener {
 
         }
