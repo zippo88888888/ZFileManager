@@ -29,14 +29,30 @@
 
 #### Step 0. 添加依赖 申明权限
 ```groovy
+
+// 目前暂时还不能直接引用 2020-7-24号提交至jCenter，目前正在审核中，估计一个工作日即可直接引用
 implementation 'com.github.zp:z_file:1.0'
 ```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
-#### Step 1. 在Application中或调用前初始化 
+#### Step 1. 实现ZFileImageListener，并在Application中或调用前初始化 
 ```Kotlin
+
+class MyFileImageListener : ZFileImageListener() {
+
+    override fun loadImage(imageView: ImageView, file: File) {
+        Glide.with(imageView.context)
+            .load(file)
+            .apply(RequestOptions().apply {
+                placeholder(R.drawable.ic_zfile_other)
+                error(R.drawable.ic_zfile_other)
+            })
+            .into(imageView)
+    }
+}
+
 getZFileHelp().init(MyFileImageListener())
 ```
 #### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
