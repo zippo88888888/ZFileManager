@@ -1,11 +1,14 @@
 package com.zp.z_file.common
 
+import android.app.Activity
 import android.content.Context
 import androidx.collection.ArrayMap
+import androidx.fragment.app.Fragment
 import com.zp.z_file.content.*
 import com.zp.z_file.listener.*
 import com.zp.z_file.listener.ZFileDefaultLoadListener
 import com.zp.z_file.ui.ZFileListActivity
+import com.zp.z_file.util.ZFileLog
 
 class ZFileManageHelp {
 
@@ -93,9 +96,18 @@ class ZFileManageHelp {
      * @param path 指定的文件路径
      */
     @JvmOverloads
-    fun start(context: Context, path: String? = null) {
-        context.jumpActivity(ZFileListActivity::class.java,
-            if (path == null) null else ArrayMap<String, Any>().apply { put("zFileStartPath", path) })
+    fun start(fragmentOrActivity: Any, path: String? = null) {
+        val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
+        if (!newPath.toFile().exists()) {
+            throw NullPointerException("$newPath 路径不存在")
+        }
+        when (fragmentOrActivity) {
+            is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
+                if (path == null) null else ArrayMap<String, Any>().apply { put("zFileStartPath", path) })
+            is Fragment -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
+                if (path == null) null else ArrayMap<String, Any>().apply { put("zFileStartPath", path) })
+            else -> throw IllegalArgumentException("fragmentOrActivity is not Activity or Fragment")
+        }
     }
 
 }

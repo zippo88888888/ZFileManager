@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".App"
+        android:name=".content.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,8 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <!-- android:name="android.support.v4.content.FileProvider" -->
+        <activity android:name=".SuperActivity"></activity>
+        <activity android:name=".FragmentSampleActivity" /> <!-- android:name="android.support.v4.content.FileProvider" -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.ZFileManagerProvider"
@@ -27,7 +27,7 @@
                 android:resource="@xml/file_manage_paths" />
         </provider>
 
-        <activity android:name=".JavaSampleActivity"/>
+        <activity android:name=".JavaSampleActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

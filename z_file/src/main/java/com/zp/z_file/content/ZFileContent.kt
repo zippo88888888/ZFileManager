@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
@@ -89,32 +90,34 @@ internal fun AppCompatActivity.checkFragmentByTag(tag: String) {
         supportFragmentManager.beginTransaction().remove(fragment).commit()
     }
 }
-/**
- * 跳转Activity
- */
+
 internal fun Context.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
     if (clazz !is Class<*>) return
     startActivity(Intent(this, clazz).apply {
-        if (map != null && map.isNotEmpty()) {
-            putExtras(Bundle().apply {
-                for ((key, value) in map) {
-                    when (value) {
-                        is Int -> putInt(key, value)
-                        is Double -> putDouble(key, value)
-                        is Float -> putFloat(key, value)
-                        is Long -> putLong(key, value)
-                        is Boolean -> putBoolean(key, value)
-                        is String -> putString(key, value)
-                        is Serializable -> putSerializable(key, value)
-                        is Parcelable -> putParcelable(key, value)
-                        else -> throw IllegalArgumentException("map type Error")
-                    }
-                }
-            })
-        }
+        if (!map.isNullOrEmpty()) putExtras(map.toBundle())
     })
 }
-
+internal fun Fragment.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
+    if (clazz !is Class<*>) return
+    startActivity(Intent(context, clazz).apply {
+        if (!map.isNullOrEmpty()) putExtras(map.toBundle())
+    })
+}
+internal fun ArrayMap<String, Any>.toBundle() = Bundle().apply {
+    for ((key, value) in this@toBundle) {
+        when (value) {
+            is Int -> putInt(key, value)
+            is Double -> putDouble(key, value)
+            is Float -> putFloat(key, value)
+            is Long -> putLong(key, value)
+            is Boolean -> putBoolean(key, value)
+            is String -> putString(key, value)
+            is Serializable -> putSerializable(key, value)
+            is Parcelable -> putParcelable(key, value)
+            else -> throw IllegalArgumentException("map type Error")
+        }
+    }
+}
 internal fun Activity.setStatusBarTransparent() {
     val decorView = window.decorView
     val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE

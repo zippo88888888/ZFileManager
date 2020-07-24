@@ -1,9 +1,10 @@
-package com.zp.zfile_manager
+package com.zp.zfile_manager.diy
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.zp.z_file.listener.ZFileImageListener
+import com.zp.zfile_manager.R
 import java.io.File
 
 class MyFileImageListener : ZFileImageListener() {

@@ -81,10 +81,10 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             setBgColor(R.id.item_zfile_list_file_line, config.resources.lineColor)
             setVisibility(R.id.item_zfile_list_file_line, position < itemCount - 1)
             setVisibility(R.id.item_zfile_file_box_pic, !isManage)
-            if (config.boxStyle == ZFileConfiguration.STYLE1) {
-                setVisibility(R.id.item_zfile_list_file_box1, isManage)
-            } else {
-                setVisibility(R.id.item_zfile_list_file_box2, isManage)
+            when (config.boxStyle) {
+                ZFileConfiguration.STYLE1 -> setVisibility(R.id.item_zfile_list_file_box1, isManage)
+                ZFileConfiguration.STYLE2 -> setVisibility(R.id.item_zfile_list_file_box2, isManage)
+                else -> throw IllegalArgumentException("ZFileConfiguration boxStyle error")
             }
         }
         val box1 = holder.getView<CheckBox>(R.id.item_zfile_list_file_box1)

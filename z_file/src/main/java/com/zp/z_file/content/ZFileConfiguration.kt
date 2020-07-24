@@ -12,11 +12,6 @@ class ZFileConfiguration : Serializable {
 
     companion object {
 
-        /** QQ访问目录 */
-        const val QQ_FILE_PATH = ""
-        /** 微信访问目录 */
-        const val WE_CHAT_FILE_PATH = ""
-
         /** 默认 */
         const val BY_DEFAULT = 0x1000
         /** 根据名字 */

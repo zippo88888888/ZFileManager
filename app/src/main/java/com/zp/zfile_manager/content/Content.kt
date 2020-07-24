@@ -1,4 +1,4 @@
-package com.zp.zfile_manager
+package com.zp.zfile_manager.content
 
 object Content {
 

@@ -1,13 +1,15 @@
-package com.zp.z_file.content
+package com.zp.z_file.async
 
 import android.content.Context
 import android.os.Handler
 import android.os.Message
+import com.zp.z_file.content.ZFileBean
+import com.zp.z_file.content.getZFileHelp
 import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
-class ZFileThread(
+internal class ZFileThread(
     private var context: Context,
     private var block: (MutableList<ZFileBean>?) -> Unit
 ) {
@@ -22,7 +24,7 @@ class ZFileThread(
         thread {
             val list = getZFileHelp().getFileLoadListener().getFileList(softReference.get(), filePath)
             handler.sendMessage(Message().apply {
-                what = 0
+                what = 10
                 obj = list
             })
         }

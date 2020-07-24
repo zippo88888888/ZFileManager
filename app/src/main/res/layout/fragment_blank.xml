@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <Button
-        android:id="@+id/java_startBtn"
+        android:id="@+id/framgent_startBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="start" />
+        android:text="start"/>
 
     <include layout="@layout/layout_result_txt" />
 

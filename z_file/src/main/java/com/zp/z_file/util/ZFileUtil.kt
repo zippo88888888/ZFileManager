@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.View
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.*
+import com.zp.z_file.async.ZFileThread
 import java.io.*
 import java.nio.channels.FileChannel
 import java.text.DecimalFormat
@@ -229,6 +230,7 @@ internal object ZFileUtil {
             isOnlyFolder = false
             isOnlyFile = false
         }
+        getZFileHelp().setFileResultListener(null)
     }
 
 }

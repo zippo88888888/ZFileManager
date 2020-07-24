@@ -7,15 +7,11 @@
 ### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
 ### 2. 支持音频，视频播放，图片查看，zip解压 && 复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展
-### 4. 支持多选，最大数量限制
-### 5. 支持实时排序、指定文件路径访问
-### 6. 高度可定制化，兼容AndroidX
+### 4. 支持多选，最大数量限制、实时排序、指定文件路径访问
+### 5. 无三分库，高度可定制化，兼容AndroidX
 
 #### 即将支持
-
-##### 1. Fragment支持
-##### 2. 支持QQ、微信单独选择
-##### 3. 类似系统文件管理
+##### 支持QQ、微信单独选择
 
 ### 截图
 <div>
@@ -25,13 +21,12 @@
 <img src = "app/src/main/assets/s3.jpg" width=180 >
 </div>
 
-## 基本使用
+## 基本使用 [Java使用](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/JavaSampleActivity.java)
 
 #### Step 0. 添加依赖 申明权限
 ```groovy
 
-// 目前暂时还不能直接引用 2020-7-24号提交至jCenter，目前正在审核中，估计一个工作日即可直接引用
-implementation 'com.github.zp:z_file:1.0'
+implementation 'com.github.zp:z_file:1.1'
 ```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -58,11 +53,34 @@ getZFileHelp().init(MyFileImageListener())
 #### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
 
 ```kotlin
-// 申明数据接收
-getZFileHelp().setFileResultListener(this)
+
 // 打开文件管理
-getZFileHelp().start(this)
-getZFileHelp().start(this,"指定目录")
+getZFileHelp().setFileResultListener(this).start(this)
+getZFileHelp().setFileResultListener(this).start(this, "指定目录")
+
+class MainActivity : AppCompatActivity(), ZFileSelectListener {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        main_defaultMangerBtn.setOnClickListener {
+            getZFileHelp()
+                .setFileResultListener(this)
+                .start(this)
+        }
+    }
+
+    override fun onSelected(fileList: MutableList<ZFileBean>?) {
+        val sb = StringBuilder()
+        fileList?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        main_resultTxt.text = sb.toString()
+    }
+
+}
+
+
 ```
 
 ## 高级用法 
@@ -203,18 +221,13 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
         var lineColor: Int = R.color.zfile_line_color
     ) : Serializable, Parcelable
     
-    
     // 方式二 如：PPT类型展示的图片太丑，继承自PptType，重写方法即可，
     // 可参照demo里面 diy包下面的实现
-    
 
 ```
 #### 自定义打开文件
 ```kotlin
 
-/**
- * 打开文件
- */
 class MyFileOpenListener : ZMyFileOpenListener() {
 
     override fun openAudio(filePath: String, view: View) {
@@ -258,9 +271,6 @@ getZFileHelp().setOpenListener(MyFileOpenListener())
 
 ```kotlin
 
-/**
- * 文件操作
- */
 class MyFileOperateListener : ZFileOperateListener() {
 
     /**
@@ -321,7 +331,11 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 ```
  
-> ### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
+##### 更多操作请查看demo， ^_^ 如果觉得可以 star 一下哦
+ 
+ 
+
+> ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
 
 

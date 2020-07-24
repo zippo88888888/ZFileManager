@@ -95,7 +95,7 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     override fun init(savedInstanceState: Bundle?) {
-
+        setSortSelectId()
         specifyPath = intent.getStringExtra("zFileStartPath")
         getZFileConfig().filePath = specifyPath
         rootPath = specifyPath ?: ""
@@ -366,6 +366,19 @@ internal class ZFileListActivity : ZFileActivity() {
                 toast("权限申请失败")
                 finish()
             }
+        }
+    }
+
+    private fun setSortSelectId() {
+        sortSelectId = when (getZFileConfig().sortordBy) {
+            ZFileConfiguration.BY_NAME -> R.id.zfile_sort_by_name
+            ZFileConfiguration.BY_SIZE -> R.id.zfile_sort_by_size
+            ZFileConfiguration.BY_DATE -> R.id.zfile_sort_by_date
+            else -> R.id.zfile_sort_by_default
+        }
+        sequenceSelectId = when (getZFileConfig().sortord) {
+            ZFileConfiguration.DESC -> R.id.zfile_sequence_desc
+            else -> R.id.zfile_sequence_asc
         }
     }
 
