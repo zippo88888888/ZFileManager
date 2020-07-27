@@ -83,8 +83,8 @@ class MainActivity : AppCompatActivity(), ZFileSelectListener {
 
 ```
 
-## 高级用法 
-> ##### 注意 下面 ":" 为继承
+## 高级用法 ZFileManager提供了对外的帮助类 (ZFileHelp)[https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt] 
+> ##### 注意 下面 ":" 为继承  
 
 ### 文件类型拓展
 
@@ -225,7 +225,7 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
     // 可参照demo里面 diy包下面的实现
 
 ```
-#### 自定义打开文件
+#### 自定义打开默认支持的文件
 ```kotlin
 
 class MyFileOpenListener : ZMyFileOpenListener() {
@@ -243,9 +243,6 @@ class MyFileOpenListener : ZMyFileOpenListener() {
     }
 
     override fun openZIP(filePath: String, view: View) {
-    }
-
-    override fun zipSelect(filePath: String, view: View) {
     }
 
     override fun openDOC(filePath: String, view: View) {
