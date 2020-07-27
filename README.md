@@ -83,8 +83,9 @@ class MainActivity : AppCompatActivity(), ZFileSelectListener {
 
 ```
 
-## 高级用法 ZFileManager提供了对外的帮助类 (ZFileHelp)[https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt] 
-> ##### 注意 下面 ":" 为继承  
+## 高级用法  
+> ##### 注意 下面 ":" 为继承    
+> ##### ZFileManager额外提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
 
 ### 文件类型拓展
 
