@@ -66,7 +66,7 @@ class ZFileConfiguration : Serializable {
      * 过滤规则，默认显示所有的文件类型
      * 如 arrayOf(PNG, JPG, JPEG, GIF) 只显示图片类型
      */
-    var fileFilterArray: Array<String>? = arrayOf(PNG, JPG, JPEG, GIF)
+    var fileFilterArray: Array<String>? = null
 
     /**
      * 最大选取数量

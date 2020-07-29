@@ -14,7 +14,7 @@
 ##### 支持QQ、微信单独选择
 
 ### 截图
-<div>
+<div align="center">
 <img src = "app/src/main/assets/s0.jpg" width=180 >
 <img src = "app/src/main/assets/s1.jpg" width=180 >
 <img src = "app/src/main/assets/s2.jpg" width=180 >
@@ -83,8 +83,7 @@ class MainActivity : AppCompatActivity(), ZFileSelectListener {
 
 ```
 
-## 高级用法  
-> ##### 注意 下面 ":" 为继承    
+## 高级用法   
 > ##### ZFileManager额外提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
 
 ### 文件类型拓展
@@ -118,6 +117,7 @@ class ApkType : ZFileType() {
     override fun loadingFile(filePath: String, pic: ImageView) {
         pic.setImageResource(R.mipmap.ic_launcher_round)
     }
+    
 }
 
 ```
@@ -152,7 +152,7 @@ getZFileHelp().init(MyFileImageListener())
 #### 自定义文件获取
 ```kotlin
 
-class ZFileDefaultLoadListener : ZFileLoadListener {
+class MyFileLoadListener : ZFileLoadListener {
 
     /**
      * 获取手机里的文件List
@@ -160,19 +160,19 @@ class ZFileDefaultLoadListener : ZFileLoadListener {
      * @return MutableList<ZFileBean>?  list
      */
     override fun getFileList(context: Context?, filePath: String?) =
-        getDefaultFileList(context, filePath)
+        getFileList(context, filePath)
 
-    private fun getDefaultFileList(context: Context?, filePath: String?): MutableList<ZFileBean> {
+    private fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean> {
          
     }
 }
 
-getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
+getZFileHelp().setFileLoadListener(MyFileLoadListener())
 
 
 ```
 
-#### UI 或操作自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt)
+#### UI 或操作自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt) 或 [values](https://github.com/zippo88888888/ZFileManager/tree/master/z_file/src/main/res/values)
  
 ```kotlin
 
@@ -222,8 +222,15 @@ getZFileHelp().setFileLoadListener(ZFileDefaultLoadListener())
         var lineColor: Int = R.color.zfile_line_color
     ) : Serializable, Parcelable
     
-    // 方式二 如：PPT类型展示的图片太丑，继承自PptType，重写方法即可，
-    // 可参照demo里面 diy包下面的实现
+     getZFileHelp().setConfiguration(getZFileConfig().apply {
+            resources = ZFileResources(R.drawable.ic_diy_audio)
+            maxLength = 6
+            maxLengthStr = "666"
+            ...
+        })
+    
+    // 方式二 如：Txt类型展示的图片太丑，继承自TxtType，重写方法即可，
+    // 可参照项目里面 diy包下面的实现，这种方式对于内置的文件类型可以完全自定义操作
 
 ```
 #### 自定义打开默认支持的文件
