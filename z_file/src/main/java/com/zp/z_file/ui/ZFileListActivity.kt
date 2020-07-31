@@ -36,6 +36,7 @@ internal class ZFileListActivity : ZFileActivity() {
     private val titleArray by lazy {
         if (getZFileConfig().longClickOperateTitles.isNullOrEmpty()) {
             arrayOf(
+                ZFileConfiguration.RENAME,
                 ZFileConfiguration.COPY,
                 ZFileConfiguration.MOVE,
                 ZFileConfiguration.DELETE,
@@ -180,15 +181,19 @@ internal class ZFileListActivity : ZFileActivity() {
                 }
             }
             itemLongClick = { _, index, item ->
-                if (getZFileConfig().needLongClick) {
-                    if (getZFileConfig().isOnlyFileHasLongClick) {
-                        if (item.isFile) showSelectDialog(index, item)
-                        else false
-                    } else {
-                        showSelectDialog(index, item)
-                    }
-                } else {
+                if (fileListAdapter.isManage) {
                     false
+                } else {
+                    if (getZFileConfig().needLongClick) {
+                        if (getZFileConfig().isOnlyFileHasLongClick) {
+                            if (item.isFile) showSelectDialog(index, item)
+                            else false
+                        } else {
+                            showSelectDialog(index, item)
+                        }
+                    } else {
+                        false
+                    }
                 }
             }
             changeListener = { isManage, size ->
@@ -254,6 +259,21 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private fun jumpByWhich(item: ZFileBean, which: Int, index: Int) {
         when (titleArray!![which]) {
+            ZFileConfiguration.RENAME -> {
+                getZFileHelp().getFileOperateListener().renameFile(item.filePath, this) { isSuccess, newName ->
+                    if (isSuccess) {
+                        val oldFile = item.filePath.toFile()
+                        val oldFileType = oldFile.getFileType()
+                        val oldPath = oldFile.path.substring(0, oldFile.path.lastIndexOf("/") + 1)
+                        val newFilePath = "$oldPath$newName.$oldFileType"
+                        fileListAdapter.getItem(index).apply {
+                            filePath = newFilePath
+                            fileName = "$newName.$oldFileType"
+                        }
+                        fileListAdapter.notifyItemChanged(index)
+                    }
+                }
+            }
             ZFileConfiguration.COPY, ZFileConfiguration.MOVE -> {
                 checkFragmentByTag(TAG)
                 ZFileSelectFolderDialog.newInstance(titleArray!![which]).apply {
@@ -385,6 +405,7 @@ internal class ZFileListActivity : ZFileActivity() {
     override fun onDestroy() {
         ZFileUtil.resetAll()
         super.onDestroy()
+        fileListAdapter.reset()
         backList.clear()
     }
 

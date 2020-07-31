@@ -9,7 +9,7 @@ data class ZFileBean(
     var fileName: String = "",      // 文件名
     var isFile: Boolean = true,     // true---文件；false---文件夹
     var filePath: String = "",      // 文件路径
-    var date: String = "",          // 格式化后的事件
+    var date: String = "",          // 格式化后的时间
     var originalDate: String = "",  // 原始时间
     var size: String = "",          // 格式化后的大小
     var originaSize: Long = 0L      // 原始大小

@@ -125,13 +125,19 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             boxMap[position] = !isSelect
             changeListener?.invoke(isManage, selectData.size)
         } else {
-            if (selectData.size >= config.maxLength) {
-                context.toast(config.maxLengthStr)
+            val size = item.originaSize.toDouble() / 1048576 // byte -> MB
+            if (size > config.maxSize.toDouble()) {
+                context.toast(config.maxSizeStr)
                 notifyItemChanged(position)
             } else {
-                selectData.add(item)
-                boxMap[position] = !isSelect
-                changeListener?.invoke(isManage, selectData.size)
+                if (selectData.size >= config.maxLength) {
+                    context.toast(config.maxLengthStr)
+                    notifyItemChanged(position)
+                } else {
+                    selectData.add(item)
+                    boxMap[position] = !isSelect
+                    changeListener?.invoke(isManage, selectData.size)
+                }
             }
         }
     }
@@ -146,5 +152,10 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
         holder.itemView.setOnClickListener {
             itemClickByAnim?.invoke(it, position, item)
         }
+    }
+
+    fun reset() {
+        selectData.clear()
+        boxMap.clear()
     }
 }

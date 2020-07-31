@@ -9,7 +9,7 @@ import com.zp.z_file.content.toFile
 open class VideoType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getOpenListener().openVideo(filePath, view)
+        getZFileHelp().getFileOpenListener().openVideo(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {

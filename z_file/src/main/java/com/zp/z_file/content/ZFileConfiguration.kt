@@ -31,6 +31,7 @@ class ZFileConfiguration : Serializable {
         /** 样式二 */
         const val STYLE2 = 2
 
+        const val RENAME = "重命名"
         const val COPY = "复制"
         const val MOVE = "移动"
         const val DELETE = "删除"
@@ -69,6 +70,16 @@ class ZFileConfiguration : Serializable {
     var fileFilterArray: Array<String>? = null
 
     /**
+     * 文件选取大小的限制，单位：M
+     */
+    var maxSize = 10
+
+    /**
+     * 超过最大选择大小文字提醒
+     */
+    var maxSizeStr = "您只能选取小于${maxSize}M的文件"
+
+    /**
      * 最大选取数量
      */
     var maxLength = 9
@@ -95,8 +106,8 @@ class ZFileConfiguration : Serializable {
     var isOnlyFileHasLongClick = true
 
     /**
-     * 长按后需要显示的操作类型 see [COPY] [MOVE] [DELETE] [INFO]
-     * 空默认为 arrayOf(COPY, MOVE, DELETE, INFO)
+     * 长按后需要显示的操作类型 see [RENAME] [COPY] [MOVE] [DELETE] [INFO]
+     * 空默认为 arrayOf(RENAME, COPY, MOVE, DELETE, INFO)
      * 目前只可以是这四种类型，个数、顺序可以自定义，文字暂不支持自定义
      */
     var longClickOperateTitles: Array<String>? = null
@@ -112,8 +123,8 @@ class ZFileConfiguration : Serializable {
     var isOnlyFile = false
 
     /**
-     * Android 7.0以上 需要的 FileProvider，一般都是包名 + xxxFileProvider
-     * 如果项目中存在或其他原因可以不设置，自己实现 ZFileOpenListener
+     * 打开文件需要 FileProvider 一般都是包名 + xxxFileProvider
+     * 如果项目中已经存在或其他原因无法修改，请自己实现 ZFileOpenListener
      */
     var authority = "com.zp.zfile_manager.ZFileManagerProvider"
 
@@ -133,6 +144,8 @@ class ZFileConfiguration : Serializable {
         private var sortordBy = BY_DEFAULT
         private var sortord = ASC
         private var fileFilterArray: Array<String>? = null
+        private var maxSize = 50
+        private var maxSizeStr = "您只能选取小于${maxSize}M的文件"
         private var maxLength = 9
         private var maxLengthStr = "您最多可以选取${maxLength}个文件"
         private var boxStyle = STYLE1
@@ -171,6 +184,16 @@ class ZFileConfiguration : Serializable {
 
         fun fileFilterArray(fileFilterArray: Array<String>?): Build {
             this.fileFilterArray = fileFilterArray
+            return this
+        }
+
+        fun maxSize(maxSize: Int): Build {
+            this.maxSize = maxSize
+            return this
+        }
+
+        fun maxSizeStr(maxSizeStr: String): Build {
+            this.maxSizeStr = maxSizeStr
             return this
         }
 
@@ -231,6 +254,8 @@ class ZFileConfiguration : Serializable {
             this.sortordBy = this@Build.sortordBy
             this.sortord = this@Build.sortord
             this.fileFilterArray = this@Build.fileFilterArray
+            this.maxSize = this@Build.maxSize
+            this.maxSizeStr = this@Build.maxSizeStr
             this.maxLength = this@Build.maxLength
             this.maxLengthStr = this@Build.maxLengthStr
             this.boxStyle = this@Build.boxStyle

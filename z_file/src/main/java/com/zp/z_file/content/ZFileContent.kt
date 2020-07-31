@@ -63,7 +63,7 @@ internal val SD_ROOT by lazy {
 
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 
-fun getZFileConfig() = getZFileHelp().getZfileConfig()
+fun getZFileConfig() = getZFileHelp().getConfiguration()
 
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
 internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =

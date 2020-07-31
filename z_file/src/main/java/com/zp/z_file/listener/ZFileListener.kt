@@ -17,6 +17,7 @@ import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
 import com.zp.z_file.ui.dialog.ZFileInfoDialog
+import com.zp.z_file.ui.dialog.ZFileRenameDialog
 import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
@@ -166,6 +167,27 @@ open class ZFileOpenListener {
 open class ZFileOperateListener {
 
     /**
+     * 文件重命名
+     * @param filePath String   文件路径
+     * @param context Context   Context
+     * @param block Function2<Boolean, String, Unit> Boolean：成功或失败；String：新名字
+     */
+    open fun renameFile(
+        filePath: String,
+        context: Context,
+        block: (Boolean, String) -> Unit
+    ) {
+        (context as? AppCompatActivity)?.let {
+            it.checkFragmentByTag("ZFileRenameDialog")
+            ZFileRenameDialog().apply {
+                reanameDown = {
+                    ZFileUtil.renameFile(filePath, this, context, block)
+                }
+            }.show(it.supportFragmentManager, "ZFileRenameDialog")
+        }
+    }
+
+    /**
      * 复制文件
      * @param sourceFile String     源文件地址
      * @param targetFile String     目标文件地址
@@ -197,7 +219,7 @@ open class ZFileOperateListener {
      */
     open fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
         ZFileCommonDialog(context).showDialog2({
-            ZFileUtil.deleteFile(context, filePath, block)
+            ZFileUtil.deleteFile(filePath, context, block)
         }, {}, "您确定要删除吗？", "删除", "取消")
     }
 

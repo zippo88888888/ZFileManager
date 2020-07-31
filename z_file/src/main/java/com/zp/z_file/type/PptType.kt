@@ -9,7 +9,7 @@ import com.zp.z_file.content.getZFileHelp
 open class PptType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getOpenListener().openPPT(filePath, view)
+        getZFileHelp().getFileOpenListener().openPPT(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {

@@ -9,7 +9,7 @@ import com.zp.z_file.content.getZFileHelp
 open class XlsType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getOpenListener().openXLS(filePath, view)
+        getZFileHelp().getFileOpenListener().openXLS(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {

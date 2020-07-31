@@ -9,7 +9,7 @@ import com.zp.z_file.content.getZFileHelp
 open class OtherType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getOpenListener().openOther(filePath, view)
+        getZFileHelp().getFileOpenListener().openOther(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {

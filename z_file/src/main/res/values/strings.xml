@@ -27,6 +27,8 @@
     <string name="zfile_info_wh">宽高比率：</string>
     <string name="zfile_info_other">其他信息：</string>
     <string name="zfile_select_forder">请选择文件夹</string>
+    <string name="zzfile_info_rename">请输入文件名称</string>
+    <string name="zifle_rename_title">文件重命名</string>
 
 
 </resources>

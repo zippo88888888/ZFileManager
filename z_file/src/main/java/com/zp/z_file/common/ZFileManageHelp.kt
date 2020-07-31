@@ -66,18 +66,18 @@ class ZFileManageHelp {
      */
     private var fileOperateListener = ZFileOperateListener()
     fun getFileOperateListener() = fileOperateListener
-    fun setFileOperateListener(fileZipListener: ZFileOperateListener): ZFileManageHelp {
-        this.fileOperateListener = fileZipListener
+    fun setFileOperateListener(fileOperateListener: ZFileOperateListener): ZFileManageHelp {
+        this.fileOperateListener = fileOperateListener
         return this
     }
 
     /**
      * 打开文件
      */
-    private var openListener = ZFileOpenListener()
-    fun getOpenListener() = openListener
-    fun setOpenListener(openListener: ZFileOpenListener): ZFileManageHelp {
-        this.openListener = openListener
+    private var fileOpenListener = ZFileOpenListener()
+    fun getFileOpenListener() = fileOpenListener
+    fun setFileOpenListener(fileOpenListener: ZFileOpenListener): ZFileManageHelp {
+        this.fileOpenListener = fileOpenListener
         return this
     }
 
@@ -85,7 +85,7 @@ class ZFileManageHelp {
      * 文件的相关配置信息
      */
     private var config = ZFileConfiguration()
-    fun getZfileConfig() = config
+    fun getConfiguration() = config
     fun setConfiguration(config: ZFileConfiguration): ZFileManageHelp {
         this.config = config
         return this

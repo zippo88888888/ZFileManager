@@ -40,9 +40,45 @@ internal object ZFileUtil {
     // TODO 下面是操作文件 ==========================================================================
 
     /**
+     * 重命名文件
+     */
+    fun renameFile(
+        filePath: String,
+        newName: String,
+        context: Context,
+        block: (Boolean, String) -> Unit
+    ) {
+        val activity = context as Activity
+        val dialog = ProgressDialog(activity).run {
+            setProgressStyle(ProgressDialog.STYLE_SPINNER)
+            setMessage("重命名中，请稍后...")
+            setCancelable(false)
+            show()
+            this
+        }
+        thread {
+            val isSuccess = try {
+                val oldFile = filePath.toFile()
+                val oldFileType = oldFile.getFileType()
+                val oldPath = oldFile.path.substring(0, oldFile.path.lastIndexOf("/") + 1)
+                val newFile = File("$oldPath$newName.$oldFileType")
+                oldFile.renameTo(newFile)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+            activity.runOnUiThread {
+                dialog.dismiss()
+                activity.toast(if (isSuccess) "重命名成功" else "重命名失败")
+                block.invoke(isSuccess, newName)
+            }
+        }
+    }
+
+    /**
      * 删除文件
      */
-    fun deleteFile(context: Context, filePath: String, block: Boolean.() -> Unit) {
+    fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
         callFileByType(filePath, "", context, DELTE_TYPE, block)
     }
 
@@ -221,6 +257,8 @@ internal object ZFileUtil {
             sortordBy = ZFileConfiguration.BY_DEFAULT
             sortord = ZFileConfiguration.ASC
             fileFilterArray = null
+            maxSize = 10
+            maxSizeStr = "您只能选取小于${maxSize}M的文件"
             maxLength = 9
             maxLengthStr = "您最多可以选取${maxLength}个文件"
             boxStyle = ZFileConfiguration.STYLE2

@@ -1,13 +1,13 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.1.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # 特点
 
 ### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
-### 2. 支持音频，视频播放，图片查看，zip解压 && 复制、移动、删除、查看详情
+### 2. 支持音频，视频播放，图片查看，zip解压 && 重命名、复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展
-### 4. 支持多选，最大数量限制、实时排序、指定文件路径访问
+### 4. 支持多选，最大数量、文件大小限制、实时排序、指定文件路径访问
 ### 5. 高度可定制化，兼容AndroidX
 
 #### 即将支持
@@ -26,7 +26,7 @@
 #### Step 0. 添加依赖 申明权限
 ```groovy
 
-implementation 'com.github.zp:z_file:1.1'
+implementation 'com.github.zp:z_file:1.1.1'
 ```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -139,8 +139,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 #### Step 3. 在Application中或调用前赋值  
 
 ```kotlin
-getZFileHelp().init(MyFileImageListener())
-            .setFileTypeListener(MyFileTypeListener())
+getZFileHelp().setFileTypeListener(MyFileTypeListener())
 
 ```
 
@@ -152,6 +151,12 @@ getZFileHelp().init(MyFileImageListener())
 #### 自定义文件获取
 ```kotlin
 
+/**
+ * 获取文件
+ * 此方式，排序、是否显示隐藏文件、过滤规则等等操作都需要自己实现
+ * Kotlin 获取配置信息：getZFileConfig()
+ * Java 获取配置信息：ZFileManageHelp.getInstance().getConfiguration()
+ */
 class MyFileLoadListener : ZFileLoadListener {
 
     /**
@@ -279,7 +284,21 @@ getZFileHelp().setOpenListener(MyFileOpenListener())
 class MyFileOperateListener : ZFileOperateListener() {
 
     /**
-     * 复制文件
+     * 文件重命名
+     * @param filePath String   文件路径
+     * @param context Context   Context
+     * @param (Boolean, String) Boolean：成功或失败；String：新名字
+     */
+    open fun renameFile(
+        filePath: String,
+        context: Context,
+        block: (Boolean, String) -> Unit
+    ) {
+       // 先弹出重命名Dialog，再执行重命名方法  
+    }
+
+    /**
+     * 复制文件 耗时操作，建议放在非UI线程中执行
      * @param sourceFile String     源文件地址
      * @param targetFile String     目标文件地址
      * @param context Context       Context
@@ -291,11 +310,18 @@ class MyFileOperateListener : ZFileOperateListener() {
         context: Context,
         block: Boolean.() -> Unit
     ) {
-    
+       thread {
+           val success = MyTestFileUtil.copyFile(sourceFile, targetFile, context)
+           (context as? Activity)?.let { 
+               it.runOnUiThread { 
+                   block.invoke(success)
+               }
+           }
+       }
     }
 
     /**
-     * 移动文件
+     * 移动文件 耗时操作，建议放在非UI线程中执行
      */
     override fun moveFile(
         sourceFile: String,
@@ -307,14 +333,14 @@ class MyFileOperateListener : ZFileOperateListener() {
     }
 
     /**
-     * 删除文件
+     * 删除文件 耗时操作，建议放在非UI线程中执行
      */
     override fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
          
     }
 
     /**
-     * 解压文件
+     * 解压文件 耗时操作，建议放在非UI线程中执行
      */
     override fun zipFile(
         sourceFile: String,

@@ -9,7 +9,7 @@ import com.zp.z_file.content.getZFileHelp
 open class ZipType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getOpenListener().openZIP(filePath, view)
+        getZFileHelp().getFileOpenListener().openZIP(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
