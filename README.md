@@ -274,7 +274,7 @@ class MyFileOpenListener : ZMyFileOpenListener() {
     }
 }
 
-getZFileHelp().setOpenListener(MyFileOpenListener())
+getZFileHelp().setFileOpenListener(MyFileOpenListener())
 
 ```
 #### 自定义文件操作
