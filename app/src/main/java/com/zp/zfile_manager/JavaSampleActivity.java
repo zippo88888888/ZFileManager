@@ -41,12 +41,6 @@ public class JavaSampleActivity extends AppCompatActivity implements ZFileSelect
                         .setConfiguration(configuration)
                         .setFileResultListener(JavaSampleActivity.this)
                         .start(JavaSampleActivity.this);
-
-                // TODO 还可以通过此方式使用，效果一样
-                /*ZFileContentKt.getZFileHelp()
-                        .setConfiguration(configuration)
-                        .setFileResultListener(JavaSampleActivity.this)
-                        .start(JavaSampleActivity.this);*/
             }
         });
     }
