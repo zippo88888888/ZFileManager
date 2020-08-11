@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -23,7 +23,7 @@
 #### Step 0. 添加依赖 申明权限
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.0'
+implementation 'com.github.zp:z_file:1.2.1'
 ```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

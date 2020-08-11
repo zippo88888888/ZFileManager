@@ -2,6 +2,8 @@ package com.zp.z_file.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
@@ -15,6 +17,7 @@ import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
 import com.zp.z_file.util.ZFileLog
+import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.activity_zfile_qw.*
 
@@ -30,6 +33,10 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     override fun getContentView() = R.layout.activity_zfile_qw
 
     override fun init(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+    }
+
+    private fun initAll() {
         selectList = ArrayList()
         val type = getZFileConfig().filePath!!
         zfile_qw_toolBar.apply {
@@ -103,6 +110,26 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
     override fun onPageSelected(position: Int) {
         getVPFragment(position)?.setManager(isManage)
+    }
+
+    private fun checkHasPermission() {
+        val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+        if (hasPermission) {
+            ZFilePermissionUtil.requestPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_CODE, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+        } else {
+            initAll()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initAll()
+            else {
+                toast("权限申请失败")
+                finish()
+            }
+        }
     }
 
     override fun onDestroy() {
