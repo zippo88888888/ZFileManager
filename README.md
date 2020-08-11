@@ -151,7 +151,7 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
     super_qqTxt.setOnClickListener {
         // 打开QQ文件选择
         getZFileHelp().setConfiguration(getZFileConfig().apply {
-            filePath = ZFileConfiguration.WECHAT // 必须设置
+            filePath = ZFileConfiguration.QQ // 必须设置
         }).start(this)
     }
 
