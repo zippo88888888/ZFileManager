@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zfile_white"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/zfile_qw_toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/zfile_base_color"
+        app:navigationIcon="@drawable/zfile_back"
+        app:popupTheme="@style/ZFile_ToolbarPopupTheme"
+        app:theme="@style/ZFile_ToolbarTheme"
+        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/zfile_qw_tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        app:tabTextColor="@color/zfile_gray"
+        app:tabSelectedTextColor="@color/zfile_base_color"
+        android:background="@color/zfile_bgclor">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/zfile_pic" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/zfile_video" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/zfile_txt" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/zfile_other" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/zfile_qw_viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

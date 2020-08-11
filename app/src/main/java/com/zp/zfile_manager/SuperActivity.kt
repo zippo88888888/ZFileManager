@@ -1,17 +1,21 @@
 package com.zp.zfile_manager
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.zp.z_file.content.*
 import com.zp.z_file.async.ZFileAsyncImpl
+import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.content.*
 import kotlinx.android.synthetic.main.activity_super.*
-import kotlin.collections.ArrayList
 
 class SuperActivity : AppCompatActivity() {
 
     private var dialog: ProgressDialog? = null
+    private var neverShow = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +50,15 @@ class SuperActivity : AppCompatActivity() {
         }
 
         super_qqTxt.setOnClickListener {
-            Toast.makeText(this, "即将支持", Toast.LENGTH_SHORT).show()
+            showDialogQW(ZFileConfiguration.QQ)
         }
 
         super_wechatTxt.setOnClickListener {
-            Toast.makeText(this, "即将支持", Toast.LENGTH_SHORT).show()
+            showDialogQW(ZFileConfiguration.WECHAT)
         }
 
         super_otherTxt.setOnClickListener {
-            Toast.makeText(this, "我只是一个占位格", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "我只是一个占位格，好看的", Toast.LENGTH_SHORT).show()
         }
 
         super_innerTxt.setOnClickListener {
@@ -65,6 +69,38 @@ class SuperActivity : AppCompatActivity() {
                 sortord = ZFileConfiguration.ASC
             }).start(this)
         }
+    }
+
+    private fun showDialogQW(path: String) {
+        Log.e("ZFileManager", "请注意：QQ、微信目前只能获取用户手动保存到手机里面的文件，" +
+                "且保存文件到手机的目录用户没有修改")
+        Log.i("ZFileManager", "所有的路径都参考自腾讯自己的\"腾讯文件\"App")
+        if (neverShow) {
+            jump(path)
+        } else {
+            AlertDialog.Builder(this).apply {
+                setTitle("温馨提示")
+                setMessage("QQ、微信目前只能获取用户手动保存到手机里面的文件，且保存文件到手机的目录用户没有修改")
+                setCancelable(false)
+                setPositiveButton("确定") { dialog, _ ->
+                    jump(path)
+                    dialog.dismiss()
+                }
+                setNegativeButton("不再提醒") { dialog, _ ->
+                    neverShow = true
+                    jump(path)
+                    dialog.dismiss()
+                }
+                show()
+            }
+        }
+    }
+
+    private fun jump(path: String) {
+        getZFileHelp().setConfiguration(getZFileConfig().apply {
+            boxStyle = ZFileConfiguration.STYLE2
+            filePath = path
+        }).start(this@SuperActivity)
     }
 
     private fun showDialog(filterArray: Array<String>) {
@@ -97,5 +133,15 @@ class SuperActivity : AppCompatActivity() {
             index++
         }
         return list
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
+        val sb = StringBuilder()
+        list?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        super_resultTxt.text = sb.toString()
     }
 }

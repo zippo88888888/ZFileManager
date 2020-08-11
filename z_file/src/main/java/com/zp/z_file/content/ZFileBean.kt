@@ -26,6 +26,11 @@ internal data class ZFilePathBean(
     var filePath: String = "" // 文件路径
 )
 
+internal data class ZFileQWBean(
+    var zFileBean: ZFileBean? = null,
+    var isSelected: Boolean = true
+)
+
 
 
  

@@ -12,8 +12,15 @@ import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
+import com.zp.z_file.util.ZFileLog
 
 internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(context) {
+
+    constructor(context: Context, isQW: Boolean) : this(context) {
+        this.isQW = isQW
+    }
+
+    private var isQW = false
 
     private var config = getZFileConfig()
 
@@ -27,18 +34,31 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
 
     var isManage = false
         set(value) {
-            if (!value) {
-                selectData.clear()
-                for ((k, _) in boxMap) {
-                    boxMap[k] = false
+            if (isQW) {
+                if (value) {
+                    notifyDataSetChanged()
+                } else {
+                    selectData.clear()
+                    for ((k, _) in boxMap) {
+                        boxMap[k] = false
+                    }
+                    notifyDataSetChanged()
                 }
-                notifyDataSetChanged()
+            } else {
+                if (!value) {
+                    selectData.clear()
+                    for ((k, _) in boxMap) {
+                        boxMap[k] = false
+                    }
+                    notifyDataSetChanged()
+                }
             }
             field = value
         }
 
     var itemClickByAnim: ((View, Int, ZFileBean) -> Unit)? = null
     var changeListener: ((Boolean, Int) -> Unit)? = null
+    var qwListener: ((Boolean, ZFileBean, Boolean) -> Unit)? = null
 
     override fun setDatas(list: MutableList<ZFileBean>?) {
         if (list.isNullOrEmpty()) {
@@ -110,6 +130,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             } else { // 非管理状态
                 isManage = !isManage
                 notifyDataSetChanged()
+                qwListener?.invoke(isManage, item, false)
             }
             changeListener?.invoke(isManage, selectData.size)
         }
@@ -124,20 +145,30 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             selectData.remove(item)
             boxMap[position] = !isSelect
             changeListener?.invoke(isManage, selectData.size)
+            qwListener?.invoke(isManage, item, false)
         } else {
             val size = item.originaSize.toDouble() / 1048576 // byte -> MB
             if (size > config.maxSize.toDouble()) {
                 context.toast(config.maxSizeStr)
                 notifyItemChanged(position)
             } else {
-                if (selectData.size >= config.maxLength) {
-                    context.toast(config.maxLengthStr)
-                    notifyItemChanged(position)
-                } else {
+                if (isQW) {
                     selectData.add(item)
                     boxMap[position] = !isSelect
                     changeListener?.invoke(isManage, selectData.size)
+                    qwListener?.invoke(isManage, item, true)
+                } else {
+                    if (selectData.size >= config.maxLength) {
+                        context.toast(config.maxLengthStr)
+                        notifyItemChanged(position)
+                    } else {
+                        selectData.add(item)
+                        boxMap[position] = !isSelect
+                        changeListener?.invoke(isManage, selectData.size)
+                        qwListener?.invoke(isManage, item, true)
+                    }
                 }
+
             }
         }
     }
@@ -151,6 +182,21 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
         }
         holder.itemView.setOnClickListener {
             itemClickByAnim?.invoke(it, position, item)
+        }
+    }
+
+    fun setQWLastState(bean: ZFileBean?) {
+        var lastIndex = -1
+        getDatas().indices.forEach forEach@{
+            if (getItem(it) == bean) {
+                lastIndex = it
+                return@forEach
+            }
+        }
+        if (lastIndex != -1) {
+            selectData.remove(bean)
+            boxMap[lastIndex] = false
+            notifyItemChanged(lastIndex)
         }
     }
 

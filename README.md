@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.1.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -8,10 +8,7 @@
 ### 2. 支持音频，视频播放，图片查看，zip解压 && 重命名、复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展
 ### 4. 支持多选，最大数量、文件大小限制、实时排序、指定文件路径访问
-### 5. 高度可定制化，兼容AndroidX
-
-#### 即将支持
-##### 支持QQ、微信单独选择
+### 5. 支持QQ、微信单独选择，高度可定制化，兼容AndroidX 
 
 ### 截图
 <div align="center">
@@ -26,13 +23,13 @@
 #### Step 0. 添加依赖 申明权限
 ```groovy
 
-implementation 'com.github.zp:z_file:1.1.1'
+implementation 'com.github.zp:z_file:1.2.0'
 ```
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
-#### Step 1. 实现ZFileImageListener，并在Application中或调用前初始化 
+#### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
 ```Kotlin
 
 class MyFileImageListener : ZFileImageListener() {
@@ -50,29 +47,30 @@ class MyFileImageListener : ZFileImageListener() {
 
 getZFileHelp().init(MyFileImageListener())
 ```
-#### Step 2. 在Activity或Fragment中 实现 ZFileSelectListener 接口
+#### Step 2. 在Activity或Fragment中使用
 
 ```kotlin
 
 // 打开文件管理
-getZFileHelp().setFileResultListener(this).start(this)
-getZFileHelp().setFileResultListener(this).start(this, "指定目录")
+getZFileHelp().start(this)
 
 class MainActivity : AppCompatActivity(), ZFileSelectListener {
+
+    // 注意：ZFileSelectListener 已废弃，下个版本将会移除！
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
-            getZFileHelp()
-                .setFileResultListener(this)
-                .start(this)
+            getZFileHelp().start(this)
         }
     }
-
-    override fun onSelected(fileList: MutableList<ZFileBean>?) {
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
         val sb = StringBuilder()
-        fileList?.forEach {
+        list?.forEach {
             sb.append(it).append("\n\n")
         }
         main_resultTxt.text = sb.toString()
@@ -143,6 +141,39 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
 
 ```
 
+### QQ或微信文件选择
+
+> QQ、微信默认根据时间倒序排序，不显示隐藏文件，过滤规则默认，只显示文件，不支持长按操作
+其他配置与文件管理保持一致！后续将完全支持自定义获取，具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/SuperActivity.kt)
+，参考 [腾讯文件](https://imtt.dd.qq.com/16891/apk/24CB038F3A67CDBE10C5A0D9B2AD10E9.apk?fsname=com.tencent.FileManager_5.0.4.0001_5040001.apk&csr=1bbd)
+```kotlin
+
+    super_qqTxt.setOnClickListener {
+        // 打开QQ文件选择
+        getZFileHelp().setConfiguration(getZFileConfig().apply {
+            filePath = ZFileConfiguration.WECHAT // 必须设置
+        }).start(this)
+    }
+
+    super_wechatTxt.setOnClickListener {
+        // 打开微信文件选择
+        getZFileHelp().setConfiguration(getZFileConfig().apply {
+            filePath = ZFileConfiguration.WECHAT // 必须设置
+        }).start(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
+        val sb = StringBuilder()
+        list?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        super_resultTxt.text = sb.toString()
+    }
+
+```
+
 ##### 搞定，是不是很简单 ^_^
 
 > ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开(作者你个渣渣)，我只想选择文件，不想要长按事件，你的长按事件弹出的功能有些不是我想要的...
@@ -180,6 +211,16 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
 #### UI 或操作自定义 更多可查看 [ZFileConfiguration](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/content/ZFileConfiguration.kt) 或 [values](https://github.com/zippo88888888/ZFileManager/tree/master/z_file/src/main/res/values)
  
 ```kotlin
+
+    /**
+     * 起始访问位置，非空为指定访问目录，空为SD卡根目录
+     * 还可指定QQ或微信目录
+     */
+    var filePath: String? = null
+
+    ...
+    ...
+    ...
 
     /**
      * 是否需要长按事件
@@ -231,6 +272,8 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
             resources = ZFileResources(R.drawable.ic_diy_audio)
             maxLength = 6
             maxLengthStr = "666"
+            ...
+            ...
             ...
         })
     
@@ -311,7 +354,7 @@ class MyFileOperateListener : ZFileOperateListener() {
         block: Boolean.() -> Unit
     ) {
        thread {
-           val success = MyTestFileUtil.copyFile(sourceFile, targetFile, context)
+           val success = MyFileUtil.copyFile(sourceFile, targetFile, context)
            (context as? Activity)?.let { 
                it.runOnUiThread { 
                    block.invoke(success)

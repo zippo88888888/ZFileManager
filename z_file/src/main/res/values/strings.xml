@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="zfile_sharedElement_pic">zfile_jump_pic</string>
     <string name="zfile_sharedElement_video">zfile_jump_Video</string>
     <string name="zfile_menu_down">完成</string>
@@ -6,13 +6,13 @@
     <string name="zifle_menu_hidden">不显示隐藏文件</string>
     <string name="zfile_menu_show">显示隐藏文件</string>
     <string name="zfile_sort_title">排序方式</string>
-    <string name="zfile_sort_default">&#160;&#160;&#160;默认（无顺序）</string>
-    <string name="zfile_sort_by_name">&#160;&#160;&#160;名称</string>
-    <string name="zfile_sort_by_time">&#160;&#160;&#160;时间</string>
-    <string name="zfile_sort_by_size">&#160;&#160;&#160;大小</string>
+    <string name="zfile_sort_default">&#160;默认（无顺序）</string>
+    <string name="zfile_sort_by_name">&#160;名称</string>
+    <string name="zfile_sort_by_time">&#160;时间</string>
+    <string name="zfile_sort_by_size">&#160;大小</string>
     <string name="zfile_sort_ss">顺序</string>
-    <string name="zfile_sort_sx">&#160;&#160;&#160;升序</string>
-    <string name="zfile_sort_jx">&#160;&#160;&#160;降序</string>
+    <string name="zfile_sort_sx">&#160;升序</string>
+    <string name="zfile_sort_jx">&#160;降序</string>
     <string name="zfile_down">确定</string>
     <string name="zfile_cancel">取消</string>
     <string name="zfile_info_title">文件详情</string>
@@ -27,8 +27,13 @@
     <string name="zfile_info_wh">宽高比率：</string>
     <string name="zfile_info_other">其他信息：</string>
     <string name="zfile_select_forder">请选择文件夹</string>
-    <string name="zzfile_info_rename">请输入文件名称</string>
+    <string name="zfile_info_rename">请输入文件名称</string>
     <string name="zifle_rename_title">文件重命名</string>
+    <string name="zfile_pic">图片</string>
+    <string name="zfile_video">视频</string>
+    <string name="zfile_txt">文档</string>
+    <string name="zfile_other">其他</string>
+    <string name="zfile_qw_loading" tools:ignore="TypographyEllipsis">文件获取中...</string>
 
 
 </resources>

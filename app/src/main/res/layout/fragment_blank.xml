@@ -10,6 +10,12 @@
         android:layout_height="wrap_content"
         android:text="start"/>
 
+    <Button
+        android:id="@+id/framgent_wechatBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="wechat"/>
+
     <include layout="@layout/layout_result_txt" />
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.zp.zfile_manager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -9,13 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileBean;
 import com.zp.z_file.content.ZFileConfiguration;
-import com.zp.z_file.listener.ZFileSelectListener;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class JavaSampleActivity extends AppCompatActivity implements ZFileSelectListener {
+
+public class JavaSampleActivity extends AppCompatActivity {
 
     private TextView resultTxt;
 
@@ -39,14 +38,15 @@ public class JavaSampleActivity extends AppCompatActivity implements ZFileSelect
             public void onClick(View v) {
                 ZFileManageHelp.getInstance()
                         .setConfiguration(configuration)
-                        .setFileResultListener(JavaSampleActivity.this)
                         .start(JavaSampleActivity.this);
             }
         });
     }
 
     @Override
-    public void onSelected(@Nullable List<ZFileBean> fileList) {
+    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        List<ZFileBean> fileList = ZFileManageHelp.getInstance().getSelectData(requestCode, resultCode, data);
         if (fileList == null || fileList.size() <= 0) {
             return;
         }
@@ -56,4 +56,5 @@ public class JavaSampleActivity extends AppCompatActivity implements ZFileSelect
         }
         resultTxt.setText(sb.toString());
     }
+
 }

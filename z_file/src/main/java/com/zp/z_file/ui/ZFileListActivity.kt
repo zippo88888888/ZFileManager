@@ -1,8 +1,10 @@
 package com.zp.z_file.ui
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -77,6 +79,9 @@ internal class ZFileListActivity : ZFileActivity() {
                     setMenuState()
                 } else {
                     getZFileHelp().getFileResultListener()?.onSelected(list)
+                    setResult(ZFILE_RESULT_CODE, Intent().apply {
+                        putParcelableArrayListExtra(ZFILE_SELECT_DATA, list as java.util.ArrayList<out Parcelable>)
+                    })
                     finish()
                 }
             }
@@ -231,10 +236,10 @@ internal class ZFileListActivity : ZFileActivity() {
         ZFileUtil.getList(this) {
             if (it.isNullOrEmpty()) {
                 fileListAdapter.clear()
-                zfile_list_emptyPic.visibility = View.VISIBLE
+                zfile_list_emptyLayout.visibility = View.VISIBLE
             } else {
                 fileListAdapter.setDatas(it)
-                zfile_list_emptyPic.visibility = View.GONE
+                zfile_list_emptyLayout.visibility = View.GONE
             }
             zfile_list_refreshLayout.isRefreshing = false
         }

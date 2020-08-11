@@ -12,6 +12,11 @@ class ZFileConfiguration : Serializable {
 
     companion object {
 
+        /** QQ目录 */
+        const val QQ = "ZFILE_QQ_FILE_PATH"
+        /** 微信目录 */
+        const val WECHAT = "ZFILE_WECHAT_FILE_PATH"
+
         /** 默认 */
         const val BY_DEFAULT = 0x1000
         /** 根据名字 */
@@ -40,6 +45,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 起始访问位置，空为SD卡根目录
+     * 还可指定QQ或微信目录 see [QQ] [WECHAT]
      */
     var filePath: String? = null
 
@@ -108,7 +114,7 @@ class ZFileConfiguration : Serializable {
     /**
      * 长按后需要显示的操作类型 see [RENAME] [COPY] [MOVE] [DELETE] [INFO]
      * 空默认为 arrayOf(RENAME, COPY, MOVE, DELETE, INFO)
-     * 目前只可以是这四种类型，个数、顺序可以自定义，文字暂不支持自定义
+     * 目前只可以是这几种类型，个数、顺序可以自定义，文字暂不支持自定义
      */
     var longClickOperateTitles: Array<String>? = null
 

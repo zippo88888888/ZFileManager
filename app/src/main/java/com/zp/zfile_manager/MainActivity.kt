@@ -4,26 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.common.ZFileManageHelp
-import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
-import com.zp.z_file.listener.ZFileSelectListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
 
-class MainActivity : AppCompatActivity(), ZFileSelectListener {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
             getZFileHelp()
-                .setFileResultListener(this)
                 .setConfiguration(getZFileConfig().apply {
                     boxStyle = ZFileConfiguration.STYLE2
                     maxLength = 6
-                    maxLengthStr = "666"
+                    maxLengthStr = "老铁最多6个文件"
                 })
                 .start(this)
         }
@@ -38,11 +35,14 @@ class MainActivity : AppCompatActivity(), ZFileSelectListener {
         }
     }
 
-    override fun onSelected(fileList: MutableList<ZFileBean>?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
         val sb = StringBuilder()
-        fileList?.forEach {
+        list?.forEach {
             sb.append(it).append("\n\n")
         }
         main_resultTxt.text = sb.toString()
+
     }
 }

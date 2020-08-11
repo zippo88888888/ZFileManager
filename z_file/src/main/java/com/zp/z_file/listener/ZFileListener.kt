@@ -39,9 +39,11 @@ interface ZFileLoadListener {
 }
 
 /**
- * 文件选择
+ * 文件选择  请使用 onActivityResult
  */
+@Deprecated("即将失效")
 interface ZFileSelectListener {
+    @Deprecated("即将失效")
     fun onSelected(fileList: MutableList<ZFileBean>?)
 }
 

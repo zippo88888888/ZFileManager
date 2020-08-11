@@ -21,38 +21,53 @@ import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
 import java.io.File
 import java.io.Serializable
+import java.util.*
+import kotlin.collections.ArrayList
 
 const val PNG = "png"
 const val JPG = "jpg"
 const val JPEG = "jpeg"
 const val GIF = "gif"
-
 const val MP3 = "mp3"
 const val AAC = "aac"
 const val WAV = "wav"
-
 const val MP4 = "mp4"
 const val _3GP = "3gp"
-
 const val TXT = "txt"
 const val XML = "xml"
 const val JSON = "json"
-
 const val DOC = "docx"
 const val XLS = "xlsx"
 const val PPT = "pptx"
-
 const val PDF = "pdf"
-
 const val ZIP = "zip"
 
-internal const val COPY_TYPE = 0x1001
-internal const val CUT_TYPE = 0x1002
-internal const val DELTE_TYPE = 0x1003
-internal const val ZIP_TYPE = 0x1004
+internal const val ZFILE_REQUEST_CODE = 0x1000
+internal const val ZFILE_RESULT_CODE = 0x1001
+internal const val ZFILE_SELECT_DATA = "ZFILE_SELECT_RESULT_DATA"
+
+internal const val COPY_TYPE = 0x2001
+internal const val CUT_TYPE = 0x2002
+internal const val DELTE_TYPE = 0x2003
+internal const val ZIP_TYPE = 0x2004
 
 internal const val FILE = 0
 internal const val FOLDER = 1
+
+internal const val QW_PIC = 0
+internal const val QW_VIDEO = 1
+internal const val QW_TXT = 2
+internal const val QW_OTHER = 3
+
+internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
+internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
+// 保存的文档（未保存到手机的图片和视频也在这个位置，感觉QQ的文件乱糟糟的）
+internal const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
+internal const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
+
+internal const val WECHAT_FILE_PATH = "/storage/emulated/0/tencent/MicroMsg/"
+internal const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
+internal const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
 
 internal const val LOG_TAG = "ZFileManager"
 
@@ -61,19 +76,12 @@ internal val SD_ROOT by lazy {
     Environment.getExternalStorageDirectory().path
 }
 
-fun getZFileHelp() = ZFileManageHelp.getInstance()
-
-fun getZFileConfig() = getZFileHelp().getConfiguration()
-
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
 internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
     resources.getDimensionPixelSize(
         resources.getIdentifier(name, defType, "android")
     )
 
-/**
- * 获取屏幕的宽，高
- */
 internal fun Context.getDisplay() = IntArray(2).apply {
     val manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
     val point = Point()
@@ -81,27 +89,23 @@ internal fun Context.getDisplay() = IntArray(2).apply {
     this[0] = point.x
     this[1] = point.y
 }
-/**
- * 根据Tag检查是否存在Fragment实例，如果存在就移除！
- */
 internal fun AppCompatActivity.checkFragmentByTag(tag: String) {
     val fragment = supportFragmentManager.findFragmentByTag(tag)
     if (fragment != null) {
         supportFragmentManager.beginTransaction().remove(fragment).commit()
     }
 }
-
-internal fun Context.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
+internal fun Activity.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
     if (clazz !is Class<*>) return
-    startActivity(Intent(this, clazz).apply {
+    startActivityForResult(Intent(this, clazz).apply {
         if (!map.isNullOrEmpty()) putExtras(map.toBundle())
-    })
+    }, ZFILE_REQUEST_CODE)
 }
 internal fun Fragment.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
     if (clazz !is Class<*>) return
-    startActivity(Intent(context, clazz).apply {
+    startActivityForResult(Intent(context, clazz).apply {
         if (!map.isNullOrEmpty()) putExtras(map.toBundle())
-    })
+    }, ZFILE_REQUEST_CODE)
 }
 internal fun ArrayMap<String, Any>.toBundle() = Bundle().apply {
     for ((key, value) in this@toBundle) {
@@ -145,26 +149,41 @@ internal fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
 internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, msg, duration).show()
 }
+internal fun Int.getFilterArray() = when (this) {
+    QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
+    QW_VIDEO -> arrayOf(MP4, _3GP)
+    QW_TXT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
+    else -> arrayOf("这里顺便写")
+}
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
 internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
-internal fun Context.dip2px(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
-internal fun Context.px2dip(pxValue: Float) = pxValue / resources.displayMetrics.density + 0.5f
 internal fun File.getFileType() = this.path.getFileType()
 internal fun String.getFileType() = this.run {
     substring(lastIndexOf(".") + 1, length)
 }
+internal fun String.accept(type: String) =
+    this.endsWith(type.toLowerCase(Locale.CHINA)) || this.endsWith(type.toUpperCase(Locale.CHINA))
 internal fun String.getFileName() = File(this).name
 internal fun String.toFile() = File(this)
-internal fun getLastPath() = if (getZFileConfig().filePath.isNullOrEmpty()) SD_ROOT else getZFileConfig().filePath
 internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.fileName
     filePath = this@toPathBean.filePath
 }
+internal fun ZFileBean.toQWBean(isSelected: Boolean = true) = ZFileQWBean(this, isSelected)
 internal fun File.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.name
     filePath = this@toPathBean.path
 }
+internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
+    val list = ArrayList<ZFileBean>()
+    for ((_, v) in this) {
+        list.add(v)
+    }
+    return list
+}
 
+fun getZFileHelp() = ZFileManageHelp.getInstance()
+fun getZFileConfig() = getZFileHelp().getConfiguration()
 
 
 

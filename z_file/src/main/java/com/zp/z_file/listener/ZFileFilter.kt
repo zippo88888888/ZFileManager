@@ -1,5 +1,6 @@
 package com.zp.z_file.listener
 
+import com.zp.z_file.content.accept
 import java.io.File
 import java.io.FileFilter
 import java.util.*
@@ -28,7 +29,7 @@ internal class ZFileFilter(
         }
         if (fileArray != null && fileArray!!.isNotEmpty()) {
             fileArray?.forEach {
-                if (file.name.endsWith(it.toLowerCase(Locale.CHINA)) || file.name.endsWith(it.toUpperCase(Locale.CHINA))) {
+                if (file.name.accept(it)) {
                     return true
                 }
             }

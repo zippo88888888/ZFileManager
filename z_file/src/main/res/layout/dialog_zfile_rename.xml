@@ -19,7 +19,7 @@
         android:id="@+id/zfile_dialog_renameEdit"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="@string/zzfile_info_rename"
+        android:hint="@string/zfile_info_rename"
         android:imeOptions="actionDone"
         android:maxLength="30"
         android:maxLines="1"
