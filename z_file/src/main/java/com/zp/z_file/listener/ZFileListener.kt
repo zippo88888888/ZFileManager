@@ -13,6 +13,7 @@ import com.zp.z_file.common.ZFileCommonDialog
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
+import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
@@ -36,15 +37,6 @@ interface ZFileLoadListener {
      * @return MutableList<ZFileBean>?  list
      */
     fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean>?
-}
-
-/**
- * 文件选择  请使用 onActivityResult
- */
-@Deprecated("即将失效")
-interface ZFileSelectListener {
-    @Deprecated("即将失效")
-    fun onSelected(fileList: MutableList<ZFileBean>?)
 }
 
 /**
@@ -124,7 +116,7 @@ open class ZFileOpenListener {
     }
 
     private fun zipSelect(filePath: String, view: View) {
-        (view.context as? AppCompatActivity)?.let {
+        (view.context as? ZFileListActivity)?.let {
             it.checkFragmentByTag("ZFileSelectFolderDialog")
             ZFileSelectFolderDialog.newInstance("解压").apply {
                 selectFolder = {
@@ -134,7 +126,7 @@ open class ZFileOpenListener {
                         } else {
                             ZFileLog.e("解压失败")
                         }
-                        ZFileLiveData.getInstance().value = this
+                        it.observer(this)
                     }
                 }
             }.show(it.supportFragmentManager, "ZFileSelectFolderDialog")

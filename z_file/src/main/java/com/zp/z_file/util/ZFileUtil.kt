@@ -79,6 +79,7 @@ internal object ZFileUtil {
      * 删除文件
      */
     fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
+        ZFileLog.i("删除文件的目录：$filePath")
         callFileByType(filePath, "", context, DELTE_TYPE, block)
     }
 
@@ -86,6 +87,8 @@ internal object ZFileUtil {
      * 复制文件
      */
     fun copyFile(filePath: String, outPath: String, context: Context, block: Boolean.() -> Unit) {
+        ZFileLog.i("源文件目录：$filePath")
+        ZFileLog.i("复制文件目录：$outPath")
         callFileByType(filePath, outPath, context, COPY_TYPE, block)
     }
 
@@ -93,6 +96,8 @@ internal object ZFileUtil {
      * 剪切文件
      */
     fun cutFile(filePath: String, outPath: String, context: Context, block: Boolean.() -> Unit) {
+        ZFileLog.i("源文件目录：$filePath")
+        ZFileLog.i("移动目录：$outPath")
         callFileByType(filePath, outPath, context, CUT_TYPE, block)
     }
 
@@ -100,6 +105,8 @@ internal object ZFileUtil {
      * 解压文件
      */
     fun zipFile(filePath: String, outZipPath: String, context: Context, block: Boolean.() -> Unit) {
+        ZFileLog.i("源文件目录：$filePath")
+        ZFileLog.i("解压目录：$outZipPath")
         callFileByType(filePath, outZipPath, context, ZIP_TYPE, block)
     }
 
@@ -252,7 +259,7 @@ internal object ZFileUtil {
     fun resetAll() {
         getZFileConfig().apply {
             filePath = null
-            resources = ZFileConfiguration.ZFileResources()
+            /*resources = ZFileConfiguration.ZFileResources()
             showHiddenFile = false
             sortordBy = ZFileConfiguration.BY_DEFAULT
             sortord = ZFileConfiguration.ASC
@@ -266,9 +273,8 @@ internal object ZFileUtil {
             isOnlyFileHasLongClick = true
             longClickOperateTitles = null
             isOnlyFolder = false
-            isOnlyFile = false
+            isOnlyFile = false*/
         }
-        getZFileHelp().setFileResultListener(null)
     }
 
 }

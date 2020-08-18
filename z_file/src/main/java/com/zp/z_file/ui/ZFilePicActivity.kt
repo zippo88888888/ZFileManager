@@ -15,7 +15,7 @@ internal class ZFilePicActivity : ZFileActivity() {
     override fun init(savedInstanceState: Bundle?) {
         setStatusBarTransparent()
         val filePath = intent.getStringExtra("picFilePath")
-        getZFileHelp().getImageLoadListener()?.loadImage(zfile_pic_show, filePath.toFile())
+        getZFileHelp().getImageLoadListener().loadImage(zfile_pic_show, filePath.toFile())
         zfile_pic_show.setOnClickListener { onBackPressed() }
     }
 }

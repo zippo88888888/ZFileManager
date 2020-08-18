@@ -56,6 +56,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
         }
         zfile_select_folder_downPic.setOnClickListener {
             selectFolder?.invoke(if (getZFileConfig().filePath.isNullOrEmpty()) SD_ROOT else getZFileConfig().filePath!!)
+            recoverData()
             dismiss()
         }
         zfile_select_folder_title.text = String.format("%s到根目录", tipStr)
@@ -67,8 +68,8 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             override fun bindView(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
                 holder.apply {
                     setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
-                    setImageRes(R.id.item_zfile_list_folderPic, getZFileConfig().resources.folderRes)
-                    setBgColor(R.id.item_zfile_list_folder_line, getZFileConfig().resources.lineColor)
+                    setImageRes(R.id.item_zfile_list_folderPic, folderRes)
+                    setBgColor(R.id.item_zfile_list_folder_line, lineColor)
                     setVisibility(R.id.item_zfile_list_folder_line, position < itemCount - 1)
                 }
             }
@@ -123,12 +124,11 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
         return true
     }
 
-    override fun onDestroyView() {
+    private fun recoverData() {
         // 恢复之前用户配置的数据
         getZFileConfig().filePath = filePath
         getZFileConfig().isOnlyFile = isOnlyFile
         getZFileConfig().isOnlyFolder = isOnlyFolder
-        super.onDestroyView()
     }
 
     override fun onStart() {

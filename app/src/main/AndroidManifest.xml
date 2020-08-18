@@ -15,8 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SuperActivity"></activity>
-        <activity android:name=".FragmentSampleActivity" /> <!-- android:name="android.support.v4.content.FileProvider" -->
+        <activity android:name=".SuperActivity" />
+        <activity android:name=".FragmentSampleActivity" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.ZFileManagerProvider"

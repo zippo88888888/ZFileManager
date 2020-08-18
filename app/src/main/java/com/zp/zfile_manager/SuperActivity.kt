@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.async.ZFileAsyncImpl
-import com.zp.z_file.common.ZFileManageHelp
 import com.zp.z_file.content.*
 import kotlinx.android.synthetic.main.activity_super.*
 
@@ -107,10 +106,10 @@ class SuperActivity : AppCompatActivity() {
         dialog?.show()
         ZFileAsyncImpl(this) {
             dialog?.dismiss()
-            // 这里考虑到传值大小限制，截取前100条数据
             if (it.isNullOrEmpty()) {
                 Toast.makeText(this, "暂无数据", Toast.LENGTH_SHORT).show()
             } else {
+                // 这里考虑到传值大小限制，截取前100条数据
                 if (it.size > 100) {
                     SuperDialog.newInstance(changeList(it))
                         .show(supportFragmentManager, "SuperDialog")

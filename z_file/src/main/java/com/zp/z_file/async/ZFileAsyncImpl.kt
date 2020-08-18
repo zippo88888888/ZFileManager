@@ -13,7 +13,7 @@ import java.lang.StringBuilder
 /**
  * 默认的实现方式，你也可以自定义实现
  */
-class ZFileAsyncImpl(context: Context, block: (MutableList<ZFileBean>?) -> Unit) : ZFileAsync(context, block) {
+open class ZFileAsyncImpl(context: Context, block: (MutableList<ZFileBean>?) -> Unit) : ZFileAsync(context, block) {
 
     override fun onPreExecute() {
         super.onPreExecute()

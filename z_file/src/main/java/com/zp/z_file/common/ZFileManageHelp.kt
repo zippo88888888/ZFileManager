@@ -6,10 +6,8 @@ import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
 import com.zp.z_file.content.*
 import com.zp.z_file.listener.*
-import com.zp.z_file.listener.ZFileDefaultLoadListener
 import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFileQWActivity
-import java.lang.StringBuilder
 
 class ZFileManageHelp {
 
@@ -23,24 +21,17 @@ class ZFileManageHelp {
     }
 
     /**
-     * 图片的加载方式，必须手动实现
+     * 图片的加载方式，必须手动实现 并在调用前或Application中初始化
      */
     private var imageLoadeListener: ZFileImageListener? = null
-    fun getImageLoadListener() = imageLoadeListener
+    fun getImageLoadListener(): ZFileImageListener {
+        if (imageLoadeListener == null) {
+            throw NullPointerException("ZFileImageListener is Null, You need call method \"init()\"")
+        }
+        return imageLoadeListener!!
+    }
     fun init(imageLoadeListener: ZFileImageListener) : ZFileManageHelp {
         this.imageLoadeListener = imageLoadeListener
-        return this
-    }
-
-    /**
-     * 文件选取，请使用onActivityResult
-     */
-    private var fileResultListener: ZFileSelectListener? = null
-    @Deprecated("即将失效")
-    fun getFileResultListener() = fileResultListener
-    @Deprecated("即将失效")
-    fun setFileResultListener(fileResultListener: ZFileSelectListener?): ZFileManageHelp {
-        this.fileResultListener = fileResultListener
         return this
     }
 
@@ -75,7 +66,7 @@ class ZFileManageHelp {
     }
 
     /**
-     * 打开文件
+     * 打开默认支持的文件
      */
     private var fileOpenListener = ZFileOpenListener()
     fun getFileOpenListener() = fileOpenListener

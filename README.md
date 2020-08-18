@@ -1,16 +1,20 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # 特点
 
-### 1. 支持操作音频，视频，图片，txt，zip，word，excel，ppt，pdf等文件
-### 2. 支持音频，视频播放，图片查看，zip解压 && 重命名、复制、移动、删除、查看详情
+### 1. 默认支持 音频，视频，图片，txt，zip，word，excel，ppt，pdf 9种文件
+### 2. 支持音频、视频播放，图片查看，zip解压，文件重命名、复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展
-### 4. 支持多选，最大数量、文件大小限制、实时排序、指定文件路径访问
-### 5. 支持QQ、微信单独选择，高度可定制化，兼容AndroidX 
+### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
+### 5. 支持QQ、微信文件选择
+### 6. 高度可定制化，兼容AndroidX 
 
-### 截图
+> ### 即将支持
+> #### 兼容 Android 10 和 Android 11
+
+### 部分截图
 <div align="center">
 <img src = "app/src/main/assets/s0.jpg" width=180 >
 <img src = "app/src/main/assets/s1.jpg" width=180 >
@@ -23,8 +27,10 @@
 #### Step 0. 添加依赖 申明权限
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.1'
+implementation 'com.github.zp:z_file:1.2.2'
 ```
+> #### 注意：从1.2.2版本开始 ZFileSelectListener 已被移除，请使用onActivityResult
+
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -51,17 +57,13 @@ getZFileHelp().init(MyFileImageListener())
 
 ```kotlin
 
-// 打开文件管理
-getZFileHelp().start(this)
-
-class MainActivity : AppCompatActivity(), ZFileSelectListener {
-
-    // 注意：ZFileSelectListener 已废弃，下个版本将会移除！
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
+            // 打开文件管理
             getZFileHelp().start(this)
         }
     }
@@ -134,7 +136,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 
 ```
 
-#### Step 3. 在Application中或调用前赋值  
+#### Step 3. 并在调用前或Application中初始化 
 
 ```kotlin
 getZFileHelp().setFileTypeListener(MyFileTypeListener())
@@ -176,7 +178,7 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
 
 ##### 搞定，是不是很简单 ^_^
 
-> ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开(作者你个渣渣)，我只想选择文件，不想要长按事件，你的长按事件弹出的功能有些不是我想要的...
+> ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开(作者你个渣渣)，我只想选择文件，不想要长按事件，文件操作我怎么用都感觉不正确，还有你的长按事件弹出的功能有些不是我想要的...
 > ###### 扶我起来，我要搞死杠精 
 
 #### 自定义文件获取
@@ -237,10 +239,8 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
      */
     var longClickOperateTitles: Array<String>? = null
 
-    // 自定义方式一
-
     /**
-     * 相关资源配置
+     * 相关资源配置 设置：[ZFILE_DEFAULT] 将使用默认资源
      * @property audioRes Int        音频
      * @property txtRes Int          文本
      * @property pdfRes Int          PDF
@@ -277,8 +277,8 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
             ...
         })
     
-    // 方式二 如：Txt类型展示的图片太丑，继承自TxtType，重写方法即可，
-    // 可参照项目里面 diy包下面的实现，这种方式对于内置的文件类型可以完全自定义操作
+    // 其他自定义方式 如：Txt类型展示的图片不符合你的要求，继承自TxtType，重写相关方法即可，
+    // 参照项目里面 diy包下面的实现，这种方式对于内置的文件类型可以达到完全自定义操作
 
 ```
 #### 自定义打开默认支持的文件
@@ -286,35 +286,16 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
 
 class MyFileOpenListener : ZMyFileOpenListener() {
 
-    override fun openAudio(filePath: String, view: View) {
-    }
-
-    override fun openImage(filePath: String, view: View) {
-    }
-
-    override fun openVideo(filePath: String, view: View) {
-    }
-
-    override fun openTXT(filePath: String, view: View) {
-    }
-
-    override fun openZIP(filePath: String, view: View) {
-    }
-
-    override fun openDOC(filePath: String, view: View) {
-    }
-
-    override fun openXLS(filePath: String, view: View) {
-    }
-
-    override fun openPPT(filePath: String, view: View) {
-    }
-
-    override fun openPDF(filePath: String, view: View) {
-    }
-
-    override fun openOther(filePath: String, view: View) {
-    }
+    override fun openAudio(filePath: String, view: View) = Unit // 音频
+    override fun openImage(filePath: String, view: View) = Unit // 图片
+    override fun openVideo(filePath: String, view: View) = Unit // 视频
+    override fun openTXT(filePath: String, view: View) = Unit // 文本
+    override fun openZIP(filePath: String, view: View) = Unit // zip压缩包
+    override fun openDOC(filePath: String, view: View) = Unit // word
+    override fun openXLS(filePath: String, view: View) = Unit // xls
+    override fun openPPT(filePath: String, view: View) = Unit // ppt
+    override fun openPDF(filePath: String, view: View) = Unit // pdf
+    override fun openOther(filePath: String, view: View) = Unit // 其他文件
 }
 
 getZFileHelp().setFileOpenListener(MyFileOpenListener())

@@ -98,7 +98,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             setText(R.id.item_zfile_list_file_nameTxt, item.fileName)
             setText(R.id.item_zfile_list_file_dateTxt, item.date)
             setText(R.id.item_zfile_list_file_sizeTxt, item.size)
-            setBgColor(R.id.item_zfile_list_file_line, config.resources.lineColor)
+            setBgColor(R.id.item_zfile_list_file_line, lineColor)
             setVisibility(R.id.item_zfile_list_file_line, position < itemCount - 1)
             setVisibility(R.id.item_zfile_file_box_pic, !isManage)
             when (config.boxStyle) {
@@ -124,19 +124,23 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             this
         }
         holder.getView<FrameLayout>(R.id.item_zfile_list_file_boxLayout).setOnClickListener {
-            if (isManage) { // 管理状态
-                boxClick(position, item)
-                notifyItemChanged(position)
-            } else { // 非管理状态
-                isManage = !isManage
-                notifyDataSetChanged()
-                qwListener?.invoke(isManage, item, false)
-            }
-            changeListener?.invoke(isManage, selectData.size)
+            boxLayoutClick(position, item)
         }
         holder.itemView.setOnClickListener {
             itemClickByAnim?.invoke(pic, position, item)
         }
+    }
+
+    fun boxLayoutClick(position: Int, item: ZFileBean) {
+        if (isManage) { // 管理状态
+            boxClick(position, item)
+            notifyItemChanged(position)
+        } else { // 非管理状态
+            isManage = !isManage
+            notifyDataSetChanged()
+            qwListener?.invoke(isManage, item, false)
+        }
+        changeListener?.invoke(isManage, selectData.size)
     }
 
     private fun boxClick(position: Int, item: ZFileBean) {
@@ -176,8 +180,8 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
     private fun setFolderData(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
         holder.apply {
             setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
-            setImageRes(R.id.item_zfile_list_folderPic, config.resources.folderRes)
-            setBgColor(R.id.item_zfile_list_folder_line, config.resources.lineColor)
+            setImageRes(R.id.item_zfile_list_folderPic, folderRes)
+            setBgColor(R.id.item_zfile_list_folder_line, lineColor)
             setVisibility(R.id.item_zfile_list_folder_line, position < itemCount - 1)
         }
         holder.itemView.setOnClickListener {

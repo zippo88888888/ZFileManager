@@ -13,6 +13,8 @@ import com.zp.z_file.content.ZFileConfiguration;
 
 import java.util.List;
 
+import static com.zp.z_file.content.ZFileContentKt.ZFILE_DEFAULT;
+
 
 public class JavaSampleActivity extends AppCompatActivity {
 
@@ -23,11 +25,12 @@ public class JavaSampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_java_sample);
         // 图片显示自定义配置
-        ZFileConfiguration.ZFileResources resources = new ZFileConfiguration.ZFileResources(R.drawable.ic_diy_yp);
+        ZFileConfiguration.ZFileResources resources = new ZFileConfiguration.ZFileResources(R.drawable.ic_diy_yp, ZFILE_DEFAULT);
         // 操作自定义配置
         final ZFileConfiguration configuration = new ZFileConfiguration.Build()
                 .resources(resources)
                 .boxStyle(ZFileConfiguration.STYLE1)
+                .sortordBy(ZFileConfiguration.BY_DEFAULT)
                 .maxLength(3)
                 .maxLengthStr("亲，最多选3个！")
                 .build();

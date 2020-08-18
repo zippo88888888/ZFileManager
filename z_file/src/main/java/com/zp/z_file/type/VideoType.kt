@@ -13,6 +13,6 @@ open class VideoType : ZFileType() {
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        getZFileHelp().getImageLoadListener()?.loadImage(pic, filePath.toFile())
+        getZFileHelp().getImageLoadListener().loadImage(pic, filePath.toFile())
     }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="ZFile_BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -11,7 +10,6 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowContentTransitions">true</item>
     </style>
-
 
     <style name="ZFile_Common_Dialog">
         <item name="android:windowNoTitle">true</item>
@@ -34,23 +32,19 @@
         <item name="android:windowExitAnimation">@anim/zfile_out_bottom</item>
     </style>
 
-    <!-- toolbar菜单样式 -->
     <style name="ZFile_ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="actionMenuTextColor">@color/zfile_white</item>
         <item name="android:textColorPrimary">@color/zfile_white</item>
     </style>
 
     <style name="ZFile_ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.Light">
-        <!--新增一个item，用于控制menu-->
         <item name="actionOverflowMenuStyle">@style/ZFile_OverflowMenuStyle</item>
     </style>
 
     <style name="ZFile_OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
-        <!-- 把该属性改为false即可使menu位置位于toolbar之下 -->
         <item name="overlapAnchor">false</item>
     </style>
 
-    <!--主标题-->
     <style name="ZFile_ToolbarTitleTextStyle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/zfile_white</item>
         <item name="android:textSize">18sp</item>

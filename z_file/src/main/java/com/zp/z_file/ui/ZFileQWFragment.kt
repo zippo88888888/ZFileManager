@@ -8,7 +8,6 @@ import com.zp.z_file.async.ZFileQWAsync
 import com.zp.z_file.common.ZFileFragment
 import com.zp.z_file.content.*
 import com.zp.z_file.ui.adapter.ZFileListAdapter
-import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.fragment_zfile_qw.*
 
@@ -41,7 +40,7 @@ internal class ZFileQWFragment : ZFileFragment() {
 
     private fun initRecyclerView() {
         initAdapter()
-        zfile_qw_emptyPic.setImageResource(getZFileConfig().resources.emptyRes)
+        zfile_qw_emptyPic.setImageResource(emptyRes)
         zfile_qw_recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = qwAdapter

@@ -139,6 +139,7 @@ class ZFileConfiguration : Serializable {
      */
     var showLog = true
 
+
     /**
      * 方便java同学调用
      */
@@ -150,7 +151,7 @@ class ZFileConfiguration : Serializable {
         private var sortordBy = BY_DEFAULT
         private var sortord = ASC
         private var fileFilterArray: Array<String>? = null
-        private var maxSize = 50
+        private var maxSize = 10
         private var maxSizeStr = "您只能选取小于${maxSize}M的文件"
         private var maxLength = 9
         private var maxLengthStr = "您最多可以选取${maxLength}个文件"
@@ -277,7 +278,7 @@ class ZFileConfiguration : Serializable {
     }
 
     /**
-     * 图片相关资源配置
+     * 图片相关资源配置 设置：[ZFILE_DEFAULT] 使用默认资源
      * @property audioRes Int        音频
      * @property txtRes Int          文本
      * @property pdfRes Int          PDF

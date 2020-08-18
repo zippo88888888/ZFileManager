@@ -26,7 +26,6 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     private val selectArray by lazy {
         ArrayMap<String, ZFileBean>()
     }
-    private var selectList: MutableList<ZFileBean>? = null
     private lateinit var vpAdapter: ZFileQWAdapter
     private var isManage = false
 
@@ -37,7 +36,6 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     }
 
     private fun initAll() {
-        selectList = ArrayList()
         val type = getZFileConfig().filePath!!
         zfile_qw_toolBar.apply {
             title = if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
@@ -59,15 +57,11 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                 toast(getZFileConfig().maxLengthStr)
                 getVPFragment(zfile_qw_viewPager.currentItem)?.removeLastSelectData(bean.zFileBean)
             } else {
-                selectList?.add(item)
                 selectArray[item.filePath] = item
-                ZFileLog.i("选中，添加")
             }
         } else {
-            selectList?.remove(item)
             if (selectArray.contains(item.filePath)) {
                 selectArray.remove(item.filePath)
-                ZFileLog.e("取消选中，移除")
             }
         }
         zfile_qw_toolBar.title = "已选中${selectArray.size}个文件"
@@ -135,8 +129,6 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     override fun onDestroy() {
         super.onDestroy()
         isManage = false
-        selectList?.clear()
-        selectList = null
         selectArray.clear()
         ZFileUtil.resetAll()
     }

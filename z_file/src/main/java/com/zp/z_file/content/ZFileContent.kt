@@ -42,6 +42,15 @@ const val PPT = "pptx"
 const val PDF = "pdf"
 const val ZIP = "zip"
 
+/** 默认资源 */
+const val ZFILE_DEFAULT = -1
+
+fun getZFileHelp() = ZFileManageHelp.getInstance()
+fun getZFileConfig() = getZFileHelp().getConfiguration()
+
+
+// TODO 以下对外不开放 ==============================================================================
+
 internal const val ZFILE_REQUEST_CODE = 0x1000
 internal const val ZFILE_RESULT_CODE = 0x1001
 internal const val ZFILE_SELECT_DATA = "ZFILE_SELECT_RESULT_DATA"
@@ -75,7 +84,6 @@ internal const val LOG_TAG = "ZFileManager"
 internal val SD_ROOT by lazy {
     Environment.getExternalStorageDirectory().path
 }
-
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
 internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
     resources.getDimensionPixelSize(
@@ -153,7 +161,7 @@ internal fun Int.getFilterArray() = when (this) {
     QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
     QW_VIDEO -> arrayOf(MP4, _3GP)
     QW_TXT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
-    else -> arrayOf("这里顺便写")
+    else -> arrayOf("")
 }
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
 internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
@@ -181,9 +189,24 @@ internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
     }
     return list
 }
+internal val emptyRes: Int
+    get() {
+        return if (getZFileConfig().resources.emptyRes == ZFILE_DEFAULT) R.drawable.ic_zfile_empty
+        else getZFileConfig().resources.emptyRes
+    }
+internal val folderRes: Int
+    get() {
+        return if (getZFileConfig().resources.folderRes == ZFILE_DEFAULT) R.drawable.ic_zfile_folder
+        else getZFileConfig().resources.folderRes
+    }
+internal val lineColor: Int
+    get() {
+        return if (getZFileConfig().resources.lineColor == ZFILE_DEFAULT) R.color.zfile_line_color
+        else getZFileConfig().resources.lineColor
+    }
 
-fun getZFileHelp() = ZFileManageHelp.getInstance()
-fun getZFileConfig() = getZFileHelp().getConfiguration()
+
+
 
 
 

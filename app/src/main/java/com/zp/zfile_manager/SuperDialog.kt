@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,6 +41,7 @@ class SuperDialog : DialogFragment() {
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.i("ZFileManager", "数据已经获取到了，具体怎么操作就交给你了！")
         super_downPic.setOnClickListener {
             dismiss()
         }

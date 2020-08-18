@@ -8,7 +8,6 @@ import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
@@ -28,7 +27,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private var barShow = false
     private lateinit var filePathAdapter: ZFileAdapter<ZFilePathBean>
-    private lateinit var fileListAdapter: ZFileListAdapter
+    private var fileListAdapter: ZFileListAdapter? = null
 
     private var index = 0
     private var rootPath = "" // 根目录
@@ -71,14 +70,13 @@ internal class ZFileListActivity : ZFileActivity() {
     private fun menuItemClick(menu: MenuItem?): Boolean {
         when (menu?.itemId) {
             R.id.menu_zfile_down -> {
-                val list = fileListAdapter.selectData
-                if (list.size <= 0) {
+                val list = fileListAdapter?.selectData
+                if (list.isNullOrEmpty()) {
                     zfile_list_toolBar.title = "文件管理"
-                    fileListAdapter.isManage = false
+                    fileListAdapter?.isManage = false
                     barShow = false
                     setMenuState()
                 } else {
-                    getZFileHelp().getFileResultListener()?.onSelected(list)
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
                         putParcelableArrayListExtra(ZFILE_SELECT_DATA, list as java.util.ArrayList<out Parcelable>)
                     })
@@ -107,16 +105,13 @@ internal class ZFileListActivity : ZFileActivity() {
         rootPath = specifyPath ?: ""
         backList.add(rootPath)
         nowPath = rootPath
-
-        ZFileLiveData.getInstance().observe(this, Observer {
-            if (it) getData(nowPath)
-        })
         zfile_list_toolBar.apply {
             inflateMenu(R.menu.zfile_list_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { onBackPressed() }
         }
-        zfile_list_emptyPic.setImageResource(getZFileConfig().resources.emptyRes)
+        zfile_list_emptyPic.setImageResource(emptyRes)
+        setHiddenState()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
     }
 
@@ -142,9 +137,7 @@ internal class ZFileListActivity : ZFileActivity() {
                         return@forEach
                     }
                 }
-                if (hasData || t.filePath == SD_ROOT) {
-                    ZFileLog.i("重复或根目录不执行")
-                } else {
+                if (!(hasData || t.filePath == SD_ROOT)) {
                     super.addItem(position, t)
                 }
             }
@@ -173,8 +166,13 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private fun initListRecyclerView() {
         fileListAdapter = ZFileListAdapter(this).run {
-            itemClickByAnim = { v, _, item ->
+            itemClickByAnim = { v, position, item ->
                 if (item.isFile) {
+                    /*if (fileListAdapter.isManage) {
+                        fileListAdapter.boxLayoutClick(position, item)
+                    } else {
+                        ZFileUtil.openFile(item.filePath, v)
+                    }*/
                     ZFileUtil.openFile(item.filePath, v)
                 } else {
                     ZFileLog.i("进入 ${item.filePath}")
@@ -186,7 +184,7 @@ internal class ZFileListActivity : ZFileActivity() {
                 }
             }
             itemLongClick = { _, index, item ->
-                if (fileListAdapter.isManage) {
+                if (fileListAdapter?.isManage == true) {
                     false
                 } else {
                     if (getZFileConfig().needLongClick) {
@@ -235,10 +233,10 @@ internal class ZFileListActivity : ZFileActivity() {
         }
         ZFileUtil.getList(this) {
             if (it.isNullOrEmpty()) {
-                fileListAdapter.clear()
+                fileListAdapter?.clear()
                 zfile_list_emptyLayout.visibility = View.VISIBLE
             } else {
-                fileListAdapter.setDatas(it)
+                fileListAdapter?.setDatas(it)
                 zfile_list_emptyLayout.visibility = View.GONE
             }
             zfile_list_refreshLayout.isRefreshing = false
@@ -271,11 +269,11 @@ internal class ZFileListActivity : ZFileActivity() {
                         val oldFileType = oldFile.getFileType()
                         val oldPath = oldFile.path.substring(0, oldFile.path.lastIndexOf("/") + 1)
                         val newFilePath = "$oldPath$newName.$oldFileType"
-                        fileListAdapter.getItem(index).apply {
+                        fileListAdapter?.getItem(index)?.apply {
                             filePath = newFilePath
                             fileName = "$newName.$oldFileType"
                         }
-                        fileListAdapter.notifyItemChanged(index)
+                        fileListAdapter?.notifyItemChanged(index)
                     }
                 }
             }
@@ -292,7 +290,7 @@ internal class ZFileListActivity : ZFileActivity() {
                 this
             ) {
                 if (this) {
-                    fileListAdapter.remove(index)
+                    fileListAdapter?.remove(index)
                     ZFileLog.i("文件删除成功")
                 } else {
                     ZFileLog.i("文件删除失败")
@@ -315,7 +313,7 @@ internal class ZFileListActivity : ZFileActivity() {
         } else { // 移动文件
             getZFileHelp().getFileOperateListener().moveFile(item.filePath, targetPath, this) {
                 if (this) {
-                    fileListAdapter.remove(position)
+                    fileListAdapter?.remove(position)
                     ZFileLog.i("文件移动成功")
                 } else {
                     ZFileLog.e("文件移动失败")
@@ -354,10 +352,10 @@ internal class ZFileListActivity : ZFileActivity() {
 
     override fun onBackPressed() {
         val path = getThisFilePath()
-        if (path == rootPath || path.isNullOrEmpty()) { // 跟目录
+        if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
                 zfile_list_toolBar.title = "文件管理"
-                fileListAdapter.isManage = false
+                fileListAdapter?.isManage = false
                 barShow = false
                 setMenuState()
             } else {
@@ -375,9 +373,13 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     private fun checkHasPermission() {
-        val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
-        if (hasPermission) {
-            ZFilePermissionUtil.requestPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_CODE, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+            if (hasPermission) {
+                ZFilePermissionUtil.requestPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_CODE, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+            } else {
+                initAll()
+            }
         } else {
             initAll()
         }
@@ -407,10 +409,27 @@ internal class ZFileListActivity : ZFileActivity() {
         }
     }
 
+    private fun setHiddenState() {
+        zfile_list_toolBar.post {
+            val menu = zfile_list_toolBar.menu
+            val showMenuItem = menu.findItem(R.id.menu_zfile_show)
+            val hiddenMenuItem = menu.findItem(R.id.menu_zfile_hidden)
+            if (getZFileConfig().showHiddenFile) {
+                showMenuItem.isChecked = true
+            } else {
+                hiddenMenuItem.isChecked = true
+            }
+        }
+    }
+
+    fun observer(isSuccess: Boolean) {
+        if (isSuccess) getData(nowPath)
+    }
+
     override fun onDestroy() {
         ZFileUtil.resetAll()
         super.onDestroy()
-        fileListAdapter.reset()
+        fileListAdapter?.reset()
         backList.clear()
     }
 

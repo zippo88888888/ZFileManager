@@ -3,6 +3,7 @@ package com.zp.z_file.common
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
+import com.zp.z_file.content.ZFILE_DEFAULT
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.getZFileHelp
 
@@ -31,4 +32,6 @@ abstract class ZFileType {
     open fun infoFile(bean: ZFileBean, context: Context) {
         getZFileHelp().getFileOperateListener().fileInfo(bean, context)
     }
+
+    protected fun getRes(res: Int, defaultRes: Int) = if (res == ZFILE_DEFAULT) defaultRes else res
 }
