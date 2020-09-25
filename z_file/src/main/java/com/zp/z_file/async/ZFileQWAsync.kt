@@ -8,11 +8,14 @@ import com.zp.z_file.util.ZFileOtherUtil
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
 
+/**
+ * QQ WeChat ---> QW
+ */
 internal class ZFileQWAsync(
     private var fileType: String,
     private var type: Int,
     context: Context,
-    block: (MutableList<ZFileBean>?) -> Unit
+    block: MutableList<ZFileBean>?.() -> Unit
 ) : ZFileAsync(context, block) {
 
     private var filePathArray = ArrayList<String>()
@@ -58,16 +61,16 @@ internal class ZFileQWAsync(
             var list1: Array<File>? = null
             if (file1.exists()) {
                 list1 = file1.listFiles(ZFileQWFilter(filterArray, type == QW_OTHER))
-            } else {
+            } /*else {
                 ZFileLog.e("路径 ${filePathArray[0]} 不存在")
-            }
+            }*/
             var list2: Array<File>? = null
             val file2 = filePathArray[1].toFile()
             if (file2.exists()) {
                 list2 = file2.listFiles(ZFileQWFilter(filterArray, type == QW_OTHER))
-            } else {
+            } /*else {
                 ZFileLog.e("路径 ${filePathArray[1]} 不存在")
-            }
+            }*/
             if (!list1.isNullOrEmpty() && !list2.isNullOrEmpty()) {
                 listFiles = list1 + list2
             } else {

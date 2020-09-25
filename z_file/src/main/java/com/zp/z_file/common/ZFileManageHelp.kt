@@ -91,7 +91,7 @@ class ZFileManageHelp {
     fun getSelectData(requestCode: Int, resultCode: Int, data: Intent?): MutableList<ZFileBean>? {
         var list: MutableList<ZFileBean>? = ArrayList()
         if (requestCode == ZFILE_REQUEST_CODE && resultCode == ZFILE_RESULT_CODE) {
-            list = data?.getParcelableArrayListExtra<ZFileBean>(ZFILE_SELECT_DATA)
+            list = data?.getParcelableArrayListExtra<ZFileBean>(ZFILE_SELECT_DATA_KEY)
         }
         return list
     }
@@ -110,20 +110,20 @@ class ZFileManageHelp {
     private fun startByQQ(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                ArrayMap<String, Any>().apply { put("fileType", ZFileConfiguration.QQ) })
+                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.QQ) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                ArrayMap<String, Any>().apply { put("fileType", ZFileConfiguration.QQ) })
-            else -> throw IllegalArgumentException("fragmentOrActivity is not Activity or Fragment")
+                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.QQ) })
+            else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
 
     private fun startByWechat(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                ArrayMap<String, Any>().apply { put("fileType", ZFileConfiguration.WECHAT) })
+                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                ArrayMap<String, Any>().apply { put("fileType", ZFileConfiguration.WECHAT) })
-            else -> throw IllegalArgumentException("fragmentOrActivity is not Activity or Fragment")
+                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
+            else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
 
@@ -134,11 +134,13 @@ class ZFileManageHelp {
         }
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                if (path == null) null else ArrayMap<String, Any>().apply { put("zFileStartPath", path) })
+                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                if (path == null) null else ArrayMap<String, Any>().apply { put("zFileStartPath", path) })
-            else -> throw IllegalArgumentException("fragmentOrActivity is not Activity or Fragment")
+                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
+            else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
+
+    private fun getMap() = ArrayMap<String, Any>()
 
 }

@@ -10,7 +10,7 @@ import com.zp.zfile_manager.R
 class MyTxtType : TxtType() {
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(R.mipmap.ic_launcher)
+        pic.setImageResource(R.drawable.ic_my_txt)
     }
 
 }

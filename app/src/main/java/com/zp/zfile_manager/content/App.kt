@@ -9,8 +9,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        getZFileHelp().init(MyFileImageListener())
-            .setFileTypeListener(MyFileTypeListener())
+        getZFileHelp()
+                .init(MyFileImageListener())
+                .setFileTypeListener(MyFileTypeListener())
     }
 
 }

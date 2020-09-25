@@ -19,7 +19,7 @@ internal object ZFileUtil {
     /**
      * 获取文件
      */
-    fun getList(context: Context, bolck: (MutableList<ZFileBean>?) -> Unit) {
+    fun getList(context: Context, bolck: MutableList<ZFileBean>?.() -> Unit) {
         ZFileThread(context, bolck).start(getZFileConfig().filePath)
     }
 

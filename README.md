@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -12,7 +12,7 @@
 ### 6. 高度可定制化，兼容AndroidX 
 
 > ### 即将支持
-> #### 兼容 Android 10 和 Android 11
+> #### 兼容 Android 11
 
 ### 部分截图
 <div align="center">
@@ -24,23 +24,20 @@
 
 ## 基本使用 （[Java使用](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/JavaSampleActivity.java)）
 
-#### Step 0. 添加依赖 申明权限
+#### Step 0. 添加依赖
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.2'
+implementation 'com.github.zp:z_file:1.2.3'
 ```
 > #### 注意：从1.2.2版本开始 ZFileSelectListener 已被移除，请使用onActivityResult
 
-```xml
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-```
 #### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
 ```Kotlin
 
 class MyFileImageListener : ZFileImageListener() {
 
     override fun loadImage(imageView: ImageView, file: File) {
+        // 以Glide为例
         Glide.with(imageView.context)
             .load(file)
             .apply(RequestOptions().apply {
@@ -51,6 +48,7 @@ class MyFileImageListener : ZFileImageListener() {
     }
 }
 
+// 在调用前或Application中初始化 
 getZFileHelp().init(MyFileImageListener())
 ```
 #### Step 2. 在Activity或Fragment中使用
@@ -136,7 +134,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 
 ```
 
-#### Step 3. 并在调用前或Application中初始化 
+#### Step 3. 在调用前或Application中配置
 
 ```kotlin
 getZFileHelp().setFileTypeListener(MyFileTypeListener())
@@ -205,6 +203,7 @@ class MyFileLoadListener : ZFileLoadListener {
     }
 }
 
+// 在调用前或Application中配置
 getZFileHelp().setFileLoadListener(MyFileLoadListener())
 
 
@@ -268,6 +267,7 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
         var lineColor: Int = R.color.zfile_line_color
     ) : Serializable, Parcelable
     
+    // 在调用前或Application中配置
      getZFileHelp().setConfiguration(getZFileConfig().apply {
             resources = ZFileResources(R.drawable.ic_diy_audio)
             maxLength = 6
@@ -298,6 +298,7 @@ class MyFileOpenListener : ZMyFileOpenListener() {
     override fun openOther(filePath: String, view: View) = Unit // 其他文件
 }
 
+// 在调用前或Application中配置
 getZFileHelp().setFileOpenListener(MyFileOpenListener())
 
 ```
@@ -382,6 +383,7 @@ class MyFileOperateListener : ZFileOperateListener() {
     }
 }
 
+// 在调用前或Application中配置
 getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 ```

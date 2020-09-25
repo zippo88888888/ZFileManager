@@ -104,10 +104,10 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             zfile_select_folder_title.text = String.format("%s到%s", tipStr, filePath.toFile().name)
         }
         ZFileUtil.getList(context!!) {
-            if (it.isNullOrEmpty()) {
+            if (isNullOrEmpty()) {
                 folderAdapter?.clear()
             } else {
-                folderAdapter?.setDatas(it)
+                folderAdapter?.setDatas(this)
             }
         }
     }

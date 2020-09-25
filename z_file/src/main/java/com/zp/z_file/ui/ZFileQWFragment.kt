@@ -22,7 +22,7 @@ internal class ZFileQWFragment : ZFileFragment() {
     companion object {
         fun newInstance(fileType: String, type: Int, isManager: Boolean) = ZFileQWFragment().apply {
             arguments = Bundle().run {
-                putString("fileType", fileType)
+                putString(FILE_TYPE_KEY, fileType)
                 putInt("type", type)
                 putBoolean("isManager", isManager)
                 this
@@ -33,7 +33,7 @@ internal class ZFileQWFragment : ZFileFragment() {
     override fun getContentView() = R.layout.fragment_zfile_qw
 
     override fun initAll() {
-        fileType = arguments?.getString("fileType") ?: ZFileConfiguration.QQ
+        fileType = arguments?.getString(FILE_TYPE_KEY) ?: ZFileConfiguration.QQ
         type = arguments?.getInt("type") ?: QW_PIC
         initRecyclerView()
     }
@@ -48,11 +48,11 @@ internal class ZFileQWFragment : ZFileFragment() {
         zfile_qw_bar.visibility = View.VISIBLE
         ZFileQWAsync(fileType, type, context!!) {
             zfile_qw_bar.visibility = View.GONE
-            if (it.isNullOrEmpty()) {
+            if (isNullOrEmpty()) {
                 qwAdapter?.clear()
                 zfile_qw_emptyLayout.visibility = View.VISIBLE
             } else {
-                qwAdapter?.setDatas(it)
+                qwAdapter?.setDatas(this)
                 zfile_qw_emptyLayout.visibility = View.GONE
             }
         }.start(type.getFilterArray())

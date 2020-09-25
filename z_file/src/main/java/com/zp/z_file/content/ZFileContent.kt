@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
@@ -19,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.util.ZFileLog
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -44,16 +46,18 @@ const val ZIP = "zip"
 
 /** 默认资源 */
 const val ZFILE_DEFAULT = -1
+/** onActivityResult requestCode */
+const val ZFILE_REQUEST_CODE = 0x1000
+/** onActivityResult resultCode */
+const val ZFILE_RESULT_CODE = 0x1001
+/**
+ * onActivityResult data key  --->>>
+ * val list = data?.getParcelableArrayListExtra<[ZFileBean]>([ZFILE_SELECT_DATA_KEY])
+ */
+const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
-
-
-// TODO 以下对外不开放 ==============================================================================
-
-internal const val ZFILE_REQUEST_CODE = 0x1000
-internal const val ZFILE_RESULT_CODE = 0x1001
-internal const val ZFILE_SELECT_DATA = "ZFILE_SELECT_RESULT_DATA"
 
 internal const val COPY_TYPE = 0x2001
 internal const val CUT_TYPE = 0x2002
@@ -79,11 +83,10 @@ internal const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
 internal const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
 
 internal const val LOG_TAG = "ZFileManager"
+internal const val ERROR_MSG = "fragmentOrActivity is not Activity or Fragment"
+internal const val FILE_TYPE_KEY = "fileType"
+internal const val FILE_START_PATH_KEY = "fileStartPath"
 
-/** SD卡的根目录  */
-internal val SD_ROOT by lazy {
-    Environment.getExternalStorageDirectory().path
-}
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
 internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
     resources.getDimensionPixelSize(
@@ -189,6 +192,11 @@ internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
     }
     return list
 }
+/** SD卡的根目录  */
+internal val SD_ROOT: String
+    get() {
+        return Environment.getExternalStorageDirectory().path
+    }
 internal val emptyRes: Int
     get() {
         return if (getZFileConfig().resources.emptyRes == ZFILE_DEFAULT) R.drawable.ic_zfile_empty

@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.activity_super.*
 class SuperActivity : AppCompatActivity() {
 
     private var dialog: ProgressDialog? = null
-    private var neverShow = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +48,11 @@ class SuperActivity : AppCompatActivity() {
         }
 
         super_qqTxt.setOnClickListener {
-            showDialogQW(ZFileConfiguration.QQ)
+            toQW(ZFileConfiguration.QQ)
         }
 
         super_wechatTxt.setOnClickListener {
-            showDialogQW(ZFileConfiguration.WECHAT)
+            toQW(ZFileConfiguration.WECHAT)
         }
 
         super_otherTxt.setOnClickListener {
@@ -70,29 +69,11 @@ class SuperActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialogQW(path: String) {
+    private fun toQW(path: String) {
         Log.e("ZFileManager", "请注意：QQ、微信目前只能获取用户手动保存到手机里面的文件，" +
                 "且保存文件到手机的目录用户没有修改")
-        Log.i("ZFileManager", "所有的路径都参考自腾讯自己的\"腾讯文件\"App")
-        if (neverShow) {
-            jump(path)
-        } else {
-            AlertDialog.Builder(this).apply {
-                setTitle("温馨提示")
-                setMessage("QQ、微信目前只能获取用户手动保存到手机里面的文件，且保存文件到手机的目录用户没有修改")
-                setCancelable(false)
-                setPositiveButton("确定") { dialog, _ ->
-                    jump(path)
-                    dialog.dismiss()
-                }
-                setNegativeButton("不再提醒") { dialog, _ ->
-                    neverShow = true
-                    jump(path)
-                    dialog.dismiss()
-                }
-                show()
-            }
-        }
+        Log.i("ZFileManager", "参考自腾讯自己的\"腾讯文件\"App，能力有限，部分文件无法获取")
+        jump(path)
     }
 
     private fun jump(path: String) {
@@ -106,16 +87,16 @@ class SuperActivity : AppCompatActivity() {
         dialog?.show()
         ZFileAsyncImpl(this) {
             dialog?.dismiss()
-            if (it.isNullOrEmpty()) {
-                Toast.makeText(this, "暂无数据", Toast.LENGTH_SHORT).show()
+            if (isNullOrEmpty()) {
+                Toast.makeText(this@SuperActivity, "暂无数据", Toast.LENGTH_SHORT).show()
             } else {
-                // 这里考虑到传值大小限制，截取前100条数据
-                if (it.size > 100) {
-                    SuperDialog.newInstance(changeList(it))
-                        .show(supportFragmentManager, "SuperDialog")
+                if (this!!.size > 100) {
+                    Log.e("ZFileManager", "这里考虑到传值大小限制，截取前100条数据")
+                    SuperDialog.newInstance(changeList(this!!))
+                            .show(supportFragmentManager, "SuperDialog")
                 } else {
-                    SuperDialog.newInstance(it as ArrayList<ZFileBean>)
-                        .show(supportFragmentManager, "SuperDialog")
+                    SuperDialog.newInstance(this as ArrayList<ZFileBean>)
+                            .show(supportFragmentManager, "SuperDialog")
                 }
             }
         }.start(filterArray)
@@ -142,5 +123,20 @@ class SuperActivity : AppCompatActivity() {
             sb.append(it).append("\n\n")
         }
         super_resultTxt.text = sb.toString()
+    }
+
+    private fun reset() {
+        // 这里重置，防止该页面销毁后其他演示页面无法正常获取数据！
+        getZFileConfig().apply {
+            needLongClick = true
+            isOnlyFolder = false
+            sortordBy = ZFileConfiguration.BY_DEFAULT
+            sortord = ZFileConfiguration.ASC
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reset()
     }
 }

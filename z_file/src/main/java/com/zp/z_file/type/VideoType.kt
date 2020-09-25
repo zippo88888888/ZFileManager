@@ -6,6 +6,9 @@ import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.getZFileHelp
 import com.zp.z_file.content.toFile
 
+/**
+ * 视频文件
+ */
 open class VideoType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {

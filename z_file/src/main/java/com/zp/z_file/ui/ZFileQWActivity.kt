@@ -16,7 +16,6 @@ import androidx.viewpager.widget.ViewPager
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
-import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.activity_zfile_qw.*
@@ -85,7 +84,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                     zfile_qw_toolBar.title = if (getZFileConfig().filePath!! == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
                 } else {
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
-                        putParcelableArrayListExtra(ZFILE_SELECT_DATA, selectArray.toFileList() as java.util.ArrayList<out Parcelable>)
+                        putParcelableArrayListExtra(ZFILE_SELECT_DATA_KEY, selectArray.toFileList() as java.util.ArrayList<out Parcelable>)
                     })
                     finish()
                 }
@@ -94,7 +93,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         return true
     }
 
-    fun getVPFragment(currentItem: Int): ZFileQWFragment? {
+    private fun getVPFragment(currentItem: Int): ZFileQWFragment? {
         val fragmentId = vpAdapter.getItemId(currentItem)
         val tag = "android:switcher:${zfile_qw_viewPager.id}:$fragmentId"
         return supportFragmentManager.findFragmentByTag(tag) as? ZFileQWFragment
@@ -138,8 +137,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         isManger: Boolean,
         context: Context,
         fragmentManager: FragmentManager
-    ) :
-        FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    ) : FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         var list = ArrayList<Fragment>()
         private val titles = arrayOf(

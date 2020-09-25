@@ -107,14 +107,14 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 默认只有文件才有长按事件
-     * 长按暂不支持对于文件夹的操作（删除、复制、剪切），如有需要，请实现 ZFileOperateListener
+     * 长按暂不支持对于文件夹的操作，如有需要，请实现 ZFileOperateListener
      */
     var isOnlyFileHasLongClick = true
 
     /**
      * 长按后需要显示的操作类型 see [RENAME] [COPY] [MOVE] [DELETE] [INFO]
      * 空默认为 arrayOf(RENAME, COPY, MOVE, DELETE, INFO)
-     * 目前只可以是这几种类型，个数、顺序可以自定义，文字暂不支持自定义
+     * 目前只可以是这几种类型，个数、顺序可以自定义，文字不支持自定义
      */
     var longClickOperateTitles: Array<String>? = null
 
@@ -278,7 +278,7 @@ class ZFileConfiguration : Serializable {
     }
 
     /**
-     * 图片相关资源配置 设置：[ZFILE_DEFAULT] 使用默认资源
+     * 图片相关资源配置 设置：[ZFILE_DEFAULT] 将使用默认资源
      * @property audioRes Int        音频
      * @property txtRes Int          文本
      * @property pdfRes Int          PDF

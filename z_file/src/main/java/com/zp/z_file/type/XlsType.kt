@@ -7,6 +7,9 @@ import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
+/**
+ * 表格文件
+ */
 open class XlsType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {

@@ -6,6 +6,9 @@ import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.getZFileHelp
 import com.zp.z_file.content.toFile
 
+/**
+ * 图片文件
+ */
 open class ImageType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {

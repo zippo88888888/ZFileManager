@@ -7,6 +7,9 @@ import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
+/**
+ * word文件
+ */
 open class WordType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {

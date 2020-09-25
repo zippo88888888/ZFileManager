@@ -12,16 +12,19 @@ object ZFileHelp {
     /**
      * 获取文件大小
      */
+    @JvmStatic
     fun getFileSize(filePath: String) = ZFileUtil.getFileSize(filePath.toFile().length())
 
     /**
      * 获取文件类型
      */
+    @JvmStatic
     fun getFileType(filePath: String) = ZFileTypeManage.getTypeManager().getFileType(filePath)
 
     /**
      * 根据后缀文件类型
      */
+    @JvmStatic
     fun getFileTypeBySuffix(filePath: String) = filePath.getFileType()
 
 }

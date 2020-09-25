@@ -78,7 +78,7 @@ internal class ZFileListActivity : ZFileActivity() {
                     setMenuState()
                 } else {
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
-                        putParcelableArrayListExtra(ZFILE_SELECT_DATA, list as java.util.ArrayList<out Parcelable>)
+                        putParcelableArrayListExtra(ZFILE_SELECT_DATA_KEY, list as java.util.ArrayList<out Parcelable>)
                     })
                     finish()
                 }
@@ -100,7 +100,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
     override fun init(savedInstanceState: Bundle?) {
         setSortSelectId()
-        specifyPath = intent.getStringExtra("zFileStartPath")
+        specifyPath = intent.getStringExtra(FILE_START_PATH_KEY)
         getZFileConfig().filePath = specifyPath
         rootPath = specifyPath ?: ""
         backList.add(rootPath)
@@ -232,11 +232,11 @@ internal class ZFileListActivity : ZFileActivity() {
             zfile_list_pathRecyclerView.scrollToPosition(filePathAdapter.itemCount - 1)
         }
         ZFileUtil.getList(this) {
-            if (it.isNullOrEmpty()) {
+            if (isNullOrEmpty()) {
                 fileListAdapter?.clear()
                 zfile_list_emptyLayout.visibility = View.VISIBLE
             } else {
-                fileListAdapter?.setDatas(it)
+                fileListAdapter?.setDatas(this)
                 zfile_list_emptyLayout.visibility = View.GONE
             }
             zfile_list_refreshLayout.isRefreshing = false

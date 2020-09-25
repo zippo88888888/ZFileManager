@@ -72,6 +72,9 @@ open class ZFileTypeListener {
  */
 open class ZFileOpenListener {
 
+    /**
+     * 打开音频
+     */
     open fun openAudio(filePath: String, view: View) {
         (view.context as? AppCompatActivity)?.apply {
             val tag = "ZFileAudioPlayDialog"
@@ -80,6 +83,9 @@ open class ZFileOpenListener {
         }
     }
 
+    /**
+     * 打开图片
+     */
     open fun openImage(filePath: String, view: View) {
         view.context.startActivity(Intent(view.context, ZFilePicActivity::class.java).apply {
             putExtra("picFilePath", filePath)
@@ -87,6 +93,9 @@ open class ZFileOpenListener {
             view.context.getStringById(R.string.zfile_sharedElement_pic)).toBundle())
     }
 
+    /**
+     * 打开视频
+     */
     open fun openVideo(filePath: String, view: View) {
         view.context.startActivity(
             Intent(view.context, ZFileVideoPlayActivity::class.java).apply {
@@ -95,10 +104,16 @@ open class ZFileOpenListener {
                 view.context.getStringById(R.string.zfile_sharedElement_video)).toBundle())
     }
 
+    /**
+     * 打开Txt
+     */
     open fun openTXT(filePath: String, view: View) {
         ZFileOpenUtil.openTXT(filePath, view)
     }
 
+    /**
+     * 打开zip
+     */
     open fun openZIP(filePath: String, view: View) {
         AlertDialog.Builder(view.context).apply {
             setTitle("请选择")
@@ -133,18 +148,30 @@ open class ZFileOpenListener {
         }
     }
 
+    /**
+     * 打开word
+     */
     open fun openDOC(filePath: String, view: View) {
         ZFileOpenUtil.openDOC(filePath, view)
     }
 
+    /**
+     * 打开表格
+     */
     open fun openXLS(filePath: String, view: View) {
         ZFileOpenUtil.openXLS(filePath, view)
     }
 
+    /**
+     * 打开PPT
+     */
     open fun openPPT(filePath: String, view: View) {
         ZFileOpenUtil.openPPT(filePath, view)
     }
 
+    /**
+     * 打开PDF
+     */
     open fun openPDF(filePath: String, view: View) {
         ZFileOpenUtil.openPDF(filePath, view)
     }

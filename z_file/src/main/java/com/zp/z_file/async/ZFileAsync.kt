@@ -13,7 +13,7 @@ import kotlin.concurrent.thread
  */
 open class ZFileAsync(
     private var context: Context,
-    private var block: (MutableList<ZFileBean>?) -> Unit
+    private var block: MutableList<ZFileBean>?.() -> Unit
 ) {
 
     private var handler: ZFileAsyncHandler? = null
@@ -62,9 +62,7 @@ open class ZFileAsync(
     /**
      * 完成后调用 mainThread
      */
-    protected open fun onPostExecute() {
-
-    }
+    protected open fun onPostExecute() = Unit
 
     class ZFileAsyncHandler(zFileAsync: ZFileAsync) : Handler() {
 

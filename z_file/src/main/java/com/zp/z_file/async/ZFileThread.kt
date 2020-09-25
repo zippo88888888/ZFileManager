@@ -11,7 +11,7 @@ import kotlin.concurrent.thread
 
 internal class ZFileThread(
     private var context: Context,
-    private var block: (MutableList<ZFileBean>?) -> Unit
+    private var block: MutableList<ZFileBean>?.() -> Unit
 ) {
 
     private var handler = ZFileHandler(this)

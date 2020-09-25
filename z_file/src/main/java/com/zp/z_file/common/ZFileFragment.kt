@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 
 internal abstract class ZFileFragment : Fragment() {
 
-    // 是否第一次加载
     private var isFirstLoad = true
     protected var rootView: View? = null
 
