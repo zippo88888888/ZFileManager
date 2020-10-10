@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
@@ -20,7 +19,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
-import com.zp.z_file.util.ZFileLog
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -44,6 +42,15 @@ const val PPT = "pptx"
 const val PDF = "pdf"
 const val ZIP = "zip"
 
+/** 图片 */
+const val ZFILE_QW_PIC = 0
+/** 媒体 */
+const val ZFILE_QW_MEDIA = 1
+/** 文档 */
+const val ZFILE_QW_DOCUMENT = 2
+/** 其他 */
+const val ZFILE_QW_OTHER = 3
+
 /** 默认资源 */
 const val ZFILE_DEFAULT = -1
 /** onActivityResult requestCode */
@@ -59,6 +66,8 @@ const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
 
+
+
 internal const val COPY_TYPE = 0x2001
 internal const val CUT_TYPE = 0x2002
 internal const val DELTE_TYPE = 0x2003
@@ -67,24 +76,19 @@ internal const val ZIP_TYPE = 0x2004
 internal const val FILE = 0
 internal const val FOLDER = 1
 
-internal const val QW_PIC = 0
-internal const val QW_VIDEO = 1
-internal const val QW_TXT = 2
-internal const val QW_OTHER = 3
-
-internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
-internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
+const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
+const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
 // 保存的文档（未保存到手机的图片和视频也在这个位置，感觉QQ的文件乱糟糟的）
-internal const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
-internal const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
+const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
+const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
 
-internal const val WECHAT_FILE_PATH = "/storage/emulated/0/tencent/MicroMsg/"
-internal const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
-internal const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
+const val WECHAT_FILE_PATH = "/storage/emulated/0/tencent/MicroMsg/"
+const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
+const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
 
 internal const val LOG_TAG = "ZFileManager"
 internal const val ERROR_MSG = "fragmentOrActivity is not Activity or Fragment"
-internal const val FILE_TYPE_KEY = "fileType"
+internal const val QW_FILE_TYPE_KEY = "QW_fileType"
 internal const val FILE_START_PATH_KEY = "fileStartPath"
 
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
@@ -161,9 +165,9 @@ internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, msg, duration).show()
 }
 internal fun Int.getFilterArray() = when (this) {
-    QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
-    QW_VIDEO -> arrayOf(MP4, _3GP)
-    QW_TXT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
+    ZFILE_QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
+    ZFILE_QW_MEDIA -> arrayOf(MP4, _3GP)
+    ZFILE_QW_DOCUMENT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
     else -> arrayOf("")
 }
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)

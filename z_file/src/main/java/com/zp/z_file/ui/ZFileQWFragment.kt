@@ -13,16 +13,17 @@ import kotlinx.android.synthetic.main.fragment_zfile_qw.*
 
 internal class ZFileQWFragment : ZFileFragment() {
 
-    private var fileType = ZFileConfiguration.QQ
-    private var type = QW_PIC
+    private var qwFileType = ZFileConfiguration.QQ
+    // 文件类型
+    private var type = ZFILE_QW_PIC
     private var qwManage = false
 
     private var qwAdapter: ZFileListAdapter? = null
 
     companion object {
-        fun newInstance(fileType: String, type: Int, isManager: Boolean) = ZFileQWFragment().apply {
+        fun newInstance(qwFileType: String, type: Int, isManager: Boolean) = ZFileQWFragment().apply {
             arguments = Bundle().run {
-                putString(FILE_TYPE_KEY, fileType)
+                putString(QW_FILE_TYPE_KEY, qwFileType)
                 putInt("type", type)
                 putBoolean("isManager", isManager)
                 this
@@ -33,8 +34,8 @@ internal class ZFileQWFragment : ZFileFragment() {
     override fun getContentView() = R.layout.fragment_zfile_qw
 
     override fun initAll() {
-        fileType = arguments?.getString(FILE_TYPE_KEY) ?: ZFileConfiguration.QQ
-        type = arguments?.getInt("type") ?: QW_PIC
+        qwFileType = arguments?.getString(QW_FILE_TYPE_KEY) ?: ZFileConfiguration.QQ
+        type = arguments?.getInt("type") ?: ZFILE_QW_PIC
         initRecyclerView()
     }
 
@@ -46,7 +47,11 @@ internal class ZFileQWFragment : ZFileFragment() {
             adapter = qwAdapter
         }
         zfile_qw_bar.visibility = View.VISIBLE
-        ZFileQWAsync(fileType, type, context!!) {
+
+        val qwFileLoadListener = getZFileHelp().getQWFileLoadListener()
+        val filterArray = qwFileLoadListener?.getFilterArray(type) ?: type.getFilterArray()
+
+        ZFileQWAsync(qwFileType, type, context!!) {
             zfile_qw_bar.visibility = View.GONE
             if (isNullOrEmpty()) {
                 qwAdapter?.clear()
@@ -55,7 +60,7 @@ internal class ZFileQWFragment : ZFileFragment() {
                 qwAdapter?.setDatas(this)
                 zfile_qw_emptyLayout.visibility = View.GONE
             }
-        }.start(type.getFilterArray())
+        }.start(filterArray)
     }
 
     private fun initAdapter() {

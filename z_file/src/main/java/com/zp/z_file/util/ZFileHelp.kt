@@ -3,6 +3,7 @@ package com.zp.z_file.util
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.getFileType
 import com.zp.z_file.content.toFile
+import java.io.File
 
 /**
  * 对外工具类
@@ -26,5 +27,11 @@ object ZFileHelp {
      */
     @JvmStatic
     fun getFileTypeBySuffix(filePath: String) = filePath.getFileType()
+
+    /**
+     * 获取文件 格式化后的Modified
+     */
+    @JvmStatic
+    fun getFormatFileDate(file: File) = ZFileOtherUtil.getFormatFileDate(file.lastModified())
 
 }

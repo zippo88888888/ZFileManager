@@ -119,12 +119,12 @@ class ZFileConfiguration : Serializable {
     var longClickOperateTitles: Array<String>? = null
 
     /**
-     * 是否只需要显示文件夹（二选一）
+     * 是否只需要显示文件夹
      */
     var isOnlyFolder = false
 
     /**
-     * 是否只需要显示文件（二选一）
+     * 是否只需要显示文件
      */
     var isOnlyFile = false
 

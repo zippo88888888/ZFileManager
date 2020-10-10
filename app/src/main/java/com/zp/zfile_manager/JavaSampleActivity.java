@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileBean;
 import com.zp.z_file.content.ZFileConfiguration;
 
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import static com.zp.z_file.content.ZFileContentKt.ZFILE_DEFAULT;
 

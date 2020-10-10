@@ -9,6 +9,9 @@ import java.io.File
 
 class MyFileImageListener : ZFileImageListener() {
 
+    /**
+     * 图片类型加载
+     */
     override fun loadImage(imageView: ImageView, file: File) {
         Glide.with(imageView.context)
             .load(file)

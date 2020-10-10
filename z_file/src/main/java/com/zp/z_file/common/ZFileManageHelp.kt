@@ -21,10 +21,10 @@ class ZFileManageHelp {
     }
 
     /**
-     * 图片的加载方式，必须手动实现 并在调用前或Application中初始化
+     * 图片类型和视频类型的显示方式，必须手动实现 并在调用前或Application中初始化
      */
     private var imageLoadeListener: ZFileImageListener? = null
-    fun getImageLoadListener(): ZFileImageListener {
+    internal fun getImageLoadListener(): ZFileImageListener {
         if (imageLoadeListener == null) {
             throw NullPointerException("ZFileImageListener is Null, You need call method \"init()\"")
         }
@@ -39,9 +39,19 @@ class ZFileManageHelp {
      * 文件数据获取
      */
     private var fileLoadListener: ZFileLoadListener = ZFileDefaultLoadListener()
-    fun getFileLoadListener() = fileLoadListener
+    internal fun getFileLoadListener() = fileLoadListener
     fun setFileLoadListener(fileLoadListener: ZFileLoadListener): ZFileManageHelp {
         this.fileLoadListener = fileLoadListener
+        return this
+    }
+
+    /**
+     * QQ or WeChat 文件获取
+     */
+    private var qwLoadListener: QWFileLoadListener? = null
+    internal fun getQWFileLoadListener() = qwLoadListener
+    fun setQWFileLoadListener(qwLoadListener: QWFileLoadListener?): ZFileManageHelp {
+        this.qwLoadListener = qwLoadListener
         return this
     }
 
@@ -49,7 +59,7 @@ class ZFileManageHelp {
      * 文件类型
      */
     private var fileTypeListener = ZFileTypeListener()
-    fun getFileTypeListener() = fileTypeListener
+    internal fun getFileTypeListener() = fileTypeListener
     fun setFileTypeListener(fileTypeListener: ZFileTypeListener): ZFileManageHelp {
         this.fileTypeListener = fileTypeListener
         return this
@@ -59,7 +69,7 @@ class ZFileManageHelp {
      * 文件操作
      */
     private var fileOperateListener = ZFileOperateListener()
-    fun getFileOperateListener() = fileOperateListener
+    internal fun getFileOperateListener() = fileOperateListener
     fun setFileOperateListener(fileOperateListener: ZFileOperateListener): ZFileManageHelp {
         this.fileOperateListener = fileOperateListener
         return this
@@ -69,7 +79,7 @@ class ZFileManageHelp {
      * 打开默认支持的文件
      */
     private var fileOpenListener = ZFileOpenListener()
-    fun getFileOpenListener() = fileOpenListener
+    internal fun getFileOpenListener() = fileOpenListener
     fun setFileOpenListener(fileOpenListener: ZFileOpenListener): ZFileManageHelp {
         this.fileOpenListener = fileOpenListener
         return this
@@ -110,9 +120,9 @@ class ZFileManageHelp {
     private fun startByQQ(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.QQ) })
+                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.QQ) })
+                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
@@ -120,9 +130,9 @@ class ZFileManageHelp {
     private fun startByWechat(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
+                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
+                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }

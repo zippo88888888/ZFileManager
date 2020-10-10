@@ -140,18 +140,20 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     ) : FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         var list = ArrayList<Fragment>()
-        private val titles = arrayOf(
-            context.getStringById(R.string.zfile_pic),
-            context.getStringById(R.string.zfile_video),
-            context.getStringById(R.string.zfile_txt),
-            context.getStringById(R.string.zfile_other)
-        )
+        private val titles by lazy {
+            arrayOf(
+                    context.getStringById(R.string.zfile_pic),
+                    context.getStringById(R.string.zfile_video),
+                    context.getStringById(R.string.zfile_txt),
+                    context.getStringById(R.string.zfile_other)
+            )
+        }
 
         init {
-            list.add(ZFileQWFragment.newInstance(type, QW_PIC, isManger))
-            list.add(ZFileQWFragment.newInstance(type, QW_VIDEO, isManger))
-            list.add(ZFileQWFragment.newInstance(type, QW_TXT, isManger))
-            list.add(ZFileQWFragment.newInstance(type, QW_OTHER, isManger))
+            list.add(ZFileQWFragment.newInstance(type, ZFILE_QW_PIC, isManger))
+            list.add(ZFileQWFragment.newInstance(type, ZFILE_QW_MEDIA, isManger))
+            list.add(ZFileQWFragment.newInstance(type, ZFILE_QW_DOCUMENT, isManger))
+            list.add(ZFileQWFragment.newInstance(type, ZFILE_QW_OTHER, isManger))
         }
 
         override fun getItem(position: Int) = list[position]
@@ -160,7 +162,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
         override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
 
-        override fun getPageTitle(position: Int): String? = titles[position]
+        override fun getPageTitle(position: Int): String? =
+                getZFileHelp().getQWFileLoadListener()?.getTitles()?.get(position) ?: titles[position]
 
     }
 

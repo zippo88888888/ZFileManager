@@ -171,6 +171,32 @@
 
         </LinearLayout>
 
+        <RadioGroup
+            android:id="@+id/super_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/super_defaultRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="QQ-WeChat默认"/>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"/>
+
+            <RadioButton
+                android:id="@+id/super_diyRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QQ-WeChat自定义"/>
+
+        </RadioGroup>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -189,7 +215,6 @@
                 android:background="?selectableItemBackground"/>
 
         </FrameLayout>
-
 
         <TextView
             android:id="@+id/super_resultTxt"

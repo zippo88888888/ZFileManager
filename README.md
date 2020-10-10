@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.4-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -8,8 +8,8 @@
 ### 2. 支持音频、视频播放，图片查看，zip解压，文件重命名、复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
-### 5. 支持QQ、微信文件选择
-### 6. 高度可定制化，兼容AndroidX 
+### 5. 支持QQ、微信文件选择（支持自定义获取）
+### 6. 高度可定制化，兼容AndroidX，Kotlin编码，100%兼容Java
 
 > ### 即将支持
 > #### 兼容 Android 11
@@ -24,12 +24,15 @@
 
 ## 基本使用 （[Java使用](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/JavaSampleActivity.java)）
 
+> ###### 注意：ZFileManageHelp获取方式
+> Kotlin：getZFileHelp()<br/>
+> Java：ZFileManageHelp.getInstance() 或 ZFileContentKt.getZFileHelp()
+
 #### Step 0. 添加依赖
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.3'
+implementation 'com.github.zp:z_file:1.2.4'
 ```
-> #### 注意：从1.2.2版本开始 ZFileSelectListener 已被移除，请使用onActivityResult
 
 #### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
 ```Kotlin
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 ```
 
 ## 高级用法   
-> ##### ZFileManager额外提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
+> ###### ZFileManager提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
 
 ### 文件类型拓展
 
@@ -144,7 +147,7 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
 ### QQ或微信文件选择
 
 > QQ、微信默认根据时间倒序排序，不显示隐藏文件，过滤规则默认，只显示文件，不支持长按操作
-其他配置与文件管理保持一致！后续将完全支持自定义获取，具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/SuperActivity.kt)
+其他配置与文件管理保持一致！具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/SuperActivity.kt)
 ，参考 [腾讯文件](https://imtt.dd.qq.com/16891/apk/24CB038F3A67CDBE10C5A0D9B2AD10E9.apk?fsname=com.tencent.FileManager_5.0.4.0001_5040001.apk&csr=1bbd)
 ```kotlin
 
@@ -278,13 +281,13 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
         })
     
     // 其他自定义方式 如：Txt类型展示的图片不符合你的要求，继承自TxtType，重写相关方法即可，
-    // 参照项目里面 diy包下面的实现，这种方式对于内置的文件类型可以达到完全自定义操作
+    // 这种方式对于内置的文件类型可以达到完全自定义操作
 
 ```
 #### 自定义打开默认支持的文件
 ```kotlin
 
-class MyFileOpenListener : ZMyFileOpenListener() {
+class MyFileOpenListener : ZFileOpenListener() {
 
     override fun openAudio(filePath: String, view: View) = Unit // 音频
     override fun openImage(filePath: String, view: View) = Unit // 图片

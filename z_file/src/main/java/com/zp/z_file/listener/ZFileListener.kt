@@ -20,11 +20,11 @@ import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
 import com.zp.z_file.ui.dialog.ZFileInfoDialog
 import com.zp.z_file.ui.dialog.ZFileRenameDialog
 import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
+import com.zp.z_file.util.ZFileHelp
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
-import java.util.*
 
 /**
  * 获取文件数据
@@ -40,10 +40,56 @@ interface ZFileLoadListener {
 }
 
 /**
- * 图片加载
+ * 图片或视频 显示
  */
 abstract class ZFileImageListener {
+
+    /**
+     * 图片类型加载
+     */
     abstract fun loadImage(imageView: ImageView, file: File)
+
+    /**
+     * 视频类型加载
+     */
+    open fun loadVideo(imageView: ImageView, file: File) {
+        loadImage(imageView, file)
+    }
+}
+
+/**
+ * QQ 或 WeChat 获取
+ */
+abstract class QWFileLoadListener {
+
+    /**
+     * 获取标题
+     * @return Array<String>
+     */
+    open fun getTitles(): Array<String>? = null
+
+    /**
+     * 获取过滤规则
+     * @param fileType Int      文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     */
+    abstract fun getFilterArray(fileType: Int): Array<String>
+
+    /**
+     * 获取 QQ 或 WeChat 文件路径
+     * @param qwType String         QQ 或 WeChat  see [ZFileConfiguration.QQ] [ZFileConfiguration.WECHAT]
+     * @param fileType Int          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     * @return MutableList<String>  文件路径集合（因为QQ或WeChat保存的文件可能存在多个路径）
+     */
+    abstract fun getQWFilePathArray(qwType: String, fileType: Int): MutableList<String>
+
+    /**
+     * 获取数据
+     * @param fileType Int                          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     * @param qwFilePathArray MutableList<String>   QQ 或 WeChat 文件路径集合
+     * @param filterArray Array<String>             过滤规则
+     */
+    abstract fun getQWFileDatas(fileType: Int, qwFilePathArray: MutableList<String>, filterArray: Array<String>): MutableList<ZFileBean>
+
 }
 
 /**
@@ -52,7 +98,7 @@ abstract class ZFileImageListener {
 open class ZFileTypeListener {
 
     open fun getFileType(filePath: String): ZFileType {
-        return when (filePath.getFileType().toLowerCase(Locale.CHINA)) {
+        return when (ZFileHelp.getFileTypeBySuffix(filePath)) {
             PNG, JPG, JPEG, GIF -> ImageType()
             MP3, AAC, WAV -> AudioType()
             MP4, _3GP -> VideoType()

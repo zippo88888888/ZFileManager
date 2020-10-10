@@ -4,7 +4,7 @@ import com.zp.z_file.content.*
 import java.io.File
 import java.io.FileFilter
 
-class ZFileQWFilter(private var filterArray: Array<String>, private var isOther: Boolean) :
+internal class ZFileQWFilter(private var filterArray: Array<String>, private var isOther: Boolean) :
     FileFilter {
 
     override fun accept(file: File): Boolean {

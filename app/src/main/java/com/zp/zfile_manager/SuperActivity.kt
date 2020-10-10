@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.async.ZFileAsyncImpl
 import com.zp.z_file.content.*
+import com.zp.zfile_manager.diy.MyQWFileListener
 import kotlinx.android.synthetic.main.activity_super.*
 
 class SuperActivity : AppCompatActivity() {
@@ -20,6 +21,7 @@ class SuperActivity : AppCompatActivity() {
         setContentView(R.layout.activity_super)
         dialog = ProgressDialog(this).run {
             setMessage("获取中，请稍后...")
+            setCancelable(false)
             this
         }
 
@@ -59,6 +61,17 @@ class SuperActivity : AppCompatActivity() {
             Toast.makeText(this, "我只是一个占位格，好看的", Toast.LENGTH_SHORT).show()
         }
 
+        super_group.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.super_diyRadio -> {
+                    getZFileHelp().setQWFileLoadListener(MyQWFileListener())
+                }
+                else -> {
+                    getZFileHelp().setQWFileLoadListener(null)
+                }
+            }
+        }
+
         super_innerTxt.setOnClickListener {
             getZFileHelp().setConfiguration(getZFileConfig().apply {
                 needLongClick = false
@@ -92,7 +105,7 @@ class SuperActivity : AppCompatActivity() {
             } else {
                 if (this!!.size > 100) {
                     Log.e("ZFileManager", "这里考虑到传值大小限制，截取前100条数据")
-                    SuperDialog.newInstance(changeList(this!!))
+                    SuperDialog.newInstance(changeList(this))
                             .show(supportFragmentManager, "SuperDialog")
                 } else {
                     SuperDialog.newInstance(this as ArrayList<ZFileBean>)
@@ -137,6 +150,7 @@ class SuperActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        getZFileHelp().setQWFileLoadListener(null)
         reset()
     }
 }
