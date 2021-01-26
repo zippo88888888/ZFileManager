@@ -4,4 +4,6 @@ object Content {
 
     const val APK = "apk"
 
+    const val AUTHORITY = "com.zp.zfile_manager.ZFileManagerProvider"
+
 }

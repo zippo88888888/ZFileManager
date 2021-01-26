@@ -16,10 +16,10 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
 
     override fun init(savedInstanceState: Bundle?) {
         setStatusBarTransparent()
-        val videoPath = intent.getStringExtra("videoFilePath")
+        val videoPath = intent.getStringExtra("videoFilePath") ?: ""
         getZFileHelp().getImageLoadListener().loadImage(video_img, videoPath.toFile())
         videoPlayer_button.setOnClickListener { v ->
-            video_player.videoPath = videoPath!!
+            video_player.videoPath = videoPath
             video_player.play()
             v.visibility = View.GONE
             video_img.visibility = View.GONE

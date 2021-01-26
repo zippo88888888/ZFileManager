@@ -57,12 +57,12 @@ class SuperDialog : DialogFragment() {
     }
 
     override fun onStart() {
-        val display = context!!.getDisplay()
+        val display = context!!.getTDisplay()
         dialog?.window?.setLayout(display[0], display[1])
         super.onStart()
     }
 
-    private fun Context.getDisplay() = IntArray(2).apply {
+    private fun Context.getTDisplay() = IntArray(2).apply {
         val manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val point = Point()
         manager.defaultDisplay.getSize(point)

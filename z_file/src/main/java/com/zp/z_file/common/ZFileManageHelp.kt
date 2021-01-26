@@ -107,6 +107,20 @@ class ZFileManageHelp {
     }
 
     /**
+     * 重置所有配置信息
+     */
+    @JvmOverloads
+    fun resetAll(imageLoadReset: Boolean = false) {
+        if (imageLoadReset) imageLoadeListener = null
+        fileLoadListener = ZFileDefaultLoadListener()
+        qwLoadListener = null
+        fileTypeListener = ZFileTypeListener()
+        fileOperateListener = ZFileOperateListener()
+        fileOpenListener = ZFileOpenListener()
+        config = ZFileConfiguration()
+    }
+
+    /**
      * 跳转至文件管理页面
      */
     fun start(fragmentOrActivity: Any) {

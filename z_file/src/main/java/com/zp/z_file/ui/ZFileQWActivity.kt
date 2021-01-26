@@ -25,19 +25,22 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     private val selectArray by lazy {
         ArrayMap<String, ZFileBean>()
     }
+
+    private var type = ZFileConfiguration.QQ
+
     private lateinit var vpAdapter: ZFileQWAdapter
     private var isManage = false
 
     override fun getContentView() = R.layout.activity_zfile_qw
 
     override fun init(savedInstanceState: Bundle?) {
+        type = getZFileConfig().filePath!!
+        zfile_qw_toolBar.title = if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
     }
 
     private fun initAll() {
-        val type = getZFileConfig().filePath!!
         zfile_qw_toolBar.apply {
-            title = if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
             inflateMenu(R.menu.zfile_qw_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { onBackPressed() }

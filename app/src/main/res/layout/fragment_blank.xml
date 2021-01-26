@@ -11,6 +11,12 @@
         android:text="start"/>
 
     <Button
+        android:id="@+id/framgent_qqBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="qq"/>
+
+    <Button
         android:id="@+id/framgent_wechatBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

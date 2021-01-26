@@ -132,7 +132,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     override fun onStart() {
-        val display = context!!.getDisplay()
+        val display = context!!.getZDisplay()
         dialog?.window?.setLayout(display[0], display[1])
         super.onStart()
     }

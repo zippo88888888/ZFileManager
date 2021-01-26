@@ -4,6 +4,7 @@ import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.getFileType
 import com.zp.z_file.content.toFile
 import java.io.File
+import java.util.*
 
 /**
  * 对外工具类
@@ -26,7 +27,7 @@ object ZFileHelp {
      * 根据后缀文件类型
      */
     @JvmStatic
-    fun getFileTypeBySuffix(filePath: String) = filePath.getFileType()
+    fun getFileTypeBySuffix(filePath: String) = filePath.getFileType().toLowerCase(Locale.CHINA)
 
     /**
      * 获取文件 格式化后的Modified

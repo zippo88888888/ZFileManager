@@ -110,8 +110,8 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
             WeakReference<ZFileInfoDialog>(dialog)
         }
 
-        override fun handleMessage(msg: Message?) {
-            if (msg?.what == 0) {
+        override fun handleMessage(msg: Message) {
+            if (msg.what == 0) {
                 val bean = msg.obj as ZFileInfoBean
                 week.get()?.apply {
                     when (fileType) {

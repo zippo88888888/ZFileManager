@@ -166,7 +166,7 @@ internal class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListene
         setMeasuredDimension(width, height)
     }*/
 
-    override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         if (player == null) {
             player = MediaPlayer()
 
@@ -199,12 +199,12 @@ internal class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListene
         player?.setSurface(s)
     }
 
-    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
 //        updateTextureViewSize()
 //        setVideoSize(videoWidth, videoHeight)
     }
 
-    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
+    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
         player?.pause()
         player?.stop()
         player?.release()
@@ -212,7 +212,7 @@ internal class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListene
         return true
     }
 
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) = Unit
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
 
     fun setVolume(leftVolume: Float = 1f, rightVolume: Float = 1f) {
         this.leftVolume = leftVolume
@@ -282,7 +282,7 @@ internal class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListene
         val sx = width.toFloat() / videoWidth.toFloat()
         val sy = height.toFloat() / videoHeight.toFloat()
         val matrix = Matrix()
-        val maxScale = Math.max(sx, sy)
+        val maxScale = sx.coerceAtLeast(sy)
         // 视频区移动到View区,使两者中心点重合.
         matrix.preTranslate(((width - videoWidth) / 2).toFloat(), ((height - videoHeight) / 2).toFloat())
         // 默认视频是fitXY的形式显示的,所以首先要缩放还原回来.

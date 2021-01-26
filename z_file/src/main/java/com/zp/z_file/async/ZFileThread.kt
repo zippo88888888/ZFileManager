@@ -2,6 +2,7 @@ package com.zp.z_file.async
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.getZFileHelp
@@ -30,14 +31,14 @@ internal class ZFileThread(
         }
     }
 
-    class ZFileHandler(thread: ZFileThread) : Handler() {
+    class ZFileHandler(thread: ZFileThread) : Handler(Looper.myLooper()!!) {
         private val weakReference by lazy {
             WeakReference<ZFileThread>(thread)
         }
 
         @Suppress("UNCHECKED_CAST")
-        override fun handleMessage(msg: Message?) {
-            val list = msg?.obj as? MutableList<ZFileBean>
+        override fun handleMessage(msg: Message) {
+            val list = msg.obj as? MutableList<ZFileBean>
             weakReference.get()?.block?.invoke(list)
         }
     }

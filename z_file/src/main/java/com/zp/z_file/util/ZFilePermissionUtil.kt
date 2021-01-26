@@ -14,6 +14,8 @@ internal object ZFilePermissionUtil {
     const val WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
     const val WRITE_EXTERNAL_CODE = 0x1001
 
+    const val FM_CODE = 0x1002
+
     /**
      * 判断是否申请过权限
      * @param permissions   权限

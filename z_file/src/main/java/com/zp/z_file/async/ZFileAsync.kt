@@ -2,6 +2,7 @@ package com.zp.z_file.async
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import com.zp.z_file.content.ZFileBean
 import java.lang.ref.SoftReference
@@ -64,14 +65,15 @@ open class ZFileAsync(
      */
     protected open fun onPostExecute() = Unit
 
-    class ZFileAsyncHandler(zFileAsync: ZFileAsync) : Handler() {
+    class ZFileAsyncHandler(zFileAsync: ZFileAsync) : Handler(Looper.myLooper()!!) {
 
         private val weakReference by lazy {
             WeakReference<ZFileAsync>(zFileAsync)
         }
 
-        override fun handleMessage(msg: Message?) {
-            val list = msg?.obj as? MutableList<ZFileBean>
+        @Suppress("UNCHECKED_CAST")
+        override fun handleMessage(msg: Message) {
+            val list = msg.obj as? MutableList<ZFileBean>
             weakReference.get()?.onPostExecute(list)
         }
     }

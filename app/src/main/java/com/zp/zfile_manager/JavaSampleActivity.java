@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileBean;
 import com.zp.z_file.content.ZFileConfiguration;
+import com.zp.zfile_manager.content.Content;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class JavaSampleActivity extends AppCompatActivity {
                 .sortordBy(ZFileConfiguration.BY_DEFAULT)
                 .maxLength(3)
                 .maxLengthStr("亲，最多选3个！")
+                .authority(Content.AUTHORITY)
                 .build();
         resultTxt = findViewById(R.id.main_resultTxt);
 

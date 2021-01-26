@@ -1,6 +1,8 @@
 package com.zp.z_file.content
 
 import android.app.Activity
+import android.app.Application
+import android.content.ContentProvider
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -9,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -76,15 +79,15 @@ internal const val ZIP_TYPE = 0x2004
 internal const val FILE = 0
 internal const val FOLDER = 1
 
-const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
-const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
+internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
+internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
 // 保存的文档（未保存到手机的图片和视频也在这个位置，感觉QQ的文件乱糟糟的）
-const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
-const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
+internal const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
+internal const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
 
-const val WECHAT_FILE_PATH = "/storage/emulated/0/tencent/MicroMsg/"
-const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
-const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
+internal const val WECHAT_FILE_PATH = "/storage/emulated/0/tencent/MicroMsg/"
+internal const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
+internal const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
 
 internal const val LOG_TAG = "ZFileManager"
 internal const val ERROR_MSG = "fragmentOrActivity is not Activity or Fragment"
@@ -97,7 +100,7 @@ internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
         resources.getIdentifier(name, defType, "android")
     )
 
-internal fun Context.getDisplay() = IntArray(2).apply {
+internal fun Context.getZDisplay() = IntArray(2).apply {
     val manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
     val point = Point()
     manager.defaultDisplay.getSize(point)
@@ -144,8 +147,9 @@ internal fun Activity.setStatusBarTransparent() {
     window.statusBarColor = Color.TRANSPARENT
 }
 internal fun ZFileManageDialog.setNeedWH() {
-    val width = context!!.getDisplay()[0] * 0.88f
-    dialog?.window?.setLayout(width.toInt(), android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+    val display = context?.getZDisplay()
+    val width = if (display?.isEmpty() == true) ViewGroup.LayoutParams.MATCH_PARENT else (display!![0] * 0.88f).toInt()
+    dialog?.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 internal fun SwipeRefreshLayout.property(
     block: () -> Unit,
@@ -170,6 +174,17 @@ internal fun Int.getFilterArray() = when (this) {
     ZFILE_QW_DOCUMENT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
     else -> arrayOf("")
 }
+internal fun Any.getContext(): Context? = when (this) {
+    is Activity -> this
+    is Fragment -> context
+    is Application -> applicationContext
+    is ContentProvider -> context
+    else -> null
+}
+fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
+fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
+fun Context.px2dipF(pxValue: Float) = pxValue / resources.displayMetrics.density + 0.5f
+fun Context.px2dip(pxValue: Float) = px2dipF(pxValue).toInt()
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
 internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
 internal fun File.getFileType() = this.path.getFileType()
@@ -216,6 +231,7 @@ internal val lineColor: Int
         return if (getZFileConfig().resources.lineColor == ZFILE_DEFAULT) R.color.zfile_line_color
         else getZFileConfig().resources.lineColor
     }
+
 
 
 

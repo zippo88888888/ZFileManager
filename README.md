@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.4-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.5-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -11,8 +11,7 @@
 ### 5. 支持QQ、微信文件选择（支持自定义获取）
 ### 6. 高度可定制化，兼容AndroidX，Kotlin编码，100%兼容Java
 
-> ### 即将支持
-> #### 兼容 Android 11
+> #### 下个版本将 兼容 Android 11 && 支持 DSL
 
 ### 部分截图
 <div align="center">
@@ -27,11 +26,12 @@
 > ###### 注意：ZFileManageHelp获取方式
 > Kotlin：getZFileHelp()<br/>
 > Java：ZFileManageHelp.getInstance() 或 ZFileContentKt.getZFileHelp()
+> ###### Log TAG：ZFileManager
 
 #### Step 0. 添加依赖
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.4'
+implementation 'com.github.zp:z_file:1.2.5'
 ```
 
 #### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
@@ -312,17 +312,19 @@ getZFileHelp().setFileOpenListener(MyFileOpenListener())
 class MyFileOperateListener : ZFileOperateListener() {
 
     /**
-     * 文件重命名
-     * @param filePath String   文件路径
-     * @param context Context   Context
-     * @param (Boolean, String) Boolean：成功或失败；String：新名字
+     * 文件重命名（该方式只需要实现重命名逻辑即可）
+     * @param filePath String       文件路径
+     * @param fileNewName String    新名字
+     * @param context Context       Context
+     * @param block Function2<Boolean, String, Unit> Boolean：成功或失败；String：新名字
      */
     open fun renameFile(
         filePath: String,
+        fileNewName: String,
         context: Context,
         block: (Boolean, String) -> Unit
     ) {
-       // 先弹出重命名Dialog，再执行重命名方法  
+       
     }
 
     /**

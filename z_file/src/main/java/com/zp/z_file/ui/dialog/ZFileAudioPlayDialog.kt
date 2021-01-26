@@ -165,7 +165,7 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
             WeakReference<ZFileAudioPlayDialog>(dialog)
         }
 
-        override fun handleMessage(msg: Message?) {
+        override fun handleMessage(msg: Message) {
             week.get()?.dialog_zfile_audio_bar?.progress = week.get()?.mediaPlayer?.currentPosition ?: 0
         }
     }

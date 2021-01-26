@@ -11,6 +11,7 @@ import com.zp.z_file.common.ZFileManageHelp
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
+import com.zp.zfile_manager.content.Content
 import kotlinx.android.synthetic.main.fragment_blank.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
 
@@ -27,9 +28,16 @@ class BlankFragment : Fragment() {
         framgent_startBtn.setOnClickListener {
             getZFileHelp().start(this)
         }
+        framgent_qqBtn.setOnClickListener {
+            getZFileHelp().setConfiguration(getZFileConfig().apply {
+                filePath = ZFileConfiguration.QQ
+                authority = Content.AUTHORITY
+            }).start(this)
+        }
         framgent_wechatBtn.setOnClickListener {
             getZFileHelp().setConfiguration(getZFileConfig().apply {
                 filePath = ZFileConfiguration.WECHAT
+                authority = Content.AUTHORITY
             }).start(this)
         }
     }

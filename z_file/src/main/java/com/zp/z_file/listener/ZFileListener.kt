@@ -15,6 +15,7 @@ import com.zp.z_file.content.*
 import com.zp.z_file.type.*
 import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFilePicActivity
+import com.zp.z_file.ui.ZFileQWActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
 import com.zp.z_file.ui.dialog.ZFileInfoDialog
@@ -25,6 +26,7 @@ import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
+import java.util.*
 
 /**
  * 获取文件数据
@@ -177,20 +179,19 @@ open class ZFileOpenListener {
     }
 
     private fun zipSelect(filePath: String, view: View) {
-        (view.context as? ZFileListActivity)?.let {
-            it.checkFragmentByTag("ZFileSelectFolderDialog")
+        val activity = view.context
+        if (activity is AppCompatActivity) {
+            activity.checkFragmentByTag("ZFileSelectFolderDialog")
             ZFileSelectFolderDialog.newInstance("解压").apply {
                 selectFolder = {
-                    getZFileHelp().getFileOperateListener().zipFile(filePath, this, it) {
-                        if (this) {
-                            ZFileLog.i("解压成功")
-                        } else {
-                            ZFileLog.e("解压失败")
+                    getZFileHelp().getFileOperateListener().zipFile(filePath, this, activity) {
+                        ZFileLog.i(if (this) "解压成功" else "解压失败")
+                        (activity as? ZFileListActivity).let {
+                            it?.observer(this)
                         }
-                        it.observer(this)
                     }
                 }
-            }.show(it.supportFragmentManager, "ZFileSelectFolderDialog")
+            }.show(activity.supportFragmentManager, "ZFileSelectFolderDialog")
         }
     }
 
@@ -234,7 +235,7 @@ open class ZFileOpenListener {
 open class ZFileOperateListener {
 
     /**
-     * 文件重命名
+     * 文件重命名（该方式需要先弹出重命名弹窗或其他页面，再执行重命名逻辑）
      * @param filePath String   文件路径
      * @param context Context   Context
      * @param block Function2<Boolean, String, Unit> Boolean：成功或失败；String：新名字
@@ -248,11 +249,25 @@ open class ZFileOperateListener {
             it.checkFragmentByTag("ZFileRenameDialog")
             ZFileRenameDialog().apply {
                 reanameDown = {
-                    ZFileUtil.renameFile(filePath, this, context, block)
+                    renameFile(filePath, this, context, block)
                 }
             }.show(it.supportFragmentManager, "ZFileRenameDialog")
         }
     }
+
+    /**
+     * 文件重命名（该方式只需要实现重命名逻辑即可）
+     * @param filePath String       文件路径
+     * @param fileNewName String    新名字
+     * @param context Context       Context
+     * @param block Function2<Boolean, String, Unit> Boolean：成功或失败；String：新名字
+     */
+    open fun renameFile(
+        filePath: String,
+        fileNewName: String,
+        context: Context,
+        block: (Boolean, String) -> Unit
+    ) = ZFileUtil.renameFile(filePath, fileNewName, context, block)
 
     /**
      * 复制文件

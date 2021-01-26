@@ -33,6 +33,7 @@
     <string name="zfile_video">视频</string>
     <string name="zfile_txt">文档</string>
     <string name="zfile_other">其他</string>
+    <string name="zfile_loading">请稍后</string>
     <string name="zfile_qw_loading" tools:ignore="TypographyEllipsis">文件获取中...</string>
 
 

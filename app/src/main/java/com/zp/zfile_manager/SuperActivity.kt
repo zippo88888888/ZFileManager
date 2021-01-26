@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.async.ZFileAsyncImpl
 import com.zp.z_file.content.*
+import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.diy.MyQWFileListener
 import kotlinx.android.synthetic.main.activity_super.*
 
@@ -78,6 +79,7 @@ class SuperActivity : AppCompatActivity() {
                 isOnlyFolder = true
                 sortordBy = ZFileConfiguration.BY_NAME
                 sortord = ZFileConfiguration.ASC
+                authority = Content.AUTHORITY
             }).start(this)
         }
     }
@@ -93,6 +95,7 @@ class SuperActivity : AppCompatActivity() {
         getZFileHelp().setConfiguration(getZFileConfig().apply {
             boxStyle = ZFileConfiguration.STYLE2
             filePath = path
+            authority = Content.AUTHORITY
         }).start(this@SuperActivity)
     }
 
@@ -103,6 +106,8 @@ class SuperActivity : AppCompatActivity() {
             if (isNullOrEmpty()) {
                 Toast.makeText(this@SuperActivity, "暂无数据", Toast.LENGTH_SHORT).show()
             } else {
+                Toast.makeText(this@SuperActivity, "共找到${this?.size}条数据", Toast.LENGTH_SHORT).show()
+                Log.i("ZFileManager", "共找到${this?.size}条数据")
                 if (this!!.size > 100) {
                     Log.e("ZFileManager", "这里考虑到传值大小限制，截取前100条数据")
                     SuperDialog.newInstance(changeList(this))
@@ -138,19 +143,9 @@ class SuperActivity : AppCompatActivity() {
         super_resultTxt.text = sb.toString()
     }
 
-    private fun reset() {
-        // 这里重置，防止该页面销毁后其他演示页面无法正常获取数据！
-        getZFileConfig().apply {
-            needLongClick = true
-            isOnlyFolder = false
-            sortordBy = ZFileConfiguration.BY_DEFAULT
-            sortord = ZFileConfiguration.ASC
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        getZFileHelp().setQWFileLoadListener(null)
-        reset()
+        // 这里重置，防止该页面销毁后其他演示页面无法正常获取数据！
+        getZFileHelp().resetAll()
     }
 }

@@ -7,6 +7,7 @@ import java.io.Serializable
 
 /**
  * 配置信息
+ * 请注意：由于 ZFileManageHelp 为单列，所以配置一次会保存，直到下次被修改
  */
 class ZFileConfiguration : Serializable {
 
@@ -132,7 +133,7 @@ class ZFileConfiguration : Serializable {
      * 打开文件需要 FileProvider 一般都是包名 + xxxFileProvider
      * 如果项目中已经存在或其他原因无法修改，请自己实现 ZFileOpenListener
      */
-    var authority = "com.zp.zfile_manager.ZFileManagerProvider"
+    var authority = ""
 
     /**
      * 是否显示日志
@@ -161,7 +162,7 @@ class ZFileConfiguration : Serializable {
         private var longClickOperateTitles: Array<String>? = null
         private var isOnlyFolder = false
         private var isOnlyFile = false
-        private var authority = "com.zp.zfile_manager.ZFileManagerProvider"
+        private var authority = ""
         private var showLog = true
 
         fun filePath(filePath: String?): Build {

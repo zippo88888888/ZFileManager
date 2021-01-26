@@ -1,13 +1,13 @@
 package com.zp.z_file.util
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.view.View
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.*
 import com.zp.z_file.async.ZFileThread
 import com.zp.z_file.listener.ZFileQWFilter
+import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import java.io.*
 import java.nio.channels.FileChannel
 import java.text.DecimalFormat
@@ -48,9 +48,7 @@ internal object ZFileUtil {
         block: (Boolean, String) -> Unit
     ) {
         val activity = context as Activity
-        val dialog = ProgressDialog(activity).run {
-            setProgressStyle(ProgressDialog.STYLE_SPINNER)
-            setMessage("重命名中，请稍后...")
+        val dialog = ZFileLoadingDialog(activity, "重命名中...").run {
             setCancelable(false)
             show()
             this
@@ -123,9 +121,7 @@ internal object ZFileUtil {
             else -> "解压"
         }
         val activity = context as Activity
-        val dialog = ProgressDialog(activity).run {
-            setProgressStyle(ProgressDialog.STYLE_SPINNER)
-            setMessage("${msg}中，请稍后...")
+        val dialog = ZFileLoadingDialog(activity, "${msg}中...").run {
             setCancelable(false)
             show()
             this

@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
+import com.zp.zfile_manager.content.Content
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
 
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
                     boxStyle = ZFileConfiguration.STYLE2
                     maxLength = 6
                     maxLengthStr = "老铁最多6个文件"
+                    authority = Content.AUTHORITY
                 })
                 .start(this)
         }

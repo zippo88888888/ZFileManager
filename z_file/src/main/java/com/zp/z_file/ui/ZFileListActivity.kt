@@ -2,9 +2,12 @@ package com.zp.z_file.ui
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcelable
+import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -22,6 +25,7 @@ import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.activity_zfile_list.*
 import java.io.File
+
 
 internal class ZFileListActivity : ZFileActivity() {
 
@@ -78,7 +82,10 @@ internal class ZFileListActivity : ZFileActivity() {
                     setMenuState()
                 } else {
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
-                        putParcelableArrayListExtra(ZFILE_SELECT_DATA_KEY, list as java.util.ArrayList<out Parcelable>)
+                        putParcelableArrayListExtra(
+                            ZFILE_SELECT_DATA_KEY,
+                            list as java.util.ArrayList<out Parcelable>
+                        )
                     })
                     finish()
                 }
@@ -112,7 +119,8 @@ internal class ZFileListActivity : ZFileActivity() {
         }
         zfile_list_emptyPic.setImageResource(emptyRes)
         setHiddenState()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+        callPermission()
+
     }
 
     private fun initAll() {
@@ -263,19 +271,21 @@ internal class ZFileListActivity : ZFileActivity() {
     private fun jumpByWhich(item: ZFileBean, which: Int, index: Int) {
         when (titleArray!![which]) {
             ZFileConfiguration.RENAME -> {
-                getZFileHelp().getFileOperateListener().renameFile(item.filePath, this) { isSuccess, newName ->
-                    if (isSuccess) {
-                        val oldFile = item.filePath.toFile()
-                        val oldFileType = oldFile.getFileType()
-                        val oldPath = oldFile.path.substring(0, oldFile.path.lastIndexOf("/") + 1)
-                        val newFilePath = "$oldPath$newName.$oldFileType"
-                        fileListAdapter?.getItem(index)?.apply {
-                            filePath = newFilePath
-                            fileName = "$newName.$oldFileType"
+                getZFileHelp().getFileOperateListener()
+                    .renameFile(item.filePath, this) { isSuccess, newName ->
+                        if (isSuccess) {
+                            val oldFile = item.filePath.toFile()
+                            val oldFileType = oldFile.getFileType()
+                            val oldPath =
+                                oldFile.path.substring(0, oldFile.path.lastIndexOf("/") + 1)
+                            val newFilePath = "$oldPath$newName.$oldFileType"
+                            fileListAdapter?.getItem(index)?.apply {
+                                filePath = newFilePath
+                                fileName = "$newName.$oldFileType"
+                            }
+                            fileListAdapter?.notifyItemChanged(index)
                         }
-                        fileListAdapter?.notifyItemChanged(index)
                     }
-                }
             }
             ZFileConfiguration.COPY, ZFileConfiguration.MOVE -> {
                 checkFragmentByTag(TAG)
@@ -372,11 +382,22 @@ internal class ZFileListActivity : ZFileActivity() {
         }
     }
 
+    private fun callPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+    }
+
     private fun checkHasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+            val hasPermission = ZFilePermissionUtil.hasPermission(
+                this,
+                ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
+            )
             if (hasPermission) {
-                ZFilePermissionUtil.requestPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_CODE, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+                ZFilePermissionUtil.requestPermission(
+                    this,
+                    ZFilePermissionUtil.WRITE_EXTERNAL_CODE,
+                    ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
+                )
             } else {
                 initAll()
             }
@@ -385,7 +406,11 @@ internal class ZFileListActivity : ZFileActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initAll()

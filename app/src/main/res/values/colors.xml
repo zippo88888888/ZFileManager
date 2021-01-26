@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- 重写该属性达到主题颜色自定义 -->
+    <color name="zfile_base_color">#2c832e</color>
+
 </resources>
