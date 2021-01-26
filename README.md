@@ -27,6 +27,7 @@
 > Kotlin：getZFileHelp()<br/>
 > Java：ZFileManageHelp.getInstance() 或 ZFileContentKt.getZFileHelp()
 > ###### Log TAG：ZFileManager
+> ###### targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
 
 #### Step 0. 添加依赖
 ```groovy
