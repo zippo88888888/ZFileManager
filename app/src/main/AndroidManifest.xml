@@ -12,8 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".dsl.DslFragmentActivity" />
+        <activity android:name=".dsl.DslActivity" />
         <activity android:name=".SuperActivity" />
         <activity android:name=".FragmentSampleActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.ZFileManagerProvider"

@@ -32,5 +32,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'androidx.documentfile:documentfile:1.0.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
     implementation project(':z_file')
 }

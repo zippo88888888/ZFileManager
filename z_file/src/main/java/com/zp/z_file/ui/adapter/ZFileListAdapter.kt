@@ -29,6 +29,11 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
         ArrayMap<Int, Boolean>()
     }
 
+    // 当前文件夹选择的数量
+    private val countMap by lazy {
+        ArrayMap<String, Int>()
+    }
+
     // 已选中的数据
     var selectData = ArrayList<ZFileBean>()
 
@@ -38,19 +43,13 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
                 if (value) {
                     notifyDataSetChanged()
                 } else {
-                    selectData.clear()
-                    for ((k, _) in boxMap) {
-                        boxMap[k] = false
-                    }
-                    notifyDataSetChanged()
+                    clearSelectMap()
+                    clearCountMap()
                 }
             } else {
                 if (!value) {
-                    selectData.clear()
-                    for ((k, _) in boxMap) {
-                        boxMap[k] = false
-                    }
-                    notifyDataSetChanged()
+                    clearSelectMap()
+                    clearCountMap()
                 }
             }
             field = value
@@ -148,6 +147,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
         if (isSelect) {
             selectData.remove(item)
             boxMap[position] = !isSelect
+            resetCountMapByClick(item, true)
             changeListener?.invoke(isManage, selectData.size)
             qwListener?.invoke(isManage, item, false)
         } else {
@@ -168,11 +168,11 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
                     } else {
                         selectData.add(item)
                         boxMap[position] = !isSelect
+                        resetCountMapByClick(item, false)
                         changeListener?.invoke(isManage, selectData.size)
                         qwListener?.invoke(isManage, item, true)
                     }
                 }
-
             }
         }
     }
@@ -183,6 +183,13 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             setImageRes(R.id.item_zfile_list_folderPic, folderRes)
             setBgColor(R.id.item_zfile_list_folder_line, lineColor)
             setVisibility(R.id.item_zfile_list_folder_line, position < itemCount - 1)
+            if (config.showSelectedCountHint) {
+                val count = getCountByMap(item)
+                setText(R.id.item_zfile_list_folderCountTxt, "$count")
+                setVisibility(R.id.item_zfile_list_folderCountTxt, count > 0 && countMap.keys.indexOf(item.filePath))
+            } else {
+                setVisibility(R.id.item_zfile_list_folderCountTxt, false)
+            }
         }
         holder.itemView.setOnClickListener {
             itemClickByAnim?.invoke(it, position, item)
@@ -207,5 +214,41 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
     fun reset() {
         selectData.clear()
         boxMap.clear()
+        countMap.clear()
+    }
+
+    private fun clearSelectMap() {
+        selectData.clear()
+        for ((k, _) in boxMap) {
+            boxMap[k] = false
+        }
+        notifyDataSetChanged()
+    }
+
+    private fun resetCountMapByClick(item: ZFileBean, remove: Boolean) {
+        try {
+            val value = countMap[item.parent] ?: 0
+            if (remove) { // 移除
+                countMap[item.parent] = value - 1
+            } else { // 新增
+                countMap[item.parent] = value + 1
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getCountByMap(item: ZFileBean) : Int {
+        var count = 0
+        for ((k, v) in countMap) {
+            if (k.indexOf(item.fileName) >= 0) {
+                count += v
+            }
+        }
+        return count
+    }
+
+    private fun clearCountMap() {
+        countMap.clear()
     }
 }

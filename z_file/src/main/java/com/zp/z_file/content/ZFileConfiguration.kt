@@ -136,6 +136,11 @@ class ZFileConfiguration : Serializable {
     var authority = ""
 
     /**
+     * 是否需要显示 已选择 的 文件个数 提示
+     */
+    var showSelectedCountHint = true
+
+    /**
      * 是否显示日志
      */
     var showLog = true
@@ -163,6 +168,7 @@ class ZFileConfiguration : Serializable {
         private var isOnlyFolder = false
         private var isOnlyFile = false
         private var authority = ""
+        private var showSelectedCountHint = true
         private var showLog = true
 
         fun filePath(filePath: String?): Build {
@@ -250,6 +256,11 @@ class ZFileConfiguration : Serializable {
             return this
         }
 
+        fun showSelectedCountHint(showSelectedCountHint: Boolean): Build {
+            this.showSelectedCountHint = showSelectedCountHint
+            return this
+        }
+
         fun showLog(showLog: Boolean): Build {
             this.showLog = showLog
             return this
@@ -273,13 +284,14 @@ class ZFileConfiguration : Serializable {
             this.isOnlyFolder = this@Build.isOnlyFolder
             this.isOnlyFile = this@Build.isOnlyFile
             this.authority = this@Build.authority
+            this.showSelectedCountHint = this@Build.showSelectedCountHint
             this.showLog = this@Build.showLog
         }
 
     }
 
     /**
-     * 图片相关资源配置 设置：[ZFILE_DEFAULT] 将使用默认资源
+     * 图片相关资源配置 设置 [ZFILE_DEFAULT] 将使用默认资源 各种文件类型的图片 建议 128 * 128
      * @property audioRes Int        音频
      * @property txtRes Int          文本
      * @property pdfRes Int          PDF
@@ -294,17 +306,17 @@ class ZFileConfiguration : Serializable {
      */
     @Parcelize
     data class ZFileResources @JvmOverloads constructor(
-        var audioRes: Int = R.drawable.ic_zfile_audio,
-        var txtRes: Int = R.drawable.ic_zfile_txt,
-        var pdfRes: Int = R.drawable.ic_zfile_pdf,
-        var pptRes: Int = R.drawable.ic_zfile_ppt,
-        var wordRes: Int = R.drawable.ic_zfile_word,
-        var excelRes: Int = R.drawable.ic_zfile_excel,
-        var zipRes: Int = R.drawable.ic_zfile_zip,
-        var otherRes: Int = R.drawable.ic_zfile_other,
-        var emptyRes: Int = R.drawable.ic_zfile_empty,
-        var folderRes: Int = R.drawable.ic_zfile_folder,
-        var lineColor: Int = R.color.zfile_line_color
+        var audioRes: Int = ZFILE_DEFAULT,
+        var txtRes: Int = ZFILE_DEFAULT,
+        var pdfRes: Int = ZFILE_DEFAULT,
+        var pptRes: Int = ZFILE_DEFAULT,
+        var wordRes: Int = ZFILE_DEFAULT,
+        var excelRes: Int = ZFILE_DEFAULT,
+        var zipRes: Int = ZFILE_DEFAULT,
+        var otherRes: Int = ZFILE_DEFAULT,
+        var emptyRes: Int = ZFILE_DEFAULT,
+        var folderRes: Int = ZFILE_DEFAULT,
+        var lineColor: Int = ZFILE_DEFAULT
     ) : Serializable, Parcelable
 
 }

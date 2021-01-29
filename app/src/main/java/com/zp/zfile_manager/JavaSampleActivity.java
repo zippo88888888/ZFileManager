@@ -1,18 +1,20 @@
 package com.zp.zfile_manager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileBean;
 import com.zp.z_file.content.ZFileConfiguration;
+import com.zp.z_file.listener.ZFileSelectResultListener;
 import com.zp.zfile_manager.content.Content;
 
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
-import androidx.appcompat.app.AppCompatActivity;
+import java.util.List;
 
 import static com.zp.z_file.content.ZFileContentKt.ZFILE_DEFAULT;
 
@@ -43,23 +45,21 @@ public class JavaSampleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ZFileManageHelp.getInstance()
                         .setConfiguration(configuration)
-                        .start(JavaSampleActivity.this);
+                        .start(JavaSampleActivity.this, new ZFileSelectResultListener() {
+                            @Override
+                            public void selectResult(@Nullable List<ZFileBean> selectList) {
+                                if (selectList == null || selectList.size() <= 0) {
+                                    return;
+                                }
+                                StringBuilder sb = new StringBuilder();
+                                for (ZFileBean bean : selectList) {
+                                    sb.append(bean.toString()).append("\n\n");
+                                }
+                                resultTxt.setText(sb.toString());
+                            }
+                        });
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        List<ZFileBean> fileList = ZFileManageHelp.getInstance().getSelectData(requestCode, resultCode, data);
-        if (fileList == null || fileList.size() <= 0) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (ZFileBean bean : fileList) {
-            sb.append(bean.toString()).append("\n\n");
-        }
-        resultTxt.setText(sb.toString());
     }
 
 }

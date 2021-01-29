@@ -176,11 +176,6 @@ internal class ZFileListActivity : ZFileActivity() {
         fileListAdapter = ZFileListAdapter(this).run {
             itemClickByAnim = { v, position, item ->
                 if (item.isFile) {
-                    /*if (fileListAdapter.isManage) {
-                        fileListAdapter.boxLayoutClick(position, item)
-                    } else {
-                        ZFileUtil.openFile(item.filePath, v)
-                    }*/
                     ZFileUtil.openFile(item.filePath, v)
                 } else {
                     ZFileLog.i("进入 ${item.filePath}")

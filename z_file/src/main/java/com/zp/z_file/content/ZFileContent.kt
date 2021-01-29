@@ -187,6 +187,16 @@ fun Context.px2dipF(pxValue: Float) = pxValue / resources.displayMetrics.density
 fun Context.px2dip(pxValue: Float) = px2dipF(pxValue).toInt()
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
 internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
+internal fun <E> Set<E>.indexOf(value: String): Boolean {
+    var flag = false
+    forEach forEach@{
+        if ((it?.toString()?.indexOf(value) ?: -1) >= 0) {
+            flag = true
+            return@forEach
+        }
+    }
+    return flag
+}
 internal fun File.getFileType() = this.path.getFileType()
 internal fun String.getFileType() = this.run {
     substring(lastIndexOf(".") + 1, length)

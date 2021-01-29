@@ -1,13 +1,13 @@
 package com.zp.zfile_manager.diy
 
 import com.zp.z_file.content.*
-import com.zp.z_file.listener.QWFileLoadListener
+import com.zp.z_file.listener.ZQWFileLoadListener
 import com.zp.z_file.util.ZFileHelp
 import java.io.File
 import java.io.FileFilter
 import java.util.*
 
-class MyQWFileListener : QWFileLoadListener() {
+class MyQWFileListener : ZQWFileLoadListener() {
 
     /**
      * 获取标题

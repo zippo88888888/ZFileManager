@@ -29,19 +29,6 @@ import java.io.File
 import java.util.*
 
 /**
- * 获取文件数据
- */
-interface ZFileLoadListener {
-
-    /**
-     * 获取手机里的文件List
-     * @param filePath String           指定的文件目录访问，空为SD卡根目录
-     * @return MutableList<ZFileBean>?  list
-     */
-    fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean>?
-}
-
-/**
  * 图片或视频 显示
  */
 abstract class ZFileImageListener {
@@ -60,9 +47,31 @@ abstract class ZFileImageListener {
 }
 
 /**
+ * 文件选取 后 的监听
+ */
+interface ZFileSelectResultListener {
+
+    fun selectResult(selectList: MutableList<ZFileBean>?)
+
+}
+
+/**
+ * 获取文件数据
+ */
+interface ZFileLoadListener {
+
+    /**
+     * 获取手机里的文件List
+     * @param filePath String           指定的文件目录访问，空为SD卡根目录
+     * @return MutableList<ZFileBean>?  list
+     */
+    fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean>?
+}
+
+/**
  * QQ 或 WeChat 获取
  */
-abstract class QWFileLoadListener {
+abstract class ZQWFileLoadListener {
 
     /**
      * 获取标题

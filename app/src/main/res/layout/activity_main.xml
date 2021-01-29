@@ -28,6 +28,12 @@
         android:layout_height="wrap_content"
         android:text="JAVA" />
 
+    <Button
+        android:id="@+id/main_dslMangerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DSL" />
+
     <include layout="@layout/layout_result_txt" />
 
 </LinearLayout>

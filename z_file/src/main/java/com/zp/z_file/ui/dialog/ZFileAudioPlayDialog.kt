@@ -47,27 +47,27 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
     override fun init(savedInstanceState: Bundle?) {
         audioHandler = AudioHandler(this)
         initPlayer()
-        dialog_zfile_audio_play.setOnClickListener { // 播放
-            if (playerState == PAUSE) {
-                startPlay()
-
-                falgTime = SystemClock.elapsedRealtime()
-                beginTime = falgTime - dialog_zfile_audio_bar.progress
-                dialog_zfile_audio_nowTime.base = beginTime
-                dialog_zfile_audio_nowTime.start()
-            } else initPlayer()
-        }
-        dialog_audio_pause.setOnClickListener { // 暂停
-            if (mediaPlayer?.isPlaying == true) {
-                mediaPlayer?.pause()
-                playerState = PAUSE
-
-                dialog_zfile_audio_nowTime.stop()
-                pauseTime = SystemClock.elapsedRealtime()
-
-                dialog_zfile_audio_play.visibility = View.VISIBLE
-                dialog_audio_pause.visibility = View.GONE
-                dialog_zfile_audio_bar.isEnabled = false
+        dialog_zfile_audio_play.setOnClickListener {
+            when (playerState) {
+                PAUSE -> {
+                    startPlay()
+                    falgTime = SystemClock.elapsedRealtime()
+                    beginTime = falgTime - dialog_zfile_audio_bar.progress
+                    dialog_zfile_audio_nowTime.base = beginTime
+                    dialog_zfile_audio_nowTime.start()
+                }
+                PLAY -> {
+                    if (mediaPlayer?.isPlaying == true) {
+                        mediaPlayer?.pause()
+                        playerState = PAUSE
+                        dialog_zfile_audio_nowTime.stop()
+                        pauseTime = SystemClock.elapsedRealtime()
+                        dialog_zfile_audio_play.setImageResource(R.drawable.zfile_play)
+                    }
+                }
+                else -> {
+                    initPlayer()
+                }
             }
         }
         dialog_zfile_audio_bar.setOnSeekBarChangeListener(this)
@@ -100,8 +100,8 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
         }
         mediaPlayer?.setOnCompletionListener {
             stopPlay()
+            dialog_zfile_audio_bar.isEnabled = false
             dialog_zfile_audio_bar.progress = 0
-
             dialog_zfile_audio_nowTime.base = SystemClock.elapsedRealtime()
             dialog_zfile_audio_nowTime.start()
             dialog_zfile_audio_nowTime.stop()
@@ -112,19 +112,16 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
     private fun startPlay() {
         mediaPlayer?.start()
         playerState = PLAY
-        dialog_zfile_audio_play.visibility = View.GONE
-        dialog_audio_pause.visibility = View.VISIBLE
+        dialog_zfile_audio_play.setImageResource(R.drawable.zfile_pause)
         dialog_zfile_audio_bar.isEnabled = true
     }
 
     // 停止播放
     private fun stopPlay() {
-        dialog_zfile_audio_play.visibility = View.VISIBLE
-        dialog_audio_pause.visibility = View.GONE
+        dialog_zfile_audio_play.setImageResource(R.drawable.zfile_play)
         mediaPlayer?.release()
         mediaPlayer = null
         playerState = UNIT
-        dialog_zfile_audio_bar.isEnabled = false
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {

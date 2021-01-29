@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.5-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.2.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -9,9 +9,9 @@
 ### 3. 支持查看指定文件类型，支持文件类型拓展
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
 ### 5. 支持QQ、微信文件选择（支持自定义获取）
-### 6. 高度可定制化，兼容AndroidX，Kotlin编码，100%兼容Java
+### 6. 高度可定制化，支持AndroidX、DSL，兼容Java
 
-> #### 下个版本将 兼容 Android 11 && 支持 DSL
+> #### 下个版本将 兼容 Android 11
 
 ### 部分截图
 <div align="center">
@@ -23,16 +23,20 @@
 
 ## 基本使用 （[Java使用](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/JavaSampleActivity.java)）
 
-> ###### 注意：ZFileManageHelp获取方式
-> Kotlin：getZFileHelp()<br/>
-> Java：ZFileManageHelp.getInstance() 或 ZFileContentKt.getZFileHelp()
-> ###### Log TAG：ZFileManager
-> ###### targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
+> ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
 
 #### Step 0. 添加依赖
 ```groovy
 
-implementation 'com.github.zp:z_file:1.2.5'
+    implementation 'com.github.zp:z_file:1.2.6'
+
+    如果报错加上
+    
+    // Kotlin Parcelable 支持
+    androidExtensions {
+        experimental = true
+    }
+
 ```
 
 #### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
@@ -66,18 +70,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
             // 打开文件管理
-            getZFileHelp().start(this)
+            getZFileHelp()
+                .result(this) {
+                    val sb = StringBuilder()
+                    this?.forEach {
+                        sb.append(it).append("\n\n")
+                    }
+                    main_resultTxt.text = sb.toString()
+                }
         }
-    }
-    
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
-        val sb = StringBuilder()
-        list?.forEach {
-            sb.append(it).append("\n\n")
-        }
-        main_resultTxt.text = sb.toString()
     }
 
 }
@@ -176,6 +177,76 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
         super_resultTxt.text = sb.toString()
     }
 
+```
+
+### DSL
+
+```kotlin
+    zfile {
+            imageLoade {
+                // 配置 ZFileImageListener
+            }
+            fileLoade {
+                // 配置 ZFileLoadListener
+            }
+            qwLoade {
+                // 配置 ZQWFileLoadListener
+            }
+            config {
+                // 配置 ZFileConfiguration
+            }
+            fileType {
+                // 配置 ZFileTypeListener
+            }
+            fileOperate {
+                // 配置 ZFileOperateListener
+            }
+            fileOpen {
+                // 配置 ZFileOpenListener
+            }
+            result {
+                // 获取结果
+            }
+        }
+```
+
+#### 举个栗子
+
+```kotlin
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        main_defaultMangerBtn.setOnClickListener {
+            dsl()
+        }
+    }
+    
+    private fun dsl() {
+        zfile {
+            fileType {
+                MyFileTypeListener()
+            }
+            config {
+                ZFileConfiguration().apply {
+                    filePath = ZFileConfiguration.WECHAT
+                }
+            }
+            result {
+                val sb = StringBuilder()
+                this?.forEach {
+                    sb.append(it).append("\n\n")
+                }
+                main_resultTxt.text = sb.toString()
+            }
+        }
+    }
+
+}
+
+    
 ```
 
 ##### 搞定，是不是很简单 ^_^
@@ -394,11 +465,15 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 ```
  
-##### 更多操作请查看demo， ^_^ 如果觉得可以 star 一下哦
- 
+##### 更多操作请查看demo， ^_^ 如果觉得可以 star 一下哦！
+###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [点这里页面加载速度应该会快一点](https://blog.csdn.net/qq_28322987/article/details/81384886)
  
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
+
+[![Travis](https://img.shields.io/badge/ZFile-1.2.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 
 

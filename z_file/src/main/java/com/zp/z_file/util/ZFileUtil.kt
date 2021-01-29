@@ -212,7 +212,7 @@ internal object ZFileUtil {
                     }
                 }
             }
-        } catch (e: FileNotFoundException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             flag = false
             ZFileLog.e("解压失败（目前解压只支持压缩包里只有一个文件，多个需要自己实现）")

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.async.ZFileAsyncImpl
 import com.zp.z_file.content.*
+import com.zp.z_file.dsl.result
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.diy.MyQWFileListener
 import kotlinx.android.synthetic.main.activity_super.*
@@ -80,7 +81,9 @@ class SuperActivity : AppCompatActivity() {
                 sortordBy = ZFileConfiguration.BY_NAME
                 sortord = ZFileConfiguration.ASC
                 authority = Content.AUTHORITY
-            }).start(this)
+            }).result(this) {
+                setResultData(this)
+            }
         }
     }
 
@@ -96,7 +99,9 @@ class SuperActivity : AppCompatActivity() {
             boxStyle = ZFileConfiguration.STYLE2
             filePath = path
             authority = Content.AUTHORITY
-        }).start(this@SuperActivity)
+        }).result(this) {
+            setResultData(this)
+        }
     }
 
     private fun showDialog(filterArray: Array<String>) {
@@ -133,9 +138,7 @@ class SuperActivity : AppCompatActivity() {
         return list
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
+    private fun setResultData(list: MutableList<ZFileBean>?) {
         val sb = StringBuilder()
         list?.forEach {
             sb.append(it).append("\n\n")

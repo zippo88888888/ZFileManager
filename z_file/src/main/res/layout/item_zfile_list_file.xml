@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?selectableItemBackground"
-        android:padding="10dp">
+        android:padding="@dimen/zfile_default_divider_padding">
 
         <!-- android:transitionName="jump_File" -->
         <ImageView
@@ -61,7 +61,7 @@
 
             <TextView
                 android:id="@+id/item_zfile_list_file_nameTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
