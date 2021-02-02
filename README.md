@@ -157,25 +157,28 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
         // 打开QQ文件选择
         getZFileHelp().setConfiguration(getZFileConfig().apply {
             filePath = ZFileConfiguration.QQ // 必须设置
-        }).start(this)
+        }).result(this) {
+            setResult(this)
+        }
     }
 
     super_wechatTxt.setOnClickListener {
         // 打开微信文件选择
         getZFileHelp().setConfiguration(getZFileConfig().apply {
             filePath = ZFileConfiguration.WECHAT // 必须设置
-        }).start(this)
+        }).result(this) {
+            setResult(this)
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val list = getZFileHelp().getSelectData(requestCode, resultCode, data)
+    private fun setResult(selectList: MutableList<ZFileBean>?) {
         val sb = StringBuilder()
-        list?.forEach {
+        selectList?.forEach {
             sb.append(it).append("\n\n")
         }
-        super_resultTxt.text = sb.toString()
+        super_resultTxt.text = sb.toString()        
     }
+
 
 ```
 
