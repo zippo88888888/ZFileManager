@@ -529,7 +529,7 @@ class MyFileOperateListener : ZFileOperateListener() {
      * @param context Context       Context
      * @param block Function2<Boolean, String, Unit> Boolean：成功或失败；String：新名字
      */
-    open fun renameFile(
+    override fun renameFile(
         filePath: String,
         fileNewName: String,
         context: Context,
