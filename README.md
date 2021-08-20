@@ -32,7 +32,7 @@
 
 ```groovy
 
-    // Android 10+ 以上  暂时只提供 aar， maven 上传太难搞了，但后续肯定会提供的，先aar使用
+    // Android 10++ 以上  暂时只提供 aar， maven 上传太难搞了，但后续肯定会提供的，先aar使用
 
     // Android 10 及以下版本使用
     implementation 'com.github.zp:z_file:1.2.6' 
