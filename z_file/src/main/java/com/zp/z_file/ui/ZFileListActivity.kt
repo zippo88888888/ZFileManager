@@ -29,6 +29,8 @@ import java.io.File
 
 internal class ZFileListActivity : ZFileActivity() {
 
+    private var toManagerPermissionPage = false
+
     private var barShow = false
     private lateinit var filePathAdapter: ZFileAdapter<ZFilePathBean>
     private var fileListAdapter: ZFileListAdapter? = null
@@ -76,7 +78,7 @@ internal class ZFileListActivity : ZFileActivity() {
             R.id.menu_zfile_down -> {
                 val list = fileListAdapter?.selectData
                 if (list.isNullOrEmpty()) {
-                    zfile_list_toolBar.title = "文件管理"
+                    setBarTitle(getStringById(R.string.zfile_title))
                     fileListAdapter?.isManage = false
                     barShow = false
                     setMenuState()
@@ -120,7 +122,7 @@ internal class ZFileListActivity : ZFileActivity() {
         zfile_list_emptyPic.setImageResource(emptyRes)
         setHiddenState()
         callPermission()
-
+        setBarTitle(getStringById(R.string.zfile_title))
     }
 
     private fun initAll() {
@@ -174,7 +176,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private fun initListRecyclerView() {
         fileListAdapter = ZFileListAdapter(this).run {
-            itemClickByAnim = { v, position, item ->
+            itemClickByAnim = { v, _, item ->
                 if (item.isFile) {
                     ZFileUtil.openFile(item.filePath, v)
                 } else {
@@ -205,10 +207,10 @@ internal class ZFileListActivity : ZFileActivity() {
             changeListener = { isManage, size ->
                 if (isManage) {
                     if (barShow) {
-                        zfile_list_toolBar.title = "已选中${size}个文件"
+                        setBarTitle("已选中${size}个文件")
                     } else {
                         barShow = true
-                        zfile_list_toolBar.title = "已选中0个文件"
+                        setBarTitle("已选中0个文件")
                         setMenuState()
                     }
                 }
@@ -302,7 +304,7 @@ internal class ZFileListActivity : ZFileActivity() {
                 }
             }
             ZFileConfiguration.INFO -> ZFileUtil.infoFile(item, this)
-            else -> throw IllegalArgumentException("ZFileConfiguration longClickOperateTitles ERROR")
+            else -> throwError("longClickOperateTitles")
         }
     }
 
@@ -311,6 +313,7 @@ internal class ZFileListActivity : ZFileActivity() {
             getZFileHelp().getFileOperateListener().copyFile(item.filePath, targetPath, this) {
                 if (this) {
                     ZFileLog.i("文件复制成功")
+                    observer(true)
                 } else {
                     ZFileLog.e("文件复制失败")
                 }
@@ -359,7 +362,7 @@ internal class ZFileListActivity : ZFileActivity() {
         val path = getThisFilePath()
         if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
-                zfile_list_toolBar.title = "文件管理"
+                setBarTitle(getStringById(R.string.zfile_title))
                 fileListAdapter?.isManage = false
                 barShow = false
                 setMenuState()
@@ -377,8 +380,35 @@ internal class ZFileListActivity : ZFileActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (toManagerPermissionPage) {
+            toManagerPermissionPage = false
+            callPermission()
+        }
+    }
+
     private fun callPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+        } else {
+            val builder = AlertDialog.Builder(this)
+                .setTitle(R.string.zfile_11_title)
+                .setMessage(R.string.zfile_11_content)
+                .setCancelable(false)
+                .setPositiveButton(R.string.zfile_down) { d, _ ->
+                    toManagerPermissionPage = true
+                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    startActivity(intent)
+                    d.dismiss()
+                }
+                .setNegativeButton(R.string.zfile_cancel) { d, _ ->
+                    toast(getStringById(R.string.zfile_11_bad))
+                    d.dismiss()
+                    finish()
+                }
+            builder.show()
+        }
     }
 
     private fun checkHasPermission() {
@@ -410,7 +440,7 @@ internal class ZFileListActivity : ZFileActivity() {
         if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initAll()
             else {
-                toast("权限申请失败")
+                toast(getStringById(R.string.zfile_permission_bad))
                 finish()
             }
         }
@@ -444,6 +474,20 @@ internal class ZFileListActivity : ZFileActivity() {
 
     fun observer(isSuccess: Boolean) {
         if (isSuccess) getData(nowPath)
+    }
+
+    private fun setBarTitle(title: String) {
+        when (getZFileConfig().titleGravity) {
+            ZFileConfiguration.TITLE_LEFT -> {
+                zfile_list_toolBar.title = title
+                zfile_list_centerTitle.visibility = View.GONE
+            }
+            else -> {
+                zfile_list_toolBar.title = ""
+                zfile_list_centerTitle.visibility = View.VISIBLE
+                zfile_list_centerTitle.text = title
+            }
+        }
     }
 
     override fun onDestroy() {

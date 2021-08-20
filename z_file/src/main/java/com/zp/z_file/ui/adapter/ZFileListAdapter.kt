@@ -103,7 +103,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             when (config.boxStyle) {
                 ZFileConfiguration.STYLE1 -> setVisibility(R.id.item_zfile_list_file_box1, isManage)
                 ZFileConfiguration.STYLE2 -> setVisibility(R.id.item_zfile_list_file_box2, isManage)
-                else -> throw IllegalArgumentException("ZFileConfiguration boxStyle error")
+                else -> throwError("boxStyle")
             }
         }
         val box1 = holder.getView<CheckBox>(R.id.item_zfile_list_file_box1)

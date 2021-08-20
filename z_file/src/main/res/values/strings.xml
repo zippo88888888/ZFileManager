@@ -1,6 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 禁止重写 -->
     <string name="zfile_sharedElement_pic">zfile_jump_pic</string>
+    <!-- 禁止重写 -->
     <string name="zfile_sharedElement_video">zfile_jump_Video</string>
+
+    <!--   下面重写即可自定义   -->
+    <string name="zfile_title">文件管理</string>
     <string name="zfile_menu_down">完成</string>
     <string name="zfile_menu_order">排序方式</string>
     <string name="zifle_menu_hidden">不显示隐藏文件</string>
@@ -35,6 +40,11 @@
     <string name="zfile_other">其他</string>
     <string name="zfile_loading">请稍后</string>
     <string name="zfile_qw_loading" tools:ignore="TypographyEllipsis">文件获取中...</string>
+    <string name="zfile_duplicate">副本_</string>
+    <string name="zfile_permission_bad">权限申请失败</string>
+    <string name="zfile_11_title">温馨提示</string>
+    <string name="zfile_11_content">访问文件需要您同意“允许访问所有文件权限”才能正常使用！</string>
+    <string name="zfile_11_bad">同意“允许访问所有文件权限”才能正常使用！</string>
 
 
 </resources>

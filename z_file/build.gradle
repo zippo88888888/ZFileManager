@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30 // 29  30
+    buildToolsVersion "30.0.3"  // 29.0.3  30.0.3
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29     
+        targetSdkVersion 30  // 29 30
         versionCode 1
         versionName "1.0"
 
@@ -23,6 +23,15 @@ android {
     // Kotlin Parcelable 支持
     androidExtensions {
         experimental = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
 }
@@ -57,7 +66,7 @@ group = "com.github.zp"
 //发布到JCenter上的项目名字，必须填写
 def libName = "zfile_lib"
 // 版本号，下次更新是只需要更改版本号即可
-version = "1.2.5"
+version = "1.2.6"
 /**  上面配置后上传至jcenter后的编译路径是这样的： compile 'com.github.zp:zfile_lib:1.0'  **/
 
 //生成源文件

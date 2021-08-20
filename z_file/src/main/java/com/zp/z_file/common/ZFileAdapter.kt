@@ -53,7 +53,8 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
         if (itemCount > 0) {
             datas.removeAt(position)
             if (changeDataNow) {
-                notifyItemRangeRemoved(position, 1)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, itemCount)
             }
         }
     }
@@ -80,7 +81,8 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
             itemClick?.invoke(this, position, getItem(position))
         }
         holder.setOnItemLongClickListener {
-            itemLongClick?.invoke(this, position, getItem(position)) ?: true
+            val item = getItem(position)
+            itemLongClick?.invoke(this, position, item) ?: true
         }
         bindView(holder, getItem(position), position)
     }

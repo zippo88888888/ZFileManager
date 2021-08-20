@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.dsl.config
+import com.zp.z_file.dsl.fileType
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.R
+import com.zp.zfile_manager.content.Content
 import kotlinx.android.synthetic.main.fragment_dsl.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
 
@@ -31,9 +33,13 @@ class DslFragment : Fragment() {
     private fun dsl() {
         zfile {
             config {
-                ZFileConfiguration().apply {
+                Content.CONFIG.run {
                     filePath = ZFileConfiguration.WECHAT
+                    this
                 }
+            }
+            fileType {
+                MyDslFileTypeListener()
             }
             result {
                 val sb = StringBuilder()

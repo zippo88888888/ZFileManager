@@ -2,12 +2,19 @@ package com.zp.z_file.content
 
 import android.os.Parcelable
 import com.zp.z_file.R
+import com.zp.z_file.ui.ZFileVideoPlayer
+import com.zp.z_file.async.ZFileStipulateAsync
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
 /**
  * 配置信息
- * 请注意：由于 ZFileManageHelp 为单列，所以配置一次会保存，直到下次被修改
+ *
+ * 1.3.0 主要更新信息：
+ * 1) Android 11 12 支持，完善 WPS 文件类型
+ * 2) 新增 [titleGravity] [keepDuplicate] 配置
+ * 3) 删除文件崩溃、解压缩中文乱码问题修复
+ * 4) [ZFileVideoPlayer] internal ---> open, ZFileAsyncImpl 重命名为 [ZFileStipulateAsync]
  */
 class ZFileConfiguration : Serializable {
 
@@ -42,6 +49,14 @@ class ZFileConfiguration : Serializable {
         const val MOVE = "移动"
         const val DELETE = "删除"
         const val INFO = "查看详情"
+
+        /** 标题居左 */
+        const val TITLE_LEFT = 0
+        /** 标题居中 */
+        const val TITLE_CENTER = 1
+        /** 标题居右 */
+        @Deprecated("在我国肯定没人有这种BT需求，有的话我zhiboduodiao")
+        const val TITLE_RIGHT = 2
     }
 
     /**
@@ -49,6 +64,12 @@ class ZFileConfiguration : Serializable {
      * 还可指定QQ或微信目录 see [QQ] [WECHAT]
      */
     var filePath: String? = null
+
+    /**
+     * 打开QQ或微信目录 see [QQ] [WECHAT]
+     * 下一个版本
+     */
+    var qwType: String? = null
 
     /**
      * 图片资源配置
@@ -136,15 +157,33 @@ class ZFileConfiguration : Serializable {
     var authority = ""
 
     /**
-     * 是否需要显示 已选择 的 文件个数 提示
+     * 是否需要显示 已选择的文件个数 提示
      */
-    var showSelectedCountHint = true
+    var showSelectedCountHint = false
+
+    /**
+     * 标题位置 see [TITLE_LEFT] [TITLE_CENTER]
+     * 设置标题 重写 [R.string.zfile_title] 即可
+     */
+    var titleGravity = TITLE_LEFT
+        set(value) {
+            if (value in TITLE_LEFT..TITLE_RIGHT) {
+                field = value
+            } else {
+                throwError("titleGravity")
+            }
+        }
+
+    /**
+     * 复制、移动、重命名、解压缩 操作 如果存在相同的文件时 是否需要保留副本
+     * false：默认直接覆盖或者移除； true：表示保留原文件，同时新增副本文件
+     */
+    var keepDuplicate = false
 
     /**
      * 是否显示日志
      */
     var showLog = true
-
 
     /**
      * 方便java同学调用
@@ -168,7 +207,9 @@ class ZFileConfiguration : Serializable {
         private var isOnlyFolder = false
         private var isOnlyFile = false
         private var authority = ""
-        private var showSelectedCountHint = true
+        private var showSelectedCountHint = false
+        private var titleGravity = TITLE_LEFT
+        private var keepDuplicate = false
         private var showLog = true
 
         fun filePath(filePath: String?): Build {
@@ -261,6 +302,20 @@ class ZFileConfiguration : Serializable {
             return this
         }
 
+        fun titleGravity(titleGravity: Int): Build {
+            if (titleGravity in TITLE_LEFT..TITLE_RIGHT) {
+                this.titleGravity = titleGravity
+            } else {
+                throwError("boxStyle")
+            }
+            return this
+        }
+
+        fun keepDuplicate(keepDuplicate: Boolean): Build {
+            this.keepDuplicate = keepDuplicate
+            return this
+        }
+
         fun showLog(showLog: Boolean): Build {
             this.showLog = showLog
             return this
@@ -285,6 +340,8 @@ class ZFileConfiguration : Serializable {
             this.isOnlyFile = this@Build.isOnlyFile
             this.authority = this@Build.authority
             this.showSelectedCountHint = this@Build.showSelectedCountHint
+            this.titleGravity = this@Build.titleGravity
+            this.keepDuplicate = this@Build.keepDuplicate
             this.showLog = this@Build.showLog
         }
 

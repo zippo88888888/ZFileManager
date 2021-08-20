@@ -11,20 +11,19 @@ import java.lang.Exception
 import java.lang.StringBuilder
 
 /**
- * 默认的实现方式，你也可以自定义实现
+ * 根据特定条件 获取文件
  */
-open class ZFileAsyncImpl(
+open class ZFileStipulateAsync(
         context: Context,
         block: MutableList<ZFileBean>?.() -> Unit
 ) : ZFileAsync(context, block) {
 
     override fun onPreExecute() {
-        super.onPreExecute()
-        ZFileLog.i("获取文件中...")
+        ZFileLog.i("根据特定条件 获取文件...")
     }
 
     override fun onPostExecute() {
-        ZFileLog.i("文件获取完成...")
+        ZFileLog.i("根据特定条件 获取文件 完成")
     }
 
     /**
@@ -82,6 +81,7 @@ open class ZFileAsyncImpl(
                 } while (cursor.moveToPrevious())
             }
         } catch (e: Exception) {
+            ZFileLog.e("根据特定条件 获取文件 ERROR ...")
             e.printStackTrace()
         } finally {
             cursor?.close()

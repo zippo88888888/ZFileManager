@@ -5,14 +5,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
-import com.zp.z_file.content.getZFileHelp
+import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.result
+import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.dsl.DslActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,32 +29,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
-            getZFileHelp()
-                .setConfiguration(getZFileConfig().apply {
-                    boxStyle = ZFileConfiguration.STYLE2
-                    maxLength = 6
-                    maxLengthStr = "老铁最多6个文件"
-                    authority = Content.AUTHORITY
-                })
-                .result(this) {
-                    val sb = StringBuilder()
-                    this?.forEach {
-                        sb.append(it).append("\n\n")
+            zfile {
+                config {
+                    getZFileConfig().apply {
+                        boxStyle = ZFileConfiguration.STYLE2
+                        maxLength = 6
+                        titleGravity = ZFileConfiguration.TITLE_CENTER
+                        maxLengthStr = "老铁最多6个文件"
+                        authority = Content.AUTHORITY
                     }
-                    main_resultTxt.text = sb.toString()
                 }
+                result { setFileListData(this) }
+            }
         }
         main_fileMangerBtn.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val hasPermission = hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                if (hasPermission) {
-                    requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                } else {
-                    jump()
-                }
-            } else {
-                jump()
-            }
+            callPermission()
         }
         main_fragmentBtn.setOnClickListener {
             startActivity(Intent(this, FragmentSampleActivity::class.java))
@@ -62,8 +56,60 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setFileListData(fileList: MutableList<ZFileBean>?) {
+        val sb = StringBuilder()
+        fileList?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        main_resultTxt.text = sb.toString()
+    }
+
     private fun jump() {
         startActivity(Intent(this, SuperActivity::class.java))
+    }
+
+    private var toManagerPermissionPage = false
+
+    override fun onResume() {
+        super.onResume()
+        if (toManagerPermissionPage) {
+            toManagerPermissionPage = false
+            callPermission()
+        }
+    }
+
+    private fun callPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else jump()
+        } else {
+            val builder = AlertDialog.Builder(this)
+                .setTitle(com.zp.z_file.R.string.zfile_11_title)
+                .setMessage(com.zp.z_file.R.string.zfile_11_content)
+                .setCancelable(false)
+                .setPositiveButton(com.zp.z_file.R.string.zfile_down) { d, _ ->
+                    toManagerPermissionPage = true
+                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    startActivity(intent)
+                    d.dismiss()
+                }
+                .setNegativeButton(com.zp.z_file.R.string.zfile_cancel) { d, _ ->
+                    d.dismiss()
+                }
+            builder.show()
+        }
+    }
+
+    private fun checkHasPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val hasPermission = hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (hasPermission) {
+                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            } else {
+                jump()
+            }
+        } else {
+            jump()
+        }
     }
 
     override fun onRequestPermissionsResult(

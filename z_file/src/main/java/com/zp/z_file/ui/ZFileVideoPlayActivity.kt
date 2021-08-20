@@ -25,9 +25,12 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
             video_img.visibility = View.GONE
         }
         video_player.setOnClickListener {
-            video_img.visibility = View.VISIBLE
             onBackPressed()
         }
     }
 
+    override fun onBackPressed() {
+        video_img.visibility = View.VISIBLE
+        super.onBackPressed()
+    }
 }

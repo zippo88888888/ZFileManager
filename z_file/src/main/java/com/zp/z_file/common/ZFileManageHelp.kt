@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.zp.z_file.content.*
-import com.zp.z_file.dsl.ZFileDsl
 import com.zp.z_file.listener.*
 import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFileProxyFragment
 import com.zp.z_file.ui.ZFileQWActivity
+import com.zp.z_file.dsl.result
 
 class ZFileManageHelp {
 
@@ -127,13 +127,17 @@ class ZFileManageHelp {
     }
 
     /**
-     * 跳转至文件管理页面
+     * 跳转至文件管理页面  推荐使用 [result] 扩展函数
      */
     fun start(fragmentOrActivity: Any, resultListener: ZFileSelectResultListener) {
         when (getConfiguration().filePath) {
             ZFileConfiguration.QQ -> startByQQ(fragmentOrActivity, resultListener)
             ZFileConfiguration.WECHAT -> startByWechat(fragmentOrActivity, resultListener)
-            else -> startByFileManager(fragmentOrActivity, getConfiguration().filePath, resultListener)
+            else -> startByFileManager(
+                fragmentOrActivity,
+                getConfiguration().filePath,
+                resultListener
+            )
         }
     }
 
@@ -141,13 +145,17 @@ class ZFileManageHelp {
         when (fragmentOrActivity) {
             is FragmentActivity -> {
                 if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) return
-                addFragment(fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
-                        ZFileQWActivity::class.java, ZFileConfiguration.QQ, resultListener)
+                addFragment(
+                    fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
+                    ZFileQWActivity::class.java, ZFileConfiguration.QQ, resultListener
+                )
             }
             is Fragment -> {
                 if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) return
-                addFragment(fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
-                        ZFileQWActivity::class.java, ZFileConfiguration.QQ, resultListener)
+                addFragment(
+                    fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
+                    ZFileQWActivity::class.java, ZFileConfiguration.QQ, resultListener
+                )
             }
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
@@ -157,19 +165,27 @@ class ZFileManageHelp {
         when (fragmentOrActivity) {
             is FragmentActivity -> {
                 if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) return
-                addFragment(fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
-                        ZFileQWActivity::class.java, ZFileConfiguration.WECHAT, resultListener)
+                addFragment(
+                    fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
+                    ZFileQWActivity::class.java, ZFileConfiguration.WECHAT, resultListener
+                )
             }
             is Fragment -> {
                 if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) return
-                addFragment(fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
-                        ZFileQWActivity::class.java, ZFileConfiguration.WECHAT, resultListener)
+                addFragment(
+                    fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
+                    ZFileQWActivity::class.java, ZFileConfiguration.WECHAT, resultListener
+                )
             }
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
 
-    private fun startByFileManager(fragmentOrActivity: Any, path: String? = null, resultListener: ZFileSelectResultListener) {
+    private fun startByFileManager(
+        fragmentOrActivity: Any,
+        path: String? = null,
+        resultListener: ZFileSelectResultListener
+    ) {
         val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
         if (!newPath.toFile().exists()) {
             throw NullPointerException("$newPath 路径不存在")
@@ -177,26 +193,31 @@ class ZFileManageHelp {
         when (fragmentOrActivity) {
             is FragmentActivity -> {
                 if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) return
-                addFragment(fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
-                        ZFileListActivity::class.java, path, resultListener)
+                addFragment(
+                    fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
+                    ZFileListActivity::class.java, path, resultListener
+                )
             }
             is Fragment -> {
                 if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) return
-                addFragment(fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
-                        ZFileListActivity::class.java, path, resultListener)
+                addFragment(
+                    fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
+                    ZFileListActivity::class.java, path, resultListener
+                )
             }
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
 
     private fun addFragment(
-            fragmentManager: FragmentManager,
-            context: Context,
-            clazz: Class<*>,
-            path: String?,
-            resultListener: ZFileSelectResultListener
+        fragmentManager: FragmentManager,
+        context: Context,
+        clazz: Class<*>,
+        path: String?,
+        resultListener: ZFileSelectResultListener
     ) {
-        var fragment = fragmentManager.findFragmentByTag(ZFileProxyFragment.TAG) as? ZFileProxyFragment
+        var fragment =
+            fragmentManager.findFragmentByTag(ZFileProxyFragment.TAG) as? ZFileProxyFragment
         if (fragment == null) {
             fragment = ZFileProxyFragment()
             fragmentManager.beginTransaction().add(fragment, ZFileProxyFragment.TAG).commitNow()
@@ -206,7 +227,7 @@ class ZFileManageHelp {
         }, resultListener)
     }
 
-    @Deprecated("不推荐使用 Not recommended")
+    @Deprecated("不推荐使用 下个版本将移除")
     fun start(fragmentOrActivity: Any) {
         when (getConfiguration().filePath) {
             ZFileConfiguration.QQ -> startByQQ(fragmentOrActivity)
@@ -218,9 +239,9 @@ class ZFileManageHelp {
     private fun startByQQ(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
+                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
+                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
@@ -228,9 +249,9 @@ class ZFileManageHelp {
     private fun startByWechat(fragmentOrActivity: Any) {
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
+                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                    getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
+                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }
@@ -242,9 +263,9 @@ class ZFileManageHelp {
         }
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                    if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
+                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
             is Fragment -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                    if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
+                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
             else -> throw IllegalArgumentException(ERROR_MSG)
         }
     }

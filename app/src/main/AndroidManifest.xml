@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".diy.SunActivity"
+            android:theme="@style/SunTheme" />
         <activity android:name=".dsl.DslFragmentActivity" />
         <activity android:name=".dsl.DslActivity" />
         <activity android:name=".SuperActivity" />

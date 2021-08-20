@@ -10,14 +10,28 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
+import com.zp.z_file.content.isNull
 import com.zp.z_file.content.setNeedWH
 import com.zp.z_file.content.toast
+import com.zp.z_file.util.ZFileLog
 import kotlinx.android.synthetic.main.dialog_zfile_rename.*
 
 internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
 
     var reanameDown: (String.() -> Unit)? = null
     private var handler: Handler? = null
+    private var oldName = "请输入文件名称"
+
+    companion object {
+
+        fun newInstance(oldName: String) = ZFileRenameDialog().apply {
+            arguments = Bundle().run {
+                putString("oldName", oldName)
+                this
+            }
+        }
+
+    }
 
     override fun getContentView() = R.layout.dialog_zfile_rename
 
@@ -27,24 +41,35 @@ internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
         }
 
     override fun init(savedInstanceState: Bundle?) {
+        oldName = arguments?.getString("oldName") ?: "请输入文件名称"
         handler = Handler()
-        zfile_dialog_renameEdit.setOnEditorActionListener { v, actionId, _ ->
+        zfile_dialog_renameEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
-                if (v.text.toString().isEmpty()) {
-                    v.toast("请输入文件名")
-                } else {
-                    reanameDown?.invoke(v.text.toString())
-                    dismiss()
-                }
+                rename()
             }
             true
         }
+        zfile_dialog_renameEdit.hint = oldName
         zfile_dialog_rename_down.setOnClickListener {
-            reanameDown?.invoke(zfile_dialog_renameEdit.text.toString())
-            dismiss()
+            rename()
         }
         zfile_dialog_rename_cancel.setOnClickListener {
             dismiss()
+        }
+    }
+
+    private fun rename() {
+        val newName = zfile_dialog_renameEdit.text.toString()
+        if (newName.isNull()) {
+            context?.toast("请输入文件名")
+        } else {
+            if (oldName == newName) {
+                ZFileLog.e("相同名字，不执行重命名操作")
+                dismiss()
+            } else {
+                reanameDown?.invoke(newName)
+                dismiss()
+            }
         }
     }
 

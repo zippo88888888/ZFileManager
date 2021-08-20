@@ -10,6 +10,7 @@ import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
+@Deprecated("Deprecated")
 internal class ZFileThread(
     private var context: Context,
     private var block: MutableList<ZFileBean>?.() -> Unit
@@ -24,7 +25,7 @@ internal class ZFileThread(
     fun start(filePath: String?) {
         thread {
             val list = getZFileHelp().getFileLoadListener().getFileList(softReference.get(), filePath)
-            handler.sendMessage(Message().apply {
+            handler.sendMessage(Message.obtain().apply {
                 what = 10
                 obj = list
             })

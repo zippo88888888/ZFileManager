@@ -14,7 +14,7 @@ class MyQWFileListener : ZQWFileLoadListener() {
      * @return Array<String>
      */
     override fun getTitles(): Array<String>? {
-        return arrayOf("图片", "媒体", "文档", "其他")
+        return arrayOf("图片", "媒体", "文档", "这是我自定义的title")
     }
 
     /**
@@ -25,7 +25,7 @@ class MyQWFileListener : ZQWFileLoadListener() {
         return when (fileType) {
             ZFILE_QW_PIC -> arrayOf(PNG, JPG, JPEG, "gif")
             ZFILE_QW_MEDIA -> arrayOf(MP4, "3gp", "mp3")
-            ZFILE_QW_DOCUMENT -> arrayOf(PDF, PPT, DOC, XLS)
+            ZFILE_QW_DOCUMENT -> arrayOf(PDF, PPT, PPTX, DOC, DOCX, XLS, XLSX)
             else -> arrayOf(TXT, JSON, XML, ZIP, "rar")
         }
     }
@@ -42,8 +42,8 @@ class MyQWFileListener : ZQWFileLoadListener() {
             when (fileType) {
                 ZFILE_QW_PIC -> {
                     listArray.add("/storage/emulated/0/tencent/QQ_Images/")
-                    listArray.add("/storage/emulated/0/Pictures/") // QQ自定义路径1，仅做演示
-                    listArray.add("/storage/emulated/0/DCIM/") // QQ自定义路径2，仅做演示
+                    listArray.add("/storage/emulated/0/Pictures/") // QQ文件保存路径1，仅做演示
+                    listArray.add("/storage/emulated/0/DCIM/") // QQ文件保存路径2，仅做演示
                     listArray.add("/storage/emulated/0/Pictures/QQ/")
                 }
                 ZFILE_QW_MEDIA -> {
@@ -68,6 +68,7 @@ class MyQWFileListener : ZQWFileLoadListener() {
                 }
                 ZFILE_QW_DOCUMENT -> {
                     listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")
+                    listArray.add("/storage/emulated/0/Pictures/WeiXin/") // 微信文件保存路径
                 }
                 else -> {
                     listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")

@@ -2,14 +2,20 @@ package com.zp.z_file.util
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.view.View
+import com.zp.z_file.R
+import com.zp.z_file.async.ZFileListAsync
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.*
-import com.zp.z_file.async.ZFileThread
 import com.zp.z_file.listener.ZFileQWFilter
 import com.zp.z_file.ui.dialog.ZFileLoadingDialog
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.channels.FileChannel
+import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -20,8 +26,8 @@ internal object ZFileUtil {
     /**
      * 获取文件
      */
-    fun getList(context: Context, bolck: MutableList<ZFileBean>?.() -> Unit) {
-        ZFileThread(context, bolck).start(getZFileConfig().filePath)
+    fun getList(context: Context, block: MutableList<ZFileBean>?.() -> Unit) {
+        ZFileListAsync(context, block).start(getZFileConfig().filePath)
     }
 
     /**
@@ -122,16 +128,16 @@ internal object ZFileUtil {
         }
         val activity = context as Activity
         val dialog = ZFileLoadingDialog(activity, "${msg}中...").run {
-            setCancelable(false)
+            setCanceledOnTouchOutside(false)
             show()
             this
         }
         thread {
             val isSuccess = when (type) {
-                COPY_TYPE -> copyFile(filePath, outPath)
-                CUT_TYPE -> cutFile(filePath, outPath)
+                COPY_TYPE -> copyFile(filePath, outPath, context)
+                CUT_TYPE -> cutFile(filePath, outPath, context)
                 DELTE_TYPE -> File(filePath).delete()
-                else -> extractFile(filePath, outPath)
+                else -> extractFile(filePath, outPath, context)
             }
             activity.runOnUiThread {
                 dialog.dismiss()
@@ -141,14 +147,25 @@ internal object ZFileUtil {
         }
     }
 
+
     /**
      * 复制文件
      */
-    private fun copyFile(sourceFile: String, targetFile: String) : Boolean {
+    private fun copyFile(sourceFile: String, targetFile: String, context: Context): Boolean {
         var success = true
         val oldFile = File(sourceFile)
-        val outFile = File(targetFile + "/" + oldFile.name)
-
+        var outFile = File("${targetFile}/${oldFile.name}")
+        if (getZFileConfig().keepDuplicate) {
+            val duplicateStr = context.getStringById(R.string.zfile_duplicate)
+            while (true) {
+                if (outFile.exists()) {
+                    ZFileLog.i("文件已存在 ---> 重命名为副本")
+                    outFile = File("${targetFile}/${duplicateStr}${outFile.name}")
+                } else {
+                    break
+                }
+            }
+        }
         var inputChannel: FileChannel? = null
         var outputChannel: FileChannel? = null
         try {
@@ -168,8 +185,8 @@ internal object ZFileUtil {
     /**
      * 剪切文件
      */
-    private fun cutFile(sourceFile: String, targetFile: String): Boolean {
-        val copySuccess = copyFile(sourceFile, targetFile)
+    private fun cutFile(sourceFile: String, targetFile: String, context: Context): Boolean {
+        val copySuccess = copyFile(sourceFile, targetFile, context)
         var delSuccess = false
         try {
             delSuccess = File(sourceFile).delete()
@@ -184,14 +201,18 @@ internal object ZFileUtil {
     /**
      * 解压文件
      */
-    private fun extractFile(zipFileName: String, outPutDir: String): Boolean {
-        var flag = true
+    private fun extractFile(zipFileName: String, outPutDir: String, context: Context): Boolean {
         var zipInputStream: ZipInputStream? = null
         val zipEntry: ZipEntry
         var outputStream: FileOutputStream? = null
         var name: String
         try {
-            zipInputStream = ZipInputStream(FileInputStream(zipFileName))
+            // 中文乱码 https://stackoverflow.com/questions/20013091/java-unzip-error-malformed
+            zipInputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                ZipInputStream(FileInputStream(zipFileName), Charset.forName("GBK"))
+            } else {
+                ZipInputStream(FileInputStream(zipFileName))
+            }
             zipEntry = zipInputStream.nextEntry
             while (zipEntry != null) {
                 name = zipEntry.name
@@ -200,7 +221,20 @@ internal object ZFileUtil {
                     val file = File(outPutDir + File.separator + name)
                     file.mkdirs()
                 } else {
-                    val file = File(outPutDir + File.separator + name)
+                    var file = File(outPutDir + File.separator + name)
+
+                    if (getZFileConfig().keepDuplicate) {
+                        val duplicateStr = context.getStringById(R.string.zfile_duplicate)
+                        while (true) {
+                            if (file.exists()) {
+                                ZFileLog.i("文件已存在 ---> 重命名为副本")
+                                file = File(outPutDir + File.separator + "${duplicateStr}${file.name}")
+                            } else {
+                                break
+                            }
+                        }
+                    }
+
                     file.createNewFile()
                     outputStream = FileOutputStream(file)
                     var ch = 0
@@ -214,8 +248,6 @@ internal object ZFileUtil {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            flag = false
-            ZFileLog.e("解压失败（目前解压只支持压缩包里只有一个文件，多个需要自己实现）")
         } finally {
             outputStream?.close()
             try {
@@ -223,7 +255,7 @@ internal object ZFileUtil {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            return flag
+            return true
         }
     }
 
@@ -270,16 +302,12 @@ internal object ZFileUtil {
             var list1: Array<File>? = null
             if (file1.exists()) {
                 list1 = file1.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-            } /*else {
-                ZFileLog.e("路径 ${filePathArray[0]} 不存在")
-            }*/
+            }
             var list2: Array<File>? = null
             val file2 = filePathArray[1].toFile()
             if (file2.exists()) {
                 list2 = file2.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-            } /*else {
-                ZFileLog.e("路径 ${filePathArray[1]} 不存在")
-            }*/
+            }
             if (!list1.isNullOrEmpty() && !list2.isNullOrEmpty()) {
                 listFiles = list1 + list2
             } else {
@@ -295,13 +323,13 @@ internal object ZFileUtil {
         listFiles?.forEach {
             if (!it.isHidden) {
                 val bean = ZFileBean(
-                        it.name,
-                        it.isFile,
-                        it.path,
-                        ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                        it.lastModified().toString(),
-                        getFileSize(it.length()),
-                        it.length()
+                    it.name,
+                    it.isFile,
+                    it.path,
+                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
+                    it.lastModified().toString(),
+                    getFileSize(it.length()),
+                    it.length()
                 )
                 list.add(bean)
             }
@@ -311,6 +339,44 @@ internal object ZFileUtil {
         }
         return list
     }
+
+    /*fun getQWFileData2(
+        type: Int,
+        filePathArray: MutableList<String>,
+        filterArray: Array<String>
+    ): MutableList<ZFileBean> {
+        val list = ArrayList<ZFileBean>()
+        val listFiles = mutableListOf<File>()
+        if (filePathArray.isNullOrEmpty().not()) {
+            if (filePathArray.isNotEmpty()) {
+                filePathArray.forEach {
+                    val toFile = it.toFile()
+                    if (toFile.exists()) {
+                        toFile.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
+                            ?.run { listFiles.addAll(this.toList()) }
+                    }
+                }
+            }
+        }
+        listFiles.forEach {
+            if (!it.isHidden) {
+                val bean = ZFileBean(
+                    it.name,
+                    it.isFile,
+                    it.path,
+                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
+                    it.lastModified().toString(),
+                    getFileSize(it.length()),
+                    it.length()
+                )
+                list.add(bean)
+            }
+        }
+        if (!list.isNullOrEmpty()) {
+            list.sortByDescending { it.originalDate }
+        }
+        return list
+    }*/
 
     fun resetAll() {
         getZFileConfig().apply {

@@ -32,9 +32,9 @@ internal class ZFileQWFilter(private var filterArray: Array<String>, private var
         val isTXT = name.accept(TXT)
         val isXML = name.accept(XML)
         val isJSON = name.accept(JSON)
-        val isDOC = name.accept(DOC)
-        val isXLS = name.accept(XLS)
-        val isPPT = name.accept(PPT)
+        val isDOC = name.accept(DOC) || name.accept(DOCX)
+        val isXLS = name.accept(XLS) || name.accept(XLSX)
+        val isPPT = name.accept(PPT) || name.accept(PPTX)
         val isPDF = name.accept(PDF)
         return !isPNG && !isJPG && !isJPEG && !isGIF && !isMP4 && !is3GP && !isTXT && !isXML &&
                 !isJSON && !isDOC && !isXLS && !isPPT && !isPDF

@@ -17,7 +17,7 @@ internal class ZFileQWAsync(
     block: MutableList<ZFileBean>?.() -> Unit
 ) : ZFileAsync(context, block) {
 
-    private var filePathArray = ArrayList<String>()
+    private var filePathArray = arrayListOf<String>()
 
     /**
      * 执行前调用 mainThread

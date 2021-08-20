@@ -5,8 +5,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcelable
+import android.provider.Settings
 import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -22,6 +26,8 @@ import kotlinx.android.synthetic.main.activity_zfile_qw.*
 
 internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener {
 
+    private var toManagerPermissionPage = false
+
     private val selectArray by lazy {
         ArrayMap<String, ZFileBean>()
     }
@@ -35,8 +41,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
     override fun init(savedInstanceState: Bundle?) {
         type = getZFileConfig().filePath!!
-        zfile_qw_toolBar.title = if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+        setBarTitle(if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件")
+        callPermission()
     }
 
     private fun initAll() {
@@ -66,7 +72,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                 selectArray.remove(item.filePath)
             }
         }
-        zfile_qw_toolBar.title = "已选中${selectArray.size}个文件"
+        setBarTitle("已选中${selectArray.size}个文件")
         isManage = true
         getMenu().isVisible = true
     }
@@ -84,7 +90,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                     }
                     isManage = false
                     getMenu().isVisible = false
-                    zfile_qw_toolBar.title = if (getZFileConfig().filePath!! == ZFileConfiguration.QQ) "QQ文件" else "微信文件"
+                    setBarTitle(if (getZFileConfig().filePath!! == ZFileConfiguration.QQ) "QQ文件" else "微信文件")
                 } else {
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
                         putParcelableArrayListExtra(ZFILE_SELECT_DATA_KEY, selectArray.toFileList() as java.util.ArrayList<out Parcelable>)
@@ -108,6 +114,37 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         getVPFragment(position)?.setManager(isManage)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (toManagerPermissionPage) {
+            toManagerPermissionPage = false
+            callPermission()
+        }
+    }
+
+    private fun callPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
+        } else {
+            val builder = AlertDialog.Builder(this)
+                .setTitle(R.string.zfile_11_title)
+                .setMessage(R.string.zfile_11_content)
+                .setCancelable(false)
+                .setPositiveButton(R.string.zfile_down) { d, _ ->
+                    toManagerPermissionPage = true
+                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    startActivity(intent)
+                    d.dismiss()
+                }
+                .setNegativeButton(R.string.zfile_cancel) { d, _ ->
+                    toast(getStringById(R.string.zfile_11_bad))
+                    d.dismiss()
+                    finish()
+                }
+            builder.show()
+        }
+    }
+
     private fun checkHasPermission() {
         val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
         if (hasPermission) {
@@ -122,8 +159,22 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initAll()
             else {
-                toast("权限申请失败")
+                toast(getStringById(R.string.zfile_permission_bad))
                 finish()
+            }
+        }
+    }
+
+    private fun setBarTitle(title: String) {
+        when (getZFileConfig().titleGravity) {
+            ZFileConfiguration.TITLE_LEFT -> {
+                zfile_qw_toolBar.title = title
+                zfile_qw_centerTitle.visibility = View.GONE
+            }
+            else -> {
+                zfile_qw_toolBar.title = ""
+                zfile_qw_centerTitle.visibility = View.VISIBLE
+                zfile_qw_centerTitle.text = title
             }
         }
     }
@@ -135,7 +186,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         ZFileUtil.resetAll()
     }
 
-    class ZFileQWAdapter(
+    private class ZFileQWAdapter(
         type: String,
         isManger: Boolean,
         context: Context,

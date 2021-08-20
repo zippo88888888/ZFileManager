@@ -5,13 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.zp.z_file.async.ZFileAsyncImpl
+import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.content.*
 import com.zp.z_file.dsl.result
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.diy.MyQWFileListener
+import com.zp.zfile_manager.diy.SunActivity
 import kotlinx.android.synthetic.main.activity_super.*
 
 class SuperActivity : AppCompatActivity() {
@@ -44,7 +44,7 @@ class SuperActivity : AppCompatActivity() {
         }
 
         super_wpsTxt.setOnClickListener {
-            showDialog(arrayOf(DOC, XLS, PPT, PDF))
+            showDialog(arrayOf(DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF))
         }
 
         super_apkTxt.setOnClickListener {
@@ -61,6 +61,7 @@ class SuperActivity : AppCompatActivity() {
 
         super_otherTxt.setOnClickListener {
             Toast.makeText(this, "我只是一个占位格，好看的", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SunActivity::class.java))
         }
 
         super_group.setOnCheckedChangeListener { _, checkedId ->
@@ -106,7 +107,7 @@ class SuperActivity : AppCompatActivity() {
 
     private fun showDialog(filterArray: Array<String>) {
         dialog?.show()
-        ZFileAsyncImpl(this) {
+        ZFileStipulateAsync(this) {
             dialog?.dismiss()
             if (isNullOrEmpty()) {
                 Toast.makeText(this@SuperActivity, "暂无数据", Toast.LENGTH_SHORT).show()

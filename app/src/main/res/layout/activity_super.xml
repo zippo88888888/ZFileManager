@@ -20,6 +20,14 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="#B6B6C4"
+            android:text="* 基于本库的一个小扩展"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +47,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="图片" />
+                    android:text="图片 *" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -53,7 +61,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="视频" />
+                    android:text="视频 *" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -67,7 +75,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="音频" />
+                    android:text="音频 *" />
 
             </LinearLayout>
 
@@ -88,7 +96,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="文档" />
+                    android:text="文档 *" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -102,7 +110,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="WPS" />
+                    android:text="WPS *" />
 
                 <View
                     android:layout_width="0.5dp"
@@ -116,7 +124,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="APK" />
+                    android:text="APK *" />
 
             </LinearLayout>
 
@@ -165,7 +173,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="占位格" />
+                    android:text="占位格 *" />
 
             </LinearLayout>
 
@@ -183,6 +191,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:textSize="12sp"
                 android:text="QQ-WeChat默认"/>
 
             <Space
@@ -193,7 +202,8 @@
                 android:id="@+id/super_diyRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="QQ-WeChat自定义"/>
+                android:textSize="12sp"
+                android:text="QQ-WeChat自定义获取文件"/>
 
         </RadioGroup>
 
@@ -209,7 +219,7 @@
                 android:id="@+id/super_innerTxt"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="内部存储"
+                android:text="简单模拟内部存储"
                 android:gravity="center"
                 android:textColor="#000000"
                 android:background="?selectableItemBackground"/>

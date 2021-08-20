@@ -5,12 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
+import com.zp.z_file.async.ZFileAsync
+import com.zp.z_file.common.ZFileManageHelp
 import com.zp.z_file.content.ZFileBean
+import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileHelp
+import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.fileType
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.R
+import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.diy.MyFileTypeListener
 import kotlinx.android.synthetic.main.activity_dsl.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
@@ -34,8 +39,8 @@ class DslActivity : AppCompatActivity() {
 
     private fun dsl() {
         zfile {
-            fileType {
-                MyDslFileTypeListener()
+            config {
+                Content.CONFIG
             }
             result {
                 setResultData(this)
@@ -60,8 +65,6 @@ class DslActivity : AppCompatActivity() {
         }
         anim = null
         super.onDestroy()
-        // 该页面演示结束后保证其他页面不受影响
-        getZFileHelp().setFileTypeListener(MyFileTypeListener())
     }
 
     private fun getAnim() = ObjectAnimator.ofFloat(dsl_dslTxt, "rotation", 0f, 360f).run {

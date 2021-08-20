@@ -11,8 +11,8 @@ internal object ZFileOtherUtil {
     /**
      * 时间戳格式化
      */
-    fun getFormatFileDate(seconds: Long) =
-        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).run { format(Date(seconds)) }!!
+    fun getFormatFileDate(seconds: Long): String =
+        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).run { format(Date(seconds)) }
 
     /** int类型转时分秒格式 */
     fun secToTime(time: Int): String {
@@ -25,13 +25,13 @@ internal object ZFileOtherUtil {
             minute = time / 60
             if (minute < 60) {
                 second = time % 60
-                timeStr = unitFormat(minute) + ":" + unitFormat(second)
+                timeStr = "${unitFormat(minute)}:${unitFormat(second)}"
             } else {
                 hour = minute / 60
                 if (hour > 99) return "99:59:59"
                 minute %= 60
                 second = time - hour * 3600 - minute * 60
-                timeStr = unitFormat(hour) + ":" + unitFormat(minute) + ":" + unitFormat(second)
+                timeStr = "${unitFormat(hour)}:${unitFormat(minute)}:${unitFormat(second)}"
             }
         }
         return timeStr

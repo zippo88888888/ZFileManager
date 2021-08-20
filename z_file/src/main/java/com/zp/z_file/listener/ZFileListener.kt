@@ -53,6 +53,7 @@ interface ZFileSelectResultListener {
 
     fun selectResult(selectList: MutableList<ZFileBean>?)
 
+
 }
 
 /**
@@ -115,9 +116,9 @@ open class ZFileTypeListener {
             MP4, _3GP -> VideoType()
             TXT, XML, JSON -> TxtType()
             ZIP -> ZipType()
-            DOC -> WordType()
-            XLS -> XlsType()
-            PPT -> PptType()
+            DOC, DOCX -> WordType()
+            XLS, XLSX -> XlsType()
+            PPT, PPTX -> PptType()
             PDF -> PdfType()
             else -> OtherType()
         }
@@ -256,7 +257,7 @@ open class ZFileOperateListener {
     ) {
         (context as? AppCompatActivity)?.let {
             it.checkFragmentByTag("ZFileRenameDialog")
-            ZFileRenameDialog().apply {
+            ZFileRenameDialog.newInstance(filePath.getFileNameOnly()).apply {
                 reanameDown = {
                     renameFile(filePath, this, context, block)
                 }

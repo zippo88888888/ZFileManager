@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.2.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -9,9 +9,8 @@
 ### 3. 支持查看指定文件类型，支持文件类型拓展
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
 ### 5. 支持QQ、微信文件选择（支持自定义获取）
-### 6. 高度可定制化，支持AndroidX、DSL，兼容Java
+### 6. 高度可定制化，支持Android 10++、AndroidX、DSL，兼容Java
 
-> #### 下个版本将 兼容 Android 11
 
 ### 部分截图
 <div align="center">
@@ -24,11 +23,19 @@
 ## 基本使用 （[Java使用](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/JavaSampleActivity.java)）
 
 > ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
+> ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
+> ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
 
 #### Step 0. 添加依赖
+
+#### [z_file_1_3_0_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_0.aar)
+
 ```groovy
 
-    implementation 'com.github.zp:z_file:1.2.6'
+    // Android 10+ 以上  暂时只提供 aar， maven 上传太难搞了，但后续肯定会提供的，先aar使用
+
+    // Android 10 及以下版本使用
+    implementation 'com.github.zp:z_file:1.2.6' 
 
     如果报错加上
     
@@ -69,16 +76,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
-            // 打开文件管理 
+            // DSL 方式
+            zfile { 
+                result {
+                    setFileListData(this)
+                }
+            }
+            // 普通 方式 
             getZFileHelp()
                 .result(this) {
-                    val sb = StringBuilder()
-                    this?.forEach {
-                        sb.append(it).append("\n\n")
-                    }
-                    main_resultTxt.text = sb.toString()
+                     setFileListData(this)
                 }
         }
+    }
+    
+    private fun setFileListData(fileList: MutableList<ZFileBean>?) {
+        val sb = StringBuilder()
+        fileList?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        main_resultTxt.text = sb.toString()
     }
 
 }
@@ -610,7 +627,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
-[![Travis](https://img.shields.io/badge/ZFile-1.2.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

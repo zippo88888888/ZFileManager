@@ -12,10 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/zfile_base_color"
-        app:navigationIcon="@drawable/zfile_back"
+        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
-        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle" />
+        app:navigationIcon="@drawable/zfile_back">
+
+        <TextView
+            style="@style/Base.DialogWindowTitle.AppCompat"
+            android:id="@+id/zfile_qw_centerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/zfile_white"
+            android:textSize="18sp"
+            android:visibility="gone"
+            tools:text="@string/zfile_title" />
+
+    </androidx.appcompat.widget.Toolbar>
+
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/zfile_qw_tabLayout"

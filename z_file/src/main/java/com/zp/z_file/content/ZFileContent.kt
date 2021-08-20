@@ -20,8 +20,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zp.z_file.R
+import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.dsl.zfile
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -39,11 +41,17 @@ const val _3GP = "3gp"
 const val TXT = "txt"
 const val XML = "xml"
 const val JSON = "json"
-const val DOC = "docx"
-const val XLS = "xlsx"
-const val PPT = "pptx"
+const val DOC = "doc"
+const val DOCX = "docx"
+const val XLS = "xls"
+const val XLSX = "xlsx"
+const val PPT = "ppt"
+const val PPTX = "pptx"
 const val PDF = "pdf"
 const val ZIP = "zip"
+
+/** 默认资源 */
+const val ZFILE_DEFAULT = -1
 
 /** 图片 */
 const val ZFILE_QW_PIC = 0
@@ -54,8 +62,6 @@ const val ZFILE_QW_DOCUMENT = 2
 /** 其他 */
 const val ZFILE_QW_OTHER = 3
 
-/** 默认资源 */
-const val ZFILE_DEFAULT = -1
 /** onActivityResult requestCode */
 const val ZFILE_REQUEST_CODE = 0x1000
 /** onActivityResult resultCode */
@@ -69,7 +75,10 @@ const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
 
+@Deprecated("请使用ZFileStipulateAsync替代")
+typealias ZFileAsyncImpl = ZFileStipulateAsync
 
+// 下面属性、方法暂不对外开放 =======================================================================
 
 internal const val COPY_TYPE = 0x2001
 internal const val CUT_TYPE = 0x2002
@@ -81,7 +90,7 @@ internal const val FOLDER = 1
 
 internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
 internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
-// 保存的文档（未保存到手机的图片和视频也在这个位置，感觉QQ的文件乱糟糟的）
+// 保存的文档（未保存到手机的图片和视频也在这个位置）
 internal const val QQ_DOWLOAD1 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/"
 internal const val QQ_DOWLOAD2 = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
 
@@ -166,25 +175,16 @@ internal fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     context.toast(msg, duration)
 }
 internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, msg, duration).show()
+    Toast.makeText(applicationContext, msg, duration).show()
 }
 internal fun Int.getFilterArray() = when (this) {
     ZFILE_QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
     ZFILE_QW_MEDIA -> arrayOf(MP4, _3GP)
-    ZFILE_QW_DOCUMENT -> arrayOf(TXT, JSON, XML, DOC, XLS, PPT, PDF)
+    ZFILE_QW_DOCUMENT -> arrayOf(TXT, JSON, XML, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF)
     else -> arrayOf("")
 }
-internal fun Any.getContext(): Context? = when (this) {
-    is Activity -> this
-    is Fragment -> context
-    is Application -> applicationContext
-    is ContentProvider -> context
-    else -> null
-}
-fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
-fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
-fun Context.px2dipF(pxValue: Float) = pxValue / resources.displayMetrics.density + 0.5f
-fun Context.px2dip(pxValue: Float) = px2dipF(pxValue).toInt()
+internal fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
+internal fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
 internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
 internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
 internal fun <E> Set<E>.indexOf(value: String): Boolean {
@@ -204,7 +204,12 @@ internal fun String.getFileType() = this.run {
 internal fun String.accept(type: String) =
     this.endsWith(type.toLowerCase(Locale.CHINA)) || this.endsWith(type.toUpperCase(Locale.CHINA))
 internal fun String.getFileName() = File(this).name
+internal fun String.getFileNameOnly() = getFileName().run {
+    substring(0, lastIndexOf("."))
+}
 internal fun String.toFile() = File(this)
+internal fun String?.isNull() =
+    if (this == null || this.isNullOrEmpty()) true else this.replace(" ".toRegex(), "").isEmpty()
 internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.fileName
     filePath = this@toPathBean.filePath
@@ -220,6 +225,9 @@ internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
         list.add(v)
     }
     return list
+}
+internal fun throwError(title: String) {
+    throw IllegalArgumentException("ZFileConfiguration $title error")
 }
 /** SD卡的根目录  */
 internal val SD_ROOT: String

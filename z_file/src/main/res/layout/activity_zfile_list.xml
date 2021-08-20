@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.ZFileListActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/zfile_list_toolBar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/zfile_base_color"
-        app:title="文件管理"
         app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
-        app:navigationIcon="@drawable/zfile_back"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:navigationIcon="@drawable/zfile_back">
+
+        <TextView
+            style="@style/Base.DialogWindowTitle.AppCompat"
+            android:id="@+id/zfile_list_centerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/zfile_white"
+            android:textSize="18sp"
+            android:visibility="gone"
+            tools:text="@string/zfile_title" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/zfile_list_pathRecyclerView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/zfile_default_divider_padding"
-        android:layout_marginEnd="@dimen/zfile_default_divider_padding"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/zfile_list_toolBar" />
+        android:layout_marginEnd="@dimen/zfile_default_divider_padding" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/zfile_list_refreshLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/zfile_list_pathRecyclerView">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -69,4 +72,4 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
