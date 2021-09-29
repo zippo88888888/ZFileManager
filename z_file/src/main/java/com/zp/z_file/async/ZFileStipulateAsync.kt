@@ -6,9 +6,6 @@ import android.provider.MediaStore
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOtherUtil
-import com.zp.z_file.util.ZFileUtil
-import java.lang.Exception
-import java.lang.StringBuilder
 
 /**
  * 根据特定条件 获取文件
@@ -62,7 +59,7 @@ open class ZFileStipulateAsync(
                             cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE))
                     val date =
                             cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATE_MODIFIED))
-                    val fileSize = ZFileUtil.getFileSize(size)
+                    val fileSize = ZFileOtherUtil.getFileSize(size)
                     val lastModified = ZFileOtherUtil.getFormatFileDate(date * 1000)
                     if (size > 0.0) {
                         val name = path.substring(path.lastIndexOf("/") + 1, path.length)

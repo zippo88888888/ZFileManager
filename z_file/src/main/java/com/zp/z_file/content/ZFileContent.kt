@@ -1,8 +1,6 @@
 package com.zp.z_file.content
 
 import android.app.Activity
-import android.app.Application
-import android.content.ContentProvider
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -23,7 +21,6 @@ import com.zp.z_file.R
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
-import com.zp.z_file.dsl.zfile
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -59,7 +56,7 @@ const val ZFILE_QW_PIC = 0
 const val ZFILE_QW_MEDIA = 1
 /** 文档 */
 const val ZFILE_QW_DOCUMENT = 2
-/** 其他 */
+/** 其他 (过滤规则可以使用 "" 代替) */
 const val ZFILE_QW_OTHER = 3
 
 /** onActivityResult requestCode */
@@ -79,6 +76,8 @@ fun getZFileConfig() = getZFileHelp().getConfiguration()
 typealias ZFileAsyncImpl = ZFileStipulateAsync
 
 // 下面属性、方法暂不对外开放 =======================================================================
+
+internal const val QW_SIZE = 4
 
 internal const val COPY_TYPE = 0x2001
 internal const val CUT_TYPE = 0x2002
@@ -161,10 +160,10 @@ internal fun ZFileManageDialog.setNeedWH() {
     dialog?.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 internal fun SwipeRefreshLayout.property(
-    block: () -> Unit,
     color: Int = R.color.zfile_base_color,
     scale: Boolean = false,
-    height: Int = 0
+    height: Int = 0,
+    block: () -> Unit
 ): SwipeRefreshLayout {
     setColorSchemeColors(context.getColorById(color))
     if (scale) setProgressViewEndTarget(scale, height)
@@ -227,9 +226,8 @@ internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
     return list
 }
 internal fun throwError(title: String) {
-    throw IllegalArgumentException("ZFileConfiguration $title error")
+    ZFileException.throwConfigurationError(title)
 }
-/** SD卡的根目录  */
 internal val SD_ROOT: String
     get() {
         return Environment.getExternalStorageDirectory().path

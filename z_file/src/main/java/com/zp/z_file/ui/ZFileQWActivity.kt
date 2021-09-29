@@ -21,6 +21,7 @@ import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
 import com.zp.z_file.util.ZFilePermissionUtil
+import com.zp.z_file.util.ZFileQWUtil
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.activity_zfile_qw.*
 
@@ -195,12 +196,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
         var list = ArrayList<Fragment>()
         private val titles by lazy {
-            arrayOf(
-                    context.getStringById(R.string.zfile_pic),
-                    context.getStringById(R.string.zfile_video),
-                    context.getStringById(R.string.zfile_txt),
-                    context.getStringById(R.string.zfile_other)
-            )
+            ZFileQWUtil.getQWTitle(context)
         }
 
         init {
@@ -216,9 +212,14 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
         override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
 
-        override fun getPageTitle(position: Int): String? =
-                getZFileHelp().getQWFileLoadListener()?.getTitles()?.get(position) ?: titles[position]
-
+        override fun getPageTitle(position: Int): String? {
+            val list = getZFileHelp().getQWFileLoadListener()?.getTitles() ?: titles
+            if (list.size != QW_SIZE) {
+                throw ZFileException("ZQWFileLoadListener.getTitles() size must be $QW_SIZE")
+            } else {
+               return list[position]
+            }
+        }
     }
 
 }

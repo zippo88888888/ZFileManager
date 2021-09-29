@@ -8,7 +8,6 @@ import com.zp.z_file.R
 import com.zp.z_file.async.ZFileListAsync
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.*
-import com.zp.z_file.listener.ZFileQWFilter
 import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import java.io.File
 import java.io.FileInputStream
@@ -258,125 +257,6 @@ internal object ZFileUtil {
             return true
         }
     }
-
-    /**
-     * 获取文件大小
-     */
-    fun getFileSize(fileS: Long): String {
-        val df = DecimalFormat("#.00")
-        val byte_size = java.lang.Double.valueOf(df.format(fileS.toDouble()))
-        if (byte_size < 1024) {
-            return "$byte_size B"
-        }
-        val kb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1024))
-        if (kb_size < 1024) {
-            return "$kb_size KB"
-        }
-        val mb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1048576))
-        if (mb_size < 1024) {
-            return "$mb_size MB"
-        }
-        val gb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1073741824))
-        if (gb_size < 1024) {
-            return "$gb_size GB"
-        }
-        return ">1TB"
-    }
-
-    /**
-     * 获取QQ微信文件
-     * @param type              文件类型
-     * @param filePathArray     路径
-     * @param filterArray       过滤规则
-     */
-    fun getQWFileData(type: Int, filePathArray: MutableList<String>, filterArray: Array<String>): MutableList<ZFileBean> {
-        val list = ArrayList<ZFileBean>()
-        var listFiles: Array<File>? = null
-        if (filePathArray.size <= 1) {
-            val file = filePathArray[0].toFile()
-            if (file.exists()) {
-                listFiles = file.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-            }
-        } else {
-            val file1 = filePathArray[0].toFile()
-            var list1: Array<File>? = null
-            if (file1.exists()) {
-                list1 = file1.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-            }
-            var list2: Array<File>? = null
-            val file2 = filePathArray[1].toFile()
-            if (file2.exists()) {
-                list2 = file2.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-            }
-            if (!list1.isNullOrEmpty() && !list2.isNullOrEmpty()) {
-                listFiles = list1 + list2
-            } else {
-                if (!list1.isNullOrEmpty()) {
-                    listFiles = list1
-                }
-                if (!list2.isNullOrEmpty()) {
-                    listFiles = list2
-                }
-            }
-        }
-
-        listFiles?.forEach {
-            if (!it.isHidden) {
-                val bean = ZFileBean(
-                    it.name,
-                    it.isFile,
-                    it.path,
-                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                    it.lastModified().toString(),
-                    getFileSize(it.length()),
-                    it.length()
-                )
-                list.add(bean)
-            }
-        }
-        if (!list.isNullOrEmpty()) {
-            list.sortByDescending { it.originalDate }
-        }
-        return list
-    }
-
-    /*fun getQWFileData2(
-        type: Int,
-        filePathArray: MutableList<String>,
-        filterArray: Array<String>
-    ): MutableList<ZFileBean> {
-        val list = ArrayList<ZFileBean>()
-        val listFiles = mutableListOf<File>()
-        if (filePathArray.isNullOrEmpty().not()) {
-            if (filePathArray.isNotEmpty()) {
-                filePathArray.forEach {
-                    val toFile = it.toFile()
-                    if (toFile.exists()) {
-                        toFile.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
-                            ?.run { listFiles.addAll(this.toList()) }
-                    }
-                }
-            }
-        }
-        listFiles.forEach {
-            if (!it.isHidden) {
-                val bean = ZFileBean(
-                    it.name,
-                    it.isFile,
-                    it.path,
-                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                    it.lastModified().toString(),
-                    getFileSize(it.length()),
-                    it.length()
-                )
-                list.add(bean)
-            }
-        }
-        if (!list.isNullOrEmpty()) {
-            list.sortByDescending { it.originalDate }
-        }
-        return list
-    }*/
 
     fun resetAll() {
         getZFileConfig().apply {

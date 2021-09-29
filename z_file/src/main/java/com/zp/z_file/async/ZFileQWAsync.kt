@@ -2,7 +2,7 @@ package com.zp.z_file.async
 
 import android.content.Context
 import com.zp.z_file.content.*
-import com.zp.z_file.util.ZFileUtil
+import com.zp.z_file.util.ZFileQWUtil
 
 /**
  * 获取 QQ 或 WeChat 文件 （QQ WeChat ---> QW）
@@ -24,7 +24,13 @@ internal class ZFileQWAsync(
      */
     override fun onPreExecute() {
         val loadListener = getZFileHelp().getQWFileLoadListener()
-        val list = loadListener?.getQWFilePathArray(fileType, type) ?: getQWFilePathArray()
+        val array = loadListener?.getQWFilePathArray(fileType, type)
+        val list: MutableList<String>
+        list = if (array.isNullOrEmpty()) {
+            getQWFilePathArray()
+        } else {
+            array
+        }
         filePathArray.addAll(list)
     }
 
@@ -35,7 +41,7 @@ internal class ZFileQWAsync(
     override fun doingWork(filterArray: Array<String>): MutableList<ZFileBean> {
         val loadListener = getZFileHelp().getQWFileLoadListener()
         return loadListener?.getQWFileDatas(type, filePathArray, filterArray)
-                ?: ZFileUtil.getQWFileData(type, filePathArray, filterArray)
+                ?: ZFileQWUtil.getQWFileData(type, filePathArray, filterArray)
     }
 
     /**
@@ -48,27 +54,10 @@ internal class ZFileQWAsync(
     /**
      * 获取 QQ 或 WeChat 文件路径
      */
-    private fun getQWFilePathArray(): MutableList<String> {
-        val listArray = arrayListOf<String>()
-        if (fileType == ZFileConfiguration.QQ) {
-            when (type) {
-                ZFILE_QW_PIC -> {
-                    listArray.add(QQ_PIC)
-                    listArray.add(QQ_PIC_MOVIE)
-                }
-                ZFILE_QW_MEDIA -> listArray.add(QQ_PIC_MOVIE)
-                else -> {
-                    listArray.add(QQ_DOWLOAD1)
-                    listArray.add(QQ_DOWLOAD2)
-                }
-            }
-        } else {
-            when (type) {
-                ZFILE_QW_PIC, ZFILE_QW_MEDIA -> listArray.add(WECHAT_FILE_PATH + WECHAT_PHOTO_VIDEO)
-                else -> listArray.add(WECHAT_FILE_PATH + WECHAT_DOWLOAD)
-            }
-        }
-        return listArray
+    private fun getQWFilePathArray() = if (fileType == ZFileConfiguration.QQ) {
+        ZFileQWUtil.getQQFilePathMap()[type]!!
+    } else {
+        ZFileQWUtil.getWechatFilePathMap()[type]!!
     }
 
 }

@@ -3,10 +3,35 @@ package com.zp.z_file.util
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import com.zp.z_file.content.ZFileInfoBean
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 internal object ZFileOtherUtil {
+
+    /**
+     * 获取文件大小
+     */
+    fun getFileSize(fileS: Long): String {
+        val df = DecimalFormat("#.00")
+        val byte_size = java.lang.Double.valueOf(df.format(fileS.toDouble()))
+        if (byte_size < 1024) {
+            return "$byte_size B"
+        }
+        val kb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1024))
+        if (kb_size < 1024) {
+            return "$kb_size KB"
+        }
+        val mb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1048576))
+        if (mb_size < 1024) {
+            return "$mb_size MB"
+        }
+        val gb_size = java.lang.Double.valueOf(df.format(fileS.toDouble() / 1073741824))
+        if (gb_size < 1024) {
+            return "$gb_size GB"
+        }
+        return ">1TB"
+    }
 
     /**
      * 时间戳格式化

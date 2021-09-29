@@ -57,7 +57,7 @@ interface ZFileSelectResultListener {
 }
 
 /**
- * 获取文件数据
+ * 完全自定义 获取文件数据
  */
 interface ZFileLoadListener {
 
@@ -70,7 +70,7 @@ interface ZFileLoadListener {
 }
 
 /**
- * QQ 或 WeChat 获取
+ * 完全自定义 QQ、WeChat 获取
  */
 abstract class ZQWFileLoadListener {
 
@@ -240,7 +240,7 @@ open class ZFileOpenListener {
 }
 
 /**
- * 文件操作
+ * 文件操作，耗时的文件操作建议放在 非 UI线程中
  */
 open class ZFileOperateListener {
 

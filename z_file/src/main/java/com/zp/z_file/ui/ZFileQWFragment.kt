@@ -8,6 +8,7 @@ import com.zp.z_file.async.ZFileQWAsync
 import com.zp.z_file.common.ZFileFragment
 import com.zp.z_file.content.*
 import com.zp.z_file.ui.adapter.ZFileListAdapter
+import com.zp.z_file.util.ZFileQWUtil
 import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.fragment_zfile_qw.*
 
@@ -49,8 +50,7 @@ internal class ZFileQWFragment : ZFileFragment() {
         zfile_qw_bar.visibility = View.VISIBLE
 
         val qwFileLoadListener = getZFileHelp().getQWFileLoadListener()
-        val filterArray = qwFileLoadListener?.getFilterArray(type) ?: type.getFilterArray()
-
+        val filterArray = qwFileLoadListener?.getFilterArray(type) ?: ZFileQWUtil.getQWFilterMap()[type]!!
         ZFileQWAsync(qwFileType, type, context!!) {
             zfile_qw_bar.visibility = View.GONE
             if (isNullOrEmpty()) {

@@ -2,10 +2,7 @@ package com.zp.z_file.listener
 
 import android.content.Context
 import com.zp.z_file.content.*
-import com.zp.z_file.content.SD_ROOT
-import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.util.ZFileOtherUtil
-import com.zp.z_file.util.ZFileUtil
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -38,7 +35,7 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                         it.path,
                         ZFileOtherUtil.getFormatFileDate(it.lastModified()) ?: "未知时间",
                         it.lastModified().toString(),
-                        ZFileUtil.getFileSize(it.length()),
+                        ZFileOtherUtil.getFileSize(it.length()),
                         it.length(),
                         it.parent
                 )
@@ -51,7 +48,7 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                             it.path,
                             ZFileOtherUtil.getFormatFileDate(it.lastModified()) ?: "未知时间",
                             it.lastModified().toString(),
-                            ZFileUtil.getFileSize(it.length()),
+                            ZFileOtherUtil.getFileSize(it.length()),
                             it.length(),
                             it.parent
                     )

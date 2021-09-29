@@ -31,7 +31,7 @@ fun ZFileDsl.fileLoade(block: () -> ZFileLoadListener) {
 }
 
 /**
- * 设置 [ZQWFileLoadListener] 配置  自定义 QQ or WeChat 文件获取
+ * 设置 [ZQWFileLoadListener] 配置 自定义 QQ or WeChat 文件获取
  */
 fun ZFileDsl.qwLoade(block: () -> ZQWFileLoadListener) {
     setQwLoad(block)
@@ -85,7 +85,7 @@ internal fun zfile(fragmentOrActivity: Any, block: ZFileDsl.() -> Unit) {
     block.invoke(zFileDsl)
 }
 
-class ZFileDsl(private var fragmentOrActivity: Any) {
+class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
 
     internal fun setImageLoade(initBlock: () -> ZFileImageListener) {
         getZFileHelp().init(initBlock())

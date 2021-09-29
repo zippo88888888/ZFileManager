@@ -8,7 +8,7 @@ internal class ZFileQWFilter(private var filterArray: Array<String>, private var
     FileFilter {
 
     override fun accept(file: File): Boolean {
-        if (isOther) {
+        /*if (isOther) {
             if (acceptOther(file.name)) {
                 return true
             }
@@ -18,25 +18,32 @@ internal class ZFileQWFilter(private var filterArray: Array<String>, private var
                     return true
                 }
             }
+        }*/
+        filterArray.forEach {
+            if (it.isNull()) {
+                if (acceptOther(file.name)) {
+                    return true
+                }
+            } else {
+                if (file.name.accept(it)) {
+                    return true
+                }
+            }
         }
         return false
     }
 
+    // 匹配其他文件类型
     private fun acceptOther(name: String): Boolean {
-        val isPNG = name.accept(PNG)
-        val isJPG = name.accept(JPG)
-        val isJPEG = name.accept(JPEG)
-        val isGIF = name.accept(GIF)
-        val isMP4 = name.accept(MP4)
-        val is3GP = name.accept(_3GP)
-        val isTXT = name.accept(TXT)
-        val isXML = name.accept(XML)
-        val isJSON = name.accept(JSON)
+        val isImage = name.accept(PNG) || name.accept(JPG) || name.accept(JPEG) || name.accept(GIF)
+        val isVideo = name.accept(MP4) || name.accept(_3GP)
+        val isAudio = name.accept(MP3) || name.accept(AAC) || name.accept(WAV)
+        val isTxt = name.accept(TXT) || name.accept(XML) || name.accept(JSON)
         val isDOC = name.accept(DOC) || name.accept(DOCX)
         val isXLS = name.accept(XLS) || name.accept(XLSX)
         val isPPT = name.accept(PPT) || name.accept(PPTX)
         val isPDF = name.accept(PDF)
-        return !isPNG && !isJPG && !isJPEG && !isGIF && !isMP4 && !is3GP && !isTXT && !isXML &&
-                !isJSON && !isDOC && !isXLS && !isPPT && !isPDF
+        val isZIP = name.accept(ZIP)
+        return !isImage && !isVideo && !isAudio && !isTxt && !isDOC && !isXLS && !isPPT && !isPDF && !isZIP
     }
 }

@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.3.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -26,9 +26,10 @@
 > ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
 > ##### 温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"
 
+
 #### Step 0. 添加依赖
 
-#### [z_file_1_3_0_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_0.aar)
+#### [z_file_1_3_1_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_1.aar)
 
 ```groovy
 
@@ -108,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
 ### 文件类型拓展
 
-#### Step 1. 新建一个类：ZFileType，重写里面的openFile()、loadingFile()方法 
+#### Step 0. 新建一个类：ZFileType，重写 openFile()、loadingFile()方法
 
 ```kotlin
 
@@ -142,7 +143,7 @@ class ApkType : ZFileType() {
 
 ```
 
-#### Step 2. 新建一个类：ZFileTypeListener，重写里面的getFileType()方法 （有多个自定义类型，公用即可）
+#### Step 1. 新建一个类：ZFileTypeListener，重写 getFileType()方法 （有多个自定义类型，公用即可）
 ```kotlin
 
 class MyFileTypeListener : ZFileTypeListener() {
@@ -156,7 +157,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 
 ```
 
-#### Step 3. 在调用前或Application中配置
+#### Step 2. 在调用前或Application中配置
 
 ```kotlin
 getZFileHelp().setFileTypeListener(MyFileTypeListener())
@@ -271,30 +272,24 @@ class MainActivity : AppCompatActivity() {
 
 ##### 搞定，是不是很简单 ^_^
 
-> ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你这个QQ、微信文件根本不能获取，你界面上的图片太丑了，打开文件你全部都是调用系统方式打开的(作者你个渣渣)，我只想选择文件，不想要长按事件，文件操作我怎么用都感觉不正确，还有长按事件弹出的功能有些不是我想要的...
-> ###### 扶我起来，我要搞死杠精 
+> ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你这个QQ、微信文件根本不能获取，你界面上的图片太low了，打开文件你全部都是调用系统方式打开的(作者你个渣渣)，我只想选择文件，不想要长按事件，文件操作我怎么用都感觉不正确，还有长按事件弹出的功能有些不是我想要的...
+> ###### 扶我起来，我要搞死杠精
+
+#
 
 #### 自定义文件获取
+> ##### 注意：此方式排序、是否显示隐藏文件、过滤规则等等操作都需要自己实现
+> ##### Kotlin 获取配置信息：getZFileConfig()
+> ##### Java 获取配置信息：ZFileManageHelp.getInstance().getConfiguration()
 ```kotlin
 
-/**
- * 获取文件
- * 此方式，排序、是否显示隐藏文件、过滤规则等等操作都需要自己实现
- * Kotlin 获取配置信息：getZFileConfig()
- * Java 获取配置信息：ZFileManageHelp.getInstance().getConfiguration()
- */
 class MyFileLoadListener : ZFileLoadListener {
 
-    /**
-     * 获取手机里的文件List
-     * @param filePath String?          指定的文件目录访问，空为SD卡根目录
-     * @return MutableList<ZFileBean>?  list
-     */
     override fun getFileList(context: Context?, filePath: String?) =
         getFileList(context, filePath)
 
     private fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean> {
-         
+         // 实现
     }
 }
 
@@ -305,137 +300,65 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
 ```
 
 #### 自定义QQ、微信文件获取
+
+> ##### 通过简单配置 即可实现 绝大部分 的需求，推荐下面的方式！如果此方式依旧无法符合你的需求！请自定义实现，[点击查看](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/diy/MyQWFileListener.kt)
+
 ```kotlin
 
-class MyQWFileListener : ZQWFileLoadListener() {
-
-    /**
-     * 获取标题
-     * @return Array<String>
-     */
-    override fun getTitles(): Array<String>? {
-        return arrayOf("图片", "媒体", "文档", "其他")
-    }
-
-    /**
-     * 获取过滤规则
-     * @param fileType Int      文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
-     */
-    override fun getFilterArray(fileType: Int): Array<String> {
-        return when (fileType) {
-            ZFILE_QW_PIC -> arrayOf(PNG, JPG, JPEG, "gif")
-            ZFILE_QW_MEDIA -> arrayOf(MP4, "3gp", "mp3")
-            ZFILE_QW_DOCUMENT -> arrayOf(PDF, PPT, DOC, XLS)
-            else -> arrayOf(TXT, JSON, XML, ZIP, "rar")
-        }
-    }
-
-    /**
-     * 获取 QQ 或 WeChat 文件路径
-     * @param qwType String         QQ 或 WeChat  see [ZFileConfiguration.QQ] [ZFileConfiguration.WECHAT]
-     * @param fileType Int          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
-     * @return MutableList<String>  文件路径集合（因为QQ或WeChat保存的文件可能存在多个路径）
-     */
-    override fun getQWFilePathArray(qwType: String, fileType: Int): MutableList<String> {
-        val listArray = arrayListOf<String>()
-        if (qwType == ZFileConfiguration.QQ) { // QQ
-            when (fileType) {
-                ZFILE_QW_PIC -> { 
-                    listArray.add("/storage/emulated/0/tencent/QQ_Images/")
-                    listArray.add("/storage/emulated/0/Pictures/") // QQ文件保存路径1，仅做演示
-                    listArray.add("/storage/emulated/0/DCIM/") // QQ文件保存路径2，仅做演示
-                    listArray.add("/storage/emulated/0/Pictures/QQ/")
-                }
-                ZFILE_QW_MEDIA -> {
-                    listArray.add("/storage/emulated/0/Pictures/QQ/")
-                }
-                ZFILE_QW_DOCUMENT -> {
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
-                }
-                else -> {
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
-                }
+       // 配置 标题
+       val TITLES: Array<String>
+            get() {
+                return arrayOf("Image", "Video", "WD", "Other")
             }
-        } else { // WeChat
-            when (fileType) {
-                ZFILE_QW_PIC -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/")
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin23/") // 微信文件保存路径1，仅做演示
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin233/") // 微信文件保存路径2，仅做演示
-                }
-                ZFILE_QW_MEDIA -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/")
-                    listArray.add("/storage/emulated/0/Pictures/WeiXin/") // 微信文件保存路径
-                }
-                ZFILE_QW_DOCUMENT -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")
-                }
-                else -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")
-                }
+    
+       // 配置 过滤规则
+       val FILTER: ArrayMap<Int, Array<String>>
+           get() {
+               val map = ArrayMap<Int, Array<String>>()
+               map[ZFILE_QW_PIC] = arrayOf(PNG, JPEG, JPG, GIF)
+               map[ZFILE_QW_MEDIA] = arrayOf(MP4, _3GP, "rmvb", "mp3", "aac")
+               map[ZFILE_QW_DOCUMENT] = arrayOf(TXT, JSON, XML, DOC,  XLS,  PPT,  PDF)
+               map[ZFILE_QW_OTHER] = arrayOf("") // 空表示 其他文件类型
+               return map
+           }
+   
+       // 配置 QQ 的 路径，微信同理
+       val QQ_MAP: ArrayMap<Int, MutableList<String>>
+            get() {
+                val map = ArrayMap<Int, MutableList<String>>()
+                map[ZFILE_QW_PIC] = arrayListOf(
+                    "/storage/emulated/0/tencent/QQ_Images/",
+                    "/storage/emulated/0/Pictures/", // 仅作演示
+                    "/storage/emulated/0/DCIM/", // 仅作演示
+                    "/storage/emulated/0/Pictures/QQ/"
+                )
+                map[ZFILE_QW_MEDIA] = arrayListOf(
+                    "/storage/emulated/0/Pictures/QQ/",
+                    "/storage/emulated/0/tencent/MicroMsg/WeiXin/" // 仅作演示
+                ) 
+                map[ZFILE_QW_DOCUMENT] = arrayListOf(
+                    "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
+                    "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
+                )
+                map[ZFILE_QW_OTHER] = arrayListOf(
+                    "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
+                    "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/",
+                    "/storage/emulated/0/tencent/MicroMsg/Download/"
+                )
+                return map
             }
-        }
-        return listArray
-    }
-
-    /**
-     * 获取数据
-     * @param fileType Int                          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
-     * @param qwFilePathArray MutableList<String>   QQ 或 WeChat 文件路径集合
-     * @param filterArray Array<String>             过滤规则
-     */
-    override fun getQWFileDatas(fileType: Int, qwFilePathArray: MutableList<String>, filterArray: Array<String>): MutableList<ZFileBean> {
-        val pathListFile = arrayListOf<Array<File>?>()
-        qwFilePathArray.forEach {
-            val file = File(it)
-            if (file.exists()) {
-                pathListFile.add(file.listFiles(MyQWFilter(filterArray)))
-            }
-        }
-        if (pathListFile.isEmpty()) return mutableListOf()
-        val list = mutableListOf<ZFileBean>()
-        pathListFile.forEach { item ->
-            item?.forEach {
-                if (!it.isHidden) {
-                    val bean = ZFileBean(
-                            it.name,
-                            it.isFile,
-                            it.path,
-                            ZFileHelp.getFormatFileDate(it),
-                            it.lastModified().toString(),
-                            ZFileHelp.getFileSize(it.path),
-                            it.length()
-                    )
-                    list.add(bean)
-                }
-            }
-        }
-        if (!list.isNullOrEmpty()) {
-            list.sortByDescending { it.originalDate }
-        }
-        return list
-    }
-
-    class MyQWFilter(private var filterArray: Array<String>) : FileFilter {
-
-        override fun accept(file: File): Boolean {
-            filterArray.forEach {
-                if (file.name.accept(it)) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        private fun String.accept(type: String) =
-                this.endsWith(type.toLowerCase(Locale.CHINA)) || this.endsWith(type.toUpperCase(Locale.CHINA))
-    }
-}
-
-// 在调用前或Application中配置
-getZFileHelp().setQWFileLoadListener(MyQWFileListener())
+    
+       // 使用
+       getZFileHelp().setConfiguration(getZFileConfig().apply {
+          qwData = ZFileQWData().apply {
+              titles = TITLES
+              filterArrayMap = FILTER
+              qqFilePathArrayMap = QQ_MAP
+              wechatFilePathArrayMap = WECHAT_MAP
+          }
+       }).result(this) {
+           setResultData(this)
+       }
 
 
 ```
@@ -449,6 +372,11 @@ getZFileHelp().setQWFileLoadListener(MyQWFileListener())
      * 还可指定QQ或微信目录
      */
     var filePath: String? = null
+
+    /**
+     * QQ、Wechat 配置信息
+     */
+    var qwData = ZFileQWData()
 
     ...
     ...
@@ -627,7 +555,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
-[![Travis](https://img.shields.io/badge/ZFile-1.3.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

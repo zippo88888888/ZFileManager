@@ -15,7 +15,7 @@ object ZFileHelp {
      * 获取文件大小
      */
     @JvmStatic
-    fun getFileSize(filePath: String) = ZFileUtil.getFileSize(filePath.toFile().length())
+    fun getFileSize(filePath: String) = ZFileOtherUtil.getFileSize(filePath.toFile().length())
 
     /**
      * 获取文件类型

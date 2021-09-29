@@ -4,17 +4,23 @@ import android.os.Parcelable
 import com.zp.z_file.R
 import com.zp.z_file.ui.ZFileVideoPlayer
 import com.zp.z_file.async.ZFileStipulateAsync
+import com.zp.z_file.listener.ZQWFileLoadListener
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
 /**
  * 配置信息
  *
+ * 1.3.1 主要更新信息：
+ * 1）新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZQWFileLoadListener] 即可实现
+ * 2）修复 QQ、Wechat 部分路径下无法获取数据的bug
+ *
  * 1.3.0 主要更新信息：
  * 1) Android 11 12 支持，完善 WPS 文件类型
  * 2) 新增 [titleGravity] [keepDuplicate] 配置
  * 3) 删除文件崩溃、解压缩中文乱码问题修复
  * 4) [ZFileVideoPlayer] internal ---> open, ZFileAsyncImpl 重命名为 [ZFileStipulateAsync]
+ *
  */
 class ZFileConfiguration : Serializable {
 
@@ -66,10 +72,9 @@ class ZFileConfiguration : Serializable {
     var filePath: String? = null
 
     /**
-     * 打开QQ或微信目录 see [QQ] [WECHAT]
-     * 下一个版本
+     * QQ、Wechat 配置信息
      */
-    var qwType: String? = null
+    var qwData = ZFileQWData()
 
     /**
      * 图片资源配置
@@ -142,11 +147,13 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 是否只需要显示文件夹
+     * 慎用！！！
      */
     var isOnlyFolder = false
 
     /**
      * 是否只需要显示文件
+     * 慎用！！！
      */
     var isOnlyFile = false
 
@@ -191,6 +198,7 @@ class ZFileConfiguration : Serializable {
     class Build {
 
         private var filePath: String? = null
+        private var qwData = ZFileQWData()
         private var resources = ZFileResources()
         private var showHiddenFile = false
         private var sortordBy = BY_DEFAULT
@@ -214,6 +222,11 @@ class ZFileConfiguration : Serializable {
 
         fun filePath(filePath: String?): Build {
             this.filePath = filePath
+            return this
+        }
+
+        fun qwData(qwData: ZFileQWData): Build {
+            this.qwData = qwData
             return this
         }
 
@@ -323,6 +336,7 @@ class ZFileConfiguration : Serializable {
 
         fun build() = ZFileConfiguration().apply {
             this.filePath = this@Build.filePath
+            this.qwData = this@Build.qwData
             this.resources = this@Build.resources
             this.showHiddenFile = this@Build.showHiddenFile
             this.sortordBy = this@Build.sortordBy

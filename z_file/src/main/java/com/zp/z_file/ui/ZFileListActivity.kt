@@ -126,9 +126,9 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     private fun initAll() {
-        zfile_list_refreshLayout.property({
+        zfile_list_refreshLayout.property() {
             getData(nowPath)
-        })
+        }
         initPathRecyclerView()
         initListRecyclerView()
     }

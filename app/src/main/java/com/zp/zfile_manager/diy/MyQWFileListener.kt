@@ -7,6 +7,9 @@ import java.io.File
 import java.io.FileFilter
 import java.util.*
 
+/**
+ * 完全自定义 获取 QQ、Wechat 文件
+ */
 class MyQWFileListener : ZQWFileLoadListener() {
 
     /**

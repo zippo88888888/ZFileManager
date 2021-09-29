@@ -6,10 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.collection.ArrayMap
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.content.*
+import com.zp.z_file.dsl.ZFileDsl
 import com.zp.z_file.dsl.result
 import com.zp.zfile_manager.content.Content
+import com.zp.zfile_manager.content.Content.FILTER
+import com.zp.zfile_manager.content.Content.QQ_MAP
+import com.zp.zfile_manager.content.Content.TITLES
 import com.zp.zfile_manager.diy.MyQWFileListener
 import com.zp.zfile_manager.diy.SunActivity
 import kotlinx.android.synthetic.main.activity_super.*
@@ -100,6 +105,15 @@ class SuperActivity : AppCompatActivity() {
             boxStyle = ZFileConfiguration.STYLE2
             filePath = path
             authority = Content.AUTHORITY
+            if (path == ZFileConfiguration.QQ) { // 打开QQ， 模拟自定义获取
+                qwData = ZFileQWData().apply {
+                    titles = TITLES
+                    filterArrayMap = FILTER
+                    qqFilePathArrayMap = QQ_MAP
+                }
+            } else {
+                qwData = ZFileQWData()
+            }
         }).result(this) {
             setResultData(this)
         }

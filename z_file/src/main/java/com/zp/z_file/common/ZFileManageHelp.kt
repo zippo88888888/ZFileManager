@@ -31,7 +31,7 @@ class ZFileManageHelp {
     private var imageLoadeListener: ZFileImageListener? = null
     internal fun getImageLoadListener(): ZFileImageListener {
         if (imageLoadeListener == null) {
-            throw NullPointerException("ZFileImageListener is Null, You need call method \"init()\"")
+            throw ZFileException("ZFileImageListener is Null, You need call method \"ZFileManageHelp.init()\"")
         }
         return imageLoadeListener!!
     }
@@ -188,7 +188,7 @@ class ZFileManageHelp {
     ) {
         val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
         if (!newPath.toFile().exists()) {
-            throw NullPointerException("$newPath 路径不存在")
+            throw ZFileException("$newPath 路径不存在")
         }
         when (fragmentOrActivity) {
             is FragmentActivity -> {
@@ -259,7 +259,7 @@ class ZFileManageHelp {
     private fun startByFileManager(fragmentOrActivity: Any, path: String? = null) {
         val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
         if (!newPath.toFile().exists()) {
-            throw NullPointerException("$newPath 路径不存在")
+            throw ZFileException("$newPath 路径不存在")
         }
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
