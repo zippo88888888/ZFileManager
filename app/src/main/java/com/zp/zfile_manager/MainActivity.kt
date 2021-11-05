@@ -20,10 +20,14 @@ import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.dsl.DslActivity
+import com.zp.zfile_manager.fm.FragmentSampleActivity2
+import com.zp.zfile_manager.super_.SuperActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_result_txt.*
 
 class MainActivity : AppCompatActivity() {
+
+    private var rbId = R.id.main_rb_af
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +49,21 @@ class MainActivity : AppCompatActivity() {
         main_fileMangerBtn.setOnClickListener {
             callPermission()
         }
-        main_fragmentBtn.setOnClickListener {
-            startActivity(Intent(this, FragmentSampleActivity::class.java))
+        main_fragmentBtn2.setOnClickListener {
+            when (rbId) {
+                R.id.main_rb_af -> {
+                    FragmentSampleActivity2.jump(this, 1)
+                }
+                R.id.main_rb_vpf -> {
+                    FragmentSampleActivity2.jump(this, 2)
+                }
+                R.id.main_rb_ff -> {
+                    FragmentSampleActivity2.jump(this, 3)
+                }
+            }
+        }
+        main_rg.setOnCheckedChangeListener { _, checkedId ->
+            rbId = checkedId
         }
         main_javaBtn.setOnClickListener {
             startActivity(Intent(this, JavaSampleActivity::class.java))

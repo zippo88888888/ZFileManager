@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 
 internal object ZFilePermissionUtil {
 
@@ -29,9 +30,14 @@ internal object ZFilePermissionUtil {
      * @param code  请求码
      * @param requestPermission 权限
      */
-    fun requestPermission(a: Activity, code: Int, vararg requestPermission: String) {
+    fun requestPermission(fragmentOrActivity: Any, code: Int, vararg requestPermission: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ActivityCompat.requestPermissions(a, requestPermission, code)
+            when (fragmentOrActivity) {
+                is Activity -> ActivityCompat.requestPermissions(fragmentOrActivity, requestPermission, code)
+                is Fragment -> fragmentOrActivity.requestPermissions(requestPermission, code)
+            }
+
         }
     }
+
 }

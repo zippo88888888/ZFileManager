@@ -1,27 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/framgent_startBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="start"/>
-
-    <Button
-        android:id="@+id/framgent_qqBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="qq"/>
-
-    <Button
-        android:id="@+id/framgent_wechatBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="wechat"/>
-
-    <include layout="@layout/layout_result_txt" />
-
-</LinearLayout>
+    android:text="ZFileManager"
+    android:gravity="center"
+    android:textSize="18sp"
+    android:textColor="@color/zfile_white"
+    android:background="@color/zfile_base_color"
+    android:orientation="vertical" />

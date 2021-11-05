@@ -1,4 +1,4 @@
-package com.zp.zfile_manager
+package com.zp.zfile_manager.super_
 
 import android.app.Dialog
 import android.content.Context
@@ -9,6 +9,7 @@ import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zp.z_file.content.ZFileBean
+import com.zp.zfile_manager.R
 import kotlinx.android.synthetic.main.dialog_super.*
 
 /**

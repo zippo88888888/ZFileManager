@@ -1,4 +1,4 @@
-package com.zp.zfile_manager
+package com.zp.zfile_manager.super_
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.zp.z_file.content.ZFileBean
+import com.zp.zfile_manager.R
 
 class SuperAdapter(private var datas: MutableList<ZFileBean>) : RecyclerView.Adapter<SuperAdapter.SuperViewHolder>() {
 

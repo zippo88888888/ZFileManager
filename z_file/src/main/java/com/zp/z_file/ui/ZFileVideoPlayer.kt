@@ -18,14 +18,28 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
 
     private var player: MediaPlayer? = null
 
+    /**
+     * 视频地址
+     */
     var videoPath = ""
-    var videoName = ""
+
+    /**
+     * assets 目录下的视频名称
+     */
+    var assetsVideoName = ""
+
+    /**
+     * 视频播放完成 是否继续 重复播放
+     */
     var completionAutoPlayer = true
 
     var sizeType = CENTER_MODE
 
+    /** 视频准备完毕 */
     var videoPrepared: (MediaPlayer?.() -> Unit)? = null
+    /** 视频播放完成 */
     var videoCompletion: (MediaPlayer?.() -> Unit)? = null
+    /** 视频播放错误 */
     var videoPlayError: (MediaPlayer?.() -> Unit)? = null
 
     protected var videoWidth = 0
@@ -51,7 +65,6 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
     constructor(context: Context, attributes: AttributeSet?) : this(context, attributes, 0)
     constructor(context: Context, attributes: AttributeSet?, defStyleAttr: Int) : super(context, attributes, defStyleAttr) {
         surfaceTextureListener = this
-        ZFileLog.i("初始化....")
     }
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
@@ -83,6 +96,7 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
         }
         val s = Surface(surface)
         player?.setSurface(s)
+        ZFileLog.i("播放器初始化....")
     }
 
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) = Unit
@@ -117,11 +131,11 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
             ZFileLog.e("player is null")
             return
         }
-        if (videoPath.isNull() && videoName.isNull()) {
+        if (videoPath.isNull() && assetsVideoName.isNull()) {
             ZFileLog.e("视频播放地址不能为空")
             return
         }
-        if (isPlaying() == true) {
+        if (isPlaying()) {
             ZFileLog.i("视频正在播放...")
             return
         }
@@ -130,19 +144,23 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
                 player?.start()
             } else {
                 player?.reset()
-                if (!videoPath.isNull()) player?.setDataSource(videoPath)
-                if (!videoName.isNull()) {
-                    val fd = context.assets.openFd(videoName)
-                    player?.setDataSource(fd.fileDescriptor, fd.startOffset, fd.declaredLength)
-                }
+                setVideoSource()
                 player?.prepare()
                 player?.start()
             }
             playState = IS_PLAYING
         } catch (e: Exception) {
             e.printStackTrace()
-            ZFileLog.e("播放失败！ videoPath --->>> $videoPath <<<===>>> videoName --->>> $videoName")
+            ZFileLog.e("播放失败！ videoPath --->>> $videoPath <<<===>>> videoName --->>> $assetsVideoName")
             videoPlayError?.invoke(player)
+        }
+    }
+
+    private fun setVideoSource() {
+        if (!videoPath.isNull()) player?.setDataSource(videoPath)
+        if (!assetsVideoName.isNull()) {
+            val fd = context.assets.openFd(assetsVideoName)
+            player?.setDataSource(fd.fileDescriptor, fd.startOffset, fd.declaredLength)
         }
     }
 
@@ -151,13 +169,13 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
      */
     open fun pause() {
         if (player == null) return
-        if (isPlaying() == true) {
+        if (isPlaying()) {
             player?.pause()
             playState = IS_PAUSE
         }
     }
 
-    open fun isPlaying() = player?.isPlaying
+    open fun isPlaying() = player?.isPlaying ?: false
     open fun isPause() = playState == IS_PAUSE
 
     open fun setVideoSize(videoWidth: Int, videoHeight: Int) {

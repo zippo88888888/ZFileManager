@@ -17,10 +17,38 @@
         android:text="SUPER" />
 
     <Button
-        android:id="@+id/main_fragmentBtn"
+        android:id="@+id/main_fragmentBtn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FRAGMENT" />
+        android:text="嵌套 FRAGMENT" />
+
+    <RadioGroup
+        android:id="@+id/main_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/main_rb_af"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="A+F" />
+
+        <RadioButton
+            android:id="@+id/main_rb_vpf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A+(VP+F)"/>
+
+        <RadioButton
+            android:id="@+id/main_rb_ff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A+(F+F)"/>
+
+    </RadioGroup>
 
     <Button
         android:id="@+id/main_javaBtn"

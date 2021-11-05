@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.3.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -6,7 +6,7 @@
 
 ### 1. 默认支持 音频，视频，图片，txt，zip，word，excel，ppt，pdf 9种文件
 ### 2. 支持音频、视频播放，图片查看，zip解压，文件重命名、复制、移动、删除、查看详情
-### 3. 支持查看指定文件类型，支持文件类型拓展
+### 3. 支持查看指定文件类型，支持文件类型拓展，支持嵌套在Fragment中使用
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
 ### 5. 支持QQ、微信文件选择（支持自定义获取）
 ### 6. 高度可定制化，支持Android 10++、AndroidX、DSL，兼容Java
@@ -29,7 +29,7 @@
 
 #### Step 0. 添加依赖
 
-#### [z_file_1_3_1_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_1.aar)
+#### [z_file_1_3_2_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_2.aar)
 
 ```groovy
 
@@ -167,7 +167,7 @@ getZFileHelp().setFileTypeListener(MyFileTypeListener())
 ### QQ或微信文件选择
 
 > QQ、微信默认根据时间倒序排序，不显示隐藏文件，过滤规则默认，只显示文件，不支持长按操作
-其他配置与文件管理保持一致！具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/SuperActivity.kt)
+其他配置与文件管理保持一致！具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/super_/SuperActivity.kt)
 ，参考 [腾讯文件](https://imtt.dd.qq.com/16891/apk/24CB038F3A67CDBE10C5A0D9B2AD10E9.apk?fsname=com.tencent.FileManager_5.0.4.0001_5040001.apk&csr=1bbd)
 ```kotlin
 
@@ -555,7 +555,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
-[![Travis](https://img.shields.io/badge/ZFile-1.3.1-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

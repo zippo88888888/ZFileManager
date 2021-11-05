@@ -1,21 +1,25 @@
 package com.zp.z_file.listener
 
+import android.Manifest
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.R
+import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.common.ZFileCommonDialog
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
+import com.zp.z_file.ui.*
 import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFilePicActivity
-import com.zp.z_file.ui.ZFileQWActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
 import com.zp.z_file.ui.dialog.ZFileInfoDialog
@@ -67,6 +71,39 @@ interface ZFileLoadListener {
      * @return MutableList<ZFileBean>?  list
      */
     fun getFileList(context: Context?, filePath: String?): MutableList<ZFileBean>?
+}
+
+/**
+ * 嵌套在 Fragment 中 使用
+ * [FragmentActivity] 中 对于 [ZFileListFragment] 操作
+ */
+abstract class ZFragmentListener {
+
+    /**
+     * 文件选择
+     */
+    abstract fun selectResult(selectList: MutableList<ZFileBean>?)
+
+    /**
+     * [Activity] 中直接调用 [Activity.finish] 即可
+     */
+    abstract fun onActivityBackPressed()
+
+    /**
+     * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败
+     * @param activity [FragmentActivity]
+     */
+    open fun onSDPermissionsFiled(activity: FragmentActivity) {
+        activity.toast(activity.getStringById(R.string.zfile_permission_bad))
+    }
+
+    /**
+     * 获取 [Environment.isExternalStorageManager] (所有的文件管理) 权限 失败
+     * 请注意：Android 11 及以上版本 才有
+     */
+    open fun onExternalStorageManagerFiled(activity: FragmentActivity) {
+        activity.toast(activity.getStringById(R.string.zfile_11_bad))
+    }
 }
 
 /**
@@ -192,16 +229,26 @@ open class ZFileOpenListener {
         val activity = view.context
         if (activity is AppCompatActivity) {
             activity.checkFragmentByTag("ZFileSelectFolderDialog")
-            ZFileSelectFolderDialog.newInstance("解压").apply {
-                selectFolder = {
-                    getZFileHelp().getFileOperateListener().zipFile(filePath, this, activity) {
-                        ZFileLog.i(if (this) "解压成功" else "解压失败")
-                        (activity as? ZFileListActivity).let {
-                            it?.observer(this)
+            val dialog = ZFileSelectFolderDialog.newInstance("解压")
+            dialog.selectFolder = {
+                getZFileHelp().getFileOperateListener().zipFile(filePath, this, activity) {
+                    ZFileLog.i(if (this) "解压成功" else "解压失败")
+                    when (activity) {
+                        is ZFileListActivity -> {
+                            activity.observer(this)
+                        }
+                        else -> {
+                            val fragment = activity.supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag)
+                            if (fragment is ZFileListFragment) {
+                                fragment.observer(this)
+                            } else {
+                                ZFileLog.e("文件解压成功，但是无法立刻刷新界面！")
+                            }
                         }
                     }
                 }
-            }.show(activity.supportFragmentManager, "ZFileSelectFolderDialog")
+            }
+            dialog.show(activity.supportFragmentManager, "ZFileSelectFolderDialog")
         }
     }
 

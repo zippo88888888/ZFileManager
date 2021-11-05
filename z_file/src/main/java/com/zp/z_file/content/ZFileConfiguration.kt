@@ -1,8 +1,12 @@
 package com.zp.z_file.content
 
 import android.os.Parcelable
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.zp.z_file.R
+import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFileVideoPlayer
+import com.zp.z_file.listener.*
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.listener.ZQWFileLoadListener
 import kotlinx.android.parcel.Parcelize
@@ -10,6 +14,10 @@ import java.io.Serializable
 
 /**
  * 配置信息
+ *
+ * 1.3.2 主要更新信息：
+ * 1）支持 直接在 Activity 、 Fragment、 Fragment + ViewPager 中使用
+ * 2）文件复制优化
  *
  * 1.3.1 主要更新信息：
  * 1）新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZQWFileLoadListener] 即可实现
@@ -134,7 +142,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 默认只有文件才有长按事件
-     * 长按暂不支持对于文件夹的操作，如有需要，请实现 ZFileOperateListener
+     * 长按暂不支持对于文件夹的操作，如有需要，请实现 [ZFileOperateListener]
      */
     var isOnlyFileHasLongClick = true
 
@@ -159,7 +167,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 打开文件需要 FileProvider 一般都是包名 + xxxFileProvider
-     * 如果项目中已经存在或其他原因无法修改，请自己实现 ZFileOpenListener
+     * 如果项目中已经存在或其他原因无法修改，请自己实现 [ZFileOpenListener]
      */
     var authority = ""
 
@@ -186,6 +194,23 @@ class ZFileConfiguration : Serializable {
      * false：默认直接覆盖或者移除； true：表示保留原文件，同时新增副本文件
      */
     var keepDuplicate = false
+
+    /**
+     * 是否开启懒加载
+     * 嵌套在 VP + Fragment 使用
+     */
+    var needLazy = true
+
+    /**
+     * Fragment TAG，可以通过 [FragmentManager.findFragmentByTag] 获取 [ZFileListFragment]
+     * 嵌套在 VP + Fragment 使用，see [FragmentPagerAdapter.makeFragmentName]
+     */
+    var fragmentTag = ZFILE_FRAGMENT_TAG
+
+    /**
+     * 是否显示 返回按钮图标
+     */
+    var showBackIcon = true
 
     /**
      * 是否显示日志
@@ -218,6 +243,8 @@ class ZFileConfiguration : Serializable {
         private var showSelectedCountHint = false
         private var titleGravity = TITLE_LEFT
         private var keepDuplicate = false
+        private var needLazy = true
+        private var showBackIcon = true
         private var showLog = true
 
         fun filePath(filePath: String?): Build {
@@ -329,6 +356,16 @@ class ZFileConfiguration : Serializable {
             return this
         }
 
+        fun needLazy(needLazy: Boolean): Build {
+            this.needLazy = needLazy
+            return this
+        }
+
+        fun showBackIcon(showBackIcon: Boolean): Build {
+            this.showBackIcon = showBackIcon
+            return this
+        }
+
         fun showLog(showLog: Boolean): Build {
             this.showLog = showLog
             return this
@@ -356,6 +393,8 @@ class ZFileConfiguration : Serializable {
             this.showSelectedCountHint = this@Build.showSelectedCountHint
             this.titleGravity = this@Build.titleGravity
             this.keepDuplicate = this@Build.keepDuplicate
+            this.needLazy = this@Build.needLazy
+            this.showBackIcon = this@Build.showBackIcon
             this.showLog = this@Build.showLog
         }
 

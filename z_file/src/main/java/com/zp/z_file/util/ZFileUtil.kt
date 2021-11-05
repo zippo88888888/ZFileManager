@@ -140,7 +140,7 @@ internal object ZFileUtil {
             }
             activity.runOnUiThread {
                 dialog.dismiss()
-                activity.toast(if (isSuccess) "${msg}成功" else "${msg}失败")
+                activity.toast(if (isSuccess) "${msg}成功" else "${msg}失败或已存在相同文件")
                 block.invoke(isSuccess)
             }
         }
@@ -154,6 +154,10 @@ internal object ZFileUtil {
         var success = true
         val oldFile = File(sourceFile)
         var outFile = File("${targetFile}/${oldFile.name}")
+        if (oldFile.path == outFile.path) {
+            ZFileLog.e("目录相同，不做任何处理！")
+            return false
+        }
         if (getZFileConfig().keepDuplicate) {
             val duplicateStr = context.getStringById(R.string.zfile_duplicate)
             while (true) {
@@ -188,7 +192,9 @@ internal object ZFileUtil {
         val copySuccess = copyFile(sourceFile, targetFile, context)
         var delSuccess = false
         try {
-            delSuccess = File(sourceFile).delete()
+            if (copySuccess) {
+                delSuccess = File(sourceFile).delete()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             delSuccess = false

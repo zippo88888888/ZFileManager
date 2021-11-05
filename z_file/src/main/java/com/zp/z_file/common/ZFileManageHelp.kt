@@ -13,6 +13,7 @@ import com.zp.z_file.ui.ZFileListActivity
 import com.zp.z_file.ui.ZFileProxyFragment
 import com.zp.z_file.ui.ZFileQWActivity
 import com.zp.z_file.dsl.result
+import com.zp.z_file.ui.ZFileListActivity2
 
 class ZFileManageHelp {
 
@@ -105,7 +106,7 @@ class ZFileManageHelp {
      * 获取返回的数据
      */
     fun getSelectData(requestCode: Int, resultCode: Int, data: Intent?): MutableList<ZFileBean>? {
-        var list: MutableList<ZFileBean>? = ArrayList()
+        var list: MutableList<ZFileBean>? = arrayListOf()
         if (requestCode == ZFILE_REQUEST_CODE && resultCode == ZFILE_RESULT_CODE) {
             list = data?.getParcelableArrayListExtra<ZFileBean>(ZFILE_SELECT_DATA_KEY)
         }
@@ -188,21 +189,21 @@ class ZFileManageHelp {
     ) {
         val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
         if (!newPath.toFile().exists()) {
-            throw ZFileException("$newPath 路径不存在")
+            throw ZFileException("$newPath not exist")
         }
         when (fragmentOrActivity) {
             is FragmentActivity -> {
                 if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) return
                 addFragment(
                     fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
-                    ZFileListActivity::class.java, path, resultListener
+                    ZFileListActivity2::class.java, path, resultListener
                 )
             }
             is Fragment -> {
                 if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) return
                 addFragment(
                     fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
-                    ZFileListActivity::class.java, path, resultListener
+                    ZFileListActivity2::class.java, path, resultListener
                 )
             }
             else -> throw IllegalArgumentException(ERROR_MSG)
@@ -259,7 +260,7 @@ class ZFileManageHelp {
     private fun startByFileManager(fragmentOrActivity: Any, path: String? = null) {
         val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
         if (!newPath.toFile().exists()) {
-            throw ZFileException("$newPath 路径不存在")
+            throw ZFileException("$newPath not exist")
         }
         when (fragmentOrActivity) {
             is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,

@@ -1,22 +1,29 @@
 package com.zp.z_file.ui
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.zp.z_file.R
-import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
+import com.zp.z_file.dsl.ZFileDsl
+import com.zp.z_file.listener.ZFragmentListener
 import com.zp.z_file.ui.adapter.ZFileListAdapter
 import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
 import com.zp.z_file.ui.dialog.ZFileSortDialog
@@ -26,8 +33,21 @@ import com.zp.z_file.util.ZFileUtil
 import kotlinx.android.synthetic.main.activity_zfile_list.*
 import java.io.File
 
-@Deprecated("不再使用")
-internal class ZFileListActivity : ZFileActivity() {
+/**
+ * 文件管理 核心实现，可以 在 Activity、Fragment or ViewPager中使用
+ *
+ * 注意：使用 [FragmentManager] 或者 [ViewPager] 动态添加或直接嵌套使用时
+ * 1. 无法通过 [ZFileDsl] 获取返回的数据，其他配置将不受影响
+ * 2. 需在 Activity 中配置 [ZFragmentListener] 来接收选中的文件
+ * 3. Activity onBackPressed 方法 需要 调用 [onBackPressed]
+ * 4. Activity onResume 方法 需要调用 [showPermissionDialog]
+ */
+class ZFileListFragment : Fragment() {
+
+    private lateinit var mActivity: FragmentActivity
+
+    private var isFirstLoad = true
+    private var rootView: View? = null
 
     private var toManagerPermissionPage = false
 
@@ -39,6 +59,10 @@ internal class ZFileListActivity : ZFileActivity() {
     private var rootPath = "" // 根目录
     private var specifyPath: String? = "" // 指定目录
     private var nowPath: String? = "" // 当前目录
+
+    private var hasPermission = false
+
+    var zFragmentListener: ZFragmentListener? = null
 
     private val titleArray by lazy {
         if (getZFileConfig().longClickOperateTitles.isNullOrEmpty()) {
@@ -62,7 +86,80 @@ internal class ZFileListActivity : ZFileActivity() {
     /** 返回当前的路径 */
     private fun getThisFilePath() = if (backList.isEmpty()) null else backList[backList.size - 1]
 
-    override fun getContentView() = R.layout.activity_zfile_list
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is FragmentActivity) {
+            mActivity = context
+        } else {
+            throw ZFileException("activity must be FragmentActivity！！！")
+        }
+    }
+
+    companion object {
+
+        /**
+         * 获取 [ZFileListFragment] 实例
+         */
+        @JvmStatic
+        fun newInstance(): ZFileListFragment {
+            val startPath = getZFileConfig().filePath
+            if (startPath == ZFileConfiguration.QQ || startPath == ZFileConfiguration.WECHAT) {
+                throw ZFileException(
+                    "startPath must be real path or empty, if you want user \" qq \" or \" wechat \", " +
+                            "please use \" getZFileHelp().start() \""
+                )
+            }
+            val newPath = if (startPath.isNullOrEmpty()) SD_ROOT else startPath
+            if (!newPath.toFile().exists()) {
+                throw ZFileException("$newPath not exist")
+            }
+            return ZFileListFragment().apply {
+                arguments = Bundle().run {
+                    putString(FILE_START_PATH_KEY, newPath)
+                    this
+                }
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.activity_zfile_list, container, false)
+        }
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (!getZFileConfig().needLazy) {
+            initAll()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (getZFileConfig().needLazy) {
+            if (isFirstLoad) {
+                initAll()
+                isFirstLoad = false
+            }
+        }
+    }
+
+    /**
+     * 可以有效避免 VP + Fragment 出现的问题
+     * 请在 Activity 中的 onResume 中调用该方法
+     */
+    fun showPermissionDialog() {
+        if (toManagerPermissionPage) {
+            toManagerPermissionPage = false
+            callPermission()
+        }
+    }
 
     private fun setMenuState() {
         zfile_list_toolBar.menu.apply {
@@ -78,18 +175,22 @@ internal class ZFileListActivity : ZFileActivity() {
             R.id.menu_zfile_down -> {
                 val list = fileListAdapter?.selectData
                 if (list.isNullOrEmpty()) {
-                    setBarTitle(getStringById(R.string.zfile_title))
+                    setBarTitle(mActivity.getStringById(R.string.zfile_title))
                     fileListAdapter?.isManage = false
                     barShow = false
                     setMenuState()
                 } else {
-                    setResult(ZFILE_RESULT_CODE, Intent().apply {
-                        putParcelableArrayListExtra(
-                            ZFILE_SELECT_DATA_KEY,
-                            list as java.util.ArrayList<out Parcelable>
-                        )
-                    })
-                    finish()
+                    if (zFragmentListener == null) {
+                        mActivity.setResult(ZFILE_RESULT_CODE, Intent().apply {
+                            putParcelableArrayListExtra(
+                                ZFILE_SELECT_DATA_KEY,
+                                list as java.util.ArrayList<out Parcelable>
+                            )
+                        })
+                        mActivity.finish()
+                    } else {
+                        zFragmentListener?.selectResult(list)
+                    }
                 }
             }
             R.id.menu_zfile_px -> showSortDialog()
@@ -107,28 +208,30 @@ internal class ZFileListActivity : ZFileActivity() {
         return true
     }
 
-    override fun init(savedInstanceState: Bundle?) {
+    private fun initAll() {
         setSortSelectId()
-        specifyPath = intent.getStringExtra(FILE_START_PATH_KEY)
+        specifyPath = arguments?.getString(FILE_START_PATH_KEY)
         getZFileConfig().filePath = specifyPath
         rootPath = specifyPath ?: ""
         backList.add(rootPath)
         nowPath = rootPath
         zfile_list_toolBar.apply {
+            if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
             inflateMenu(R.menu.zfile_list_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
-            setNavigationOnClickListener { onBackPressed() }
+            setNavigationOnClickListener { back() }
         }
         zfile_list_emptyPic.setImageResource(emptyRes)
         setHiddenState()
+        setBarTitle(mActivity.getStringById(R.string.zfile_title))
         zfile_list_againBtn.setOnClickListener {
             callPermission()
         }
-        setBarTitle(getStringById(R.string.zfile_title))
         callPermission()
     }
 
     private fun initRV() {
+        hasPermission = true
         zfile_list_errorLayout.visibility = View.GONE
         zfile_list_refreshLayout.property() {
             getData(nowPath)
@@ -138,7 +241,7 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     private fun initPathRecyclerView() {
-        filePathAdapter = object : ZFileAdapter<ZFilePathBean>(this, R.layout.item_zfile_path) {
+        filePathAdapter = object : ZFileAdapter<ZFilePathBean>(mActivity, R.layout.item_zfile_path) {
             override fun bindView(holder: ZFileViewHolder, item: ZFilePathBean, position: Int) {
                 holder.setText(R.id.item_zfile_path_title, item.fileName)
             }
@@ -158,7 +261,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
         }
         zfile_list_pathRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@ZFileListActivity).run {
+            layoutManager = LinearLayoutManager(activity).run {
                 orientation = LinearLayoutManager.HORIZONTAL
                 this
             }
@@ -171,15 +274,15 @@ internal class ZFileListActivity : ZFileActivity() {
         val filePath = getZFileConfig().filePath
         val pathList = ArrayList<ZFilePathBean>()
         if (filePath.isNullOrEmpty() || filePath == SD_ROOT) {
-            pathList.add(ZFilePathBean("根目录", "root"))
+            pathList.add(ZFilePathBean(mActivity.getStringById(R.string.zfile_root_path), "root"))
         } else {
-            pathList.add(ZFilePathBean("指定目录${filePath.getFileName()}", filePath))
+            pathList.add(ZFilePathBean("${mActivity.getStringById(R.string.zfile_path)}${filePath.getFileName()}", filePath))
         }
         filePathAdapter.addAll(pathList)
     }
 
     private fun initListRecyclerView() {
-        fileListAdapter = ZFileListAdapter(this).run {
+        fileListAdapter = ZFileListAdapter(mActivity).run {
             itemClickByAnim = { v, _, item ->
                 if (item.isFile) {
                     ZFileUtil.openFile(item.filePath, v)
@@ -222,7 +325,7 @@ internal class ZFileListActivity : ZFileActivity() {
             this
         }
         zfile_list_listRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@ZFileListActivity)
+            layoutManager = LinearLayoutManager(activity)
             adapter = fileListAdapter
         }
         getData(getZFileConfig().filePath)
@@ -230,6 +333,10 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     private fun getData(filePath: String?) {
+        if (!hasPermission) {
+            ZFileLog.e("no permission")
+            return
+        }
         zfile_list_refreshLayout.isRefreshing = true
         val key = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
         if (rootPath.isEmpty()) {
@@ -240,7 +347,7 @@ internal class ZFileListActivity : ZFileActivity() {
             filePathAdapter.addItem(filePathAdapter.itemCount, File(key).toPathBean())
             zfile_list_pathRecyclerView.scrollToPosition(filePathAdapter.itemCount - 1)
         }
-        ZFileUtil.getList(this) {
+        ZFileUtil.getList(mActivity) {
             if (isNullOrEmpty()) {
                 fileListAdapter?.clear()
                 zfile_list_emptyLayout.visibility = View.VISIBLE
@@ -253,7 +360,7 @@ internal class ZFileListActivity : ZFileActivity() {
     }
 
     private fun showSelectDialog(index: Int, item: ZFileBean): Boolean {
-        AlertDialog.Builder(this).apply {
+        AlertDialog.Builder(mActivity).apply {
             setTitle("请选择")
             setItems(titleArray) { dialog, which ->
                 jumpByWhich(item, which, index)
@@ -273,7 +380,7 @@ internal class ZFileListActivity : ZFileActivity() {
         when (titleArray!![which]) {
             ZFileConfiguration.RENAME -> {
                 getZFileHelp().getFileOperateListener()
-                    .renameFile(item.filePath, this) { isSuccess, newName ->
+                    .renameFile(item.filePath, mActivity) { isSuccess, newName ->
                         if (isSuccess) {
                             val oldFile = item.filePath.toFile()
                             val oldFileType = oldFile.getFileType()
@@ -289,16 +396,16 @@ internal class ZFileListActivity : ZFileActivity() {
                     }
             }
             ZFileConfiguration.COPY, ZFileConfiguration.MOVE -> {
-                checkFragmentByTag(TAG)
+                mActivity.checkFragmentByTag(TAG)
                 ZFileSelectFolderDialog.newInstance(titleArray!![which]).apply {
                     selectFolder = {
                         doSth(item, this, titleArray!![which], index)
                     }
-                }.show(supportFragmentManager, TAG)
+                }.show(mActivity.supportFragmentManager, TAG)
             }
             ZFileConfiguration.DELETE -> getZFileHelp().getFileOperateListener().deleteFile(
                 item.filePath,
-                this
+                mActivity
             ) {
                 if (this) {
                     fileListAdapter?.remove(index)
@@ -307,14 +414,14 @@ internal class ZFileListActivity : ZFileActivity() {
                     ZFileLog.i("文件删除失败")
                 }
             }
-            ZFileConfiguration.INFO -> ZFileUtil.infoFile(item, this)
+            ZFileConfiguration.INFO -> ZFileUtil.infoFile(item, mActivity)
             else -> throwError("longClickOperateTitles")
         }
     }
 
     private fun doSth(item: ZFileBean, targetPath: String, type: String, position: Int) {
         if (type == ZFileConfiguration.COPY) { // 复制文件
-            getZFileHelp().getFileOperateListener().copyFile(item.filePath, targetPath, this) {
+            getZFileHelp().getFileOperateListener().copyFile(item.filePath, targetPath, mActivity) {
                 if (this) {
                     ZFileLog.i("文件复制成功")
                     observer(true)
@@ -323,7 +430,7 @@ internal class ZFileListActivity : ZFileActivity() {
                 }
             }
         } else { // 移动文件
-            getZFileHelp().getFileOperateListener().moveFile(item.filePath, targetPath, this) {
+            getZFileHelp().getFileOperateListener().moveFile(item.filePath, targetPath, mActivity) {
                 if (this) {
                     fileListAdapter?.remove(position)
                     ZFileLog.i("文件移动成功")
@@ -336,7 +443,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private fun showSortDialog() {
         val tag = ZFileSortDialog::class.java.simpleName
-        checkFragmentByTag(tag)
+        mActivity.checkFragmentByTag(tag)
         ZFileSortDialog.newInstance(sortSelectId, sequenceSelectId).apply {
             checkedChangedListener = { sortId, sequenceId ->
                 sortSelectId = sortId
@@ -359,19 +466,31 @@ internal class ZFileListActivity : ZFileActivity() {
                 }
                 getData(nowPath)
             }
-        }.show(supportFragmentManager, tag)
+        }.show(mActivity.supportFragmentManager, tag)
     }
 
-    override fun onBackPressed() {
+    /**
+     * 监听返回按钮
+     * 请在 Activity 中的 onBackPressed 中调用该方法
+     */
+    fun onBackPressed() {
+        back()
+    }
+
+    private fun back() {
         val path = getThisFilePath()
         if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
-                setBarTitle(getStringById(R.string.zfile_title))
+                setBarTitle(mActivity.getStringById(R.string.zfile_title))
                 fileListAdapter?.isManage = false
                 barShow = false
                 setMenuState()
             } else {
-                super.onBackPressed()
+                if (zFragmentListener == null) {
+                    mActivity.onBackPressed()
+                } else {
+                    zFragmentListener?.onActivityBackPressed()
+                }
             }
         } else { // 返回上一级
             // 先清除当前一级的数据
@@ -384,20 +503,12 @@ internal class ZFileListActivity : ZFileActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (toManagerPermissionPage) {
-            toManagerPermissionPage = false
-            callPermission()
-        }
-    }
-
     private fun callPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initRV()
         } else {
             zfile_list_errorLayout.visibility = View.VISIBLE
-            val builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(mActivity)
                 .setTitle(R.string.zfile_11_title)
                 .setMessage(R.string.zfile_11_content)
                 .setCancelable(false)
@@ -408,9 +519,13 @@ internal class ZFileListActivity : ZFileActivity() {
                     d.dismiss()
                 }
                 .setNegativeButton(R.string.zfile_cancel) { d, _ ->
-                    toast(getStringById(R.string.zfile_11_bad))
                     d.dismiss()
-//                    finish()
+                    if (zFragmentListener == null) {
+                        mActivity.toast(mActivity.getStringById(R.string.zfile_11_bad))
+                        mActivity.finish()
+                    } else {
+                        zFragmentListener?.onExternalStorageManagerFiled(mActivity)
+                    }
                 }
             builder.show()
         }
@@ -419,7 +534,7 @@ internal class ZFileListActivity : ZFileActivity() {
     private fun checkHasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val hasPermission = ZFilePermissionUtil.hasPermission(
-                this,
+                mActivity,
                 ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
             )
             if (hasPermission) {
@@ -446,8 +561,12 @@ internal class ZFileListActivity : ZFileActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initRV()
             else {
                 zfile_list_errorLayout.visibility = View.VISIBLE
-                toast(getStringById(R.string.zfile_permission_bad))
-//                finish()
+                if (zFragmentListener == null) {
+                    mActivity.toast(mActivity.getStringById(R.string.zfile_permission_bad))
+                    mActivity.finish()
+                } else {
+                    zFragmentListener?.onSDPermissionsFiled(mActivity)
+                }
             }
         }
     }
@@ -501,6 +620,7 @@ internal class ZFileListActivity : ZFileActivity() {
         super.onDestroy()
         fileListAdapter?.reset()
         backList.clear()
+        zFragmentListener = null
     }
 
 }

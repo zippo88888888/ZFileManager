@@ -10,4 +10,6 @@
     <color name="zfile_bbbbb9">#bbbbb9</color>
     <color name="zfile_line_color">#f2f2f2</color>
     <color name="zfile_bgclor">#f2f2f2</color>
+    <color name="zfile_no_permissions_color1">@color/zfile_gray</color>
+    <color name="zfile_no_permissions_color2">@color/zfile_green</color>
 </resources>

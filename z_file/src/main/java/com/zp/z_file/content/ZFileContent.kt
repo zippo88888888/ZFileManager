@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zp.z_file.R
 import com.zp.z_file.async.ZFileStipulateAsync
@@ -77,6 +78,8 @@ typealias ZFileAsyncImpl = ZFileStipulateAsync
 
 // 下面属性、方法暂不对外开放 =======================================================================
 
+internal const val ZFILE_FRAGMENT_TAG = "ZFileListFragment"
+
 internal const val QW_SIZE = 4
 
 internal const val COPY_TYPE = 0x2001
@@ -115,7 +118,7 @@ internal fun Context.getZDisplay() = IntArray(2).apply {
     this[0] = point.x
     this[1] = point.y
 }
-internal fun AppCompatActivity.checkFragmentByTag(tag: String) {
+internal fun FragmentActivity.checkFragmentByTag(tag: String) {
     val fragment = supportFragmentManager.findFragmentByTag(tag)
     if (fragment != null) {
         supportFragmentManager.beginTransaction().remove(fragment).commit()

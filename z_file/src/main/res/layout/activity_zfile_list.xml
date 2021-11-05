@@ -4,22 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.ZFileListActivity">
+    android:orientation="vertical" >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/zfile_list_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/zfile_base_color"
-        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
+        tools:navigationIcon="@drawable/zfile_back"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
-        app:navigationIcon="@drawable/zfile_back">
+        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle">
 
         <TextView
-            style="@style/Base.DialogWindowTitle.AppCompat"
             android:id="@+id/zfile_list_centerTitle"
+            style="@style/Base.DialogWindowTitle.AppCompat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -37,12 +36,12 @@
         android:layout_marginStart="@dimen/zfile_default_divider_padding"
         android:layout_marginEnd="@dimen/zfile_default_divider_padding" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/zfile_list_refreshLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/zfile_list_refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -50,26 +49,58 @@
                 android:id="@+id/zfile_list_listRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/item_zfile_list_folder"/>
+                tools:listitem="@layout/item_zfile_list_folder" />
 
-            <FrameLayout
-                android:id="@+id/zfile_list_emptyLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@color/zfile_white">
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-                <ImageView
-                    android:id="@+id/zfile_list_emptyPic"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_gravity="center"
-                    tools:src="@drawable/ic_zfile_empty"/>
+        <FrameLayout
+            android:id="@+id/zfile_list_emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/zfile_white">
 
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/zfile_list_emptyPic"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_gravity="center"
+                tools:src="@drawable/ic_zfile_empty" />
 
         </FrameLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <LinearLayout
+            android:id="@+id/zfile_list_errorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@color/zfile_white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="35dp"
+                android:textColor="@color/zfile_no_permissions_color1"
+                android:text="@string/zifle_permission_bad2"/>
+
+            <Button
+                android:id="@+id/zfile_list_againBtn"
+                style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zifle_permission_bad3"
+                android:layout_gravity="end"
+                android:layout_marginEnd="35dp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/zfile_no_permissions_color2" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

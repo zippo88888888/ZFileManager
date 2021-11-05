@@ -1,4 +1,4 @@
-package com.zp.zfile_manager
+package com.zp.zfile_manager.super_
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -6,11 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.collection.ArrayMap
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.content.*
-import com.zp.z_file.dsl.ZFileDsl
 import com.zp.z_file.dsl.result
+import com.zp.zfile_manager.R
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.content.Content.FILTER
 import com.zp.zfile_manager.content.Content.QQ_MAP

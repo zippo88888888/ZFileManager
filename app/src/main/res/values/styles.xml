@@ -14,4 +14,9 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="VPTheme" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

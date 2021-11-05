@@ -15,7 +15,7 @@
         app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
-        app:navigationIcon="@drawable/zfile_back">
+        tools:navigationIcon="@drawable/zfile_back">
 
         <TextView
             style="@style/Base.DialogWindowTitle.AppCompat"

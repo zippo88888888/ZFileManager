@@ -15,6 +15,9 @@
             android:name=".ui.ZFileListActivity"
             android:theme="@style/ZFile_BaseTheme" />
         <activity
+            android:name=".ui.ZFileListActivity2"
+            android:theme="@style/ZFile_BaseTheme" />
+        <activity
             android:name=".ui.ZFilePicActivity"
             android:theme="@style/ZFile_BaseTheme" />
         <activity
