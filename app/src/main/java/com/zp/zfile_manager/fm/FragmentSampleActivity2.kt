@@ -119,7 +119,7 @@ class FragmentSampleActivity2 : AppCompatActivity() {
          * 文件选择
          */
         override fun selectResult(selectList: MutableList<ZFileBean>?) {
-            Toast.makeText(this@FragmentSampleActivity2, "选中了${selectList?.size}个", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@FragmentSampleActivity2, "选中了${selectList?.size}个，具体信息查看log", Toast.LENGTH_SHORT).show()
             Log.i("ZFileManager", "选中的值 ===>>> ")
             selectList?.forEach {
                 Log.i("ZFileManager", it.toString())
@@ -130,9 +130,9 @@ class FragmentSampleActivity2 : AppCompatActivity() {
         /**
          * 直接调用 [Activity.finish] 即可
          */
-        override fun onActivityBackPressed() {
-            finish()
-        }
+//        override fun onActivityBackPressed() {
+//            finish()
+//        }
 
         /**
          * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败

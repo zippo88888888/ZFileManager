@@ -29,7 +29,7 @@ internal class ZFileFilter(
         }
         if (fileArray != null && fileArray!!.isNotEmpty()) {
             fileArray?.forEach {
-                if (file.name.accept(it)) {
+                if (file.name accept it) {
                     return true
                 }
             }

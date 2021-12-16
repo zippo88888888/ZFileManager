@@ -19,7 +19,7 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
     private fun getDefaultFileList(context: Context?, filePath: String?): MutableList<ZFileBean> {
         val path = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
         val config = getZFileConfig()
-        val list = ArrayList<ZFileBean>()
+        val list = arrayListOf<ZFileBean>()
         val listFiles = path.toFile().listFiles(
             ZFileFilter(
                 config.fileFilterArray,

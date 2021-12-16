@@ -180,7 +180,7 @@ internal class ZFileListActivity : ZFileActivity() {
 
     private fun initListRecyclerView() {
         fileListAdapter = ZFileListAdapter(this).run {
-            itemClickByAnim = { v, _, item ->
+            itemClick = { v, _, item ->
                 if (item.isFile) {
                     ZFileUtil.openFile(item.filePath, v)
                 } else {

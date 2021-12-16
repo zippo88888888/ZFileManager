@@ -12,12 +12,37 @@ import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
-import com.zp.z_file.util.ZFileLog
 
 internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(context) {
 
-    constructor(context: Context, isQW: Boolean) : this(context) {
+    internal constructor(context: Context, isQW: Boolean) : this(context) {
         this.isQW = isQW
+    }
+
+    init {
+
+        addChildClickViewIds(
+            R.id.item_zfile_list_file_box1,
+            R.id.item_zfile_list_file_box2,
+            R.id.item_zfile_list_file_boxLayout
+        )
+
+        itemChildClick = { v, position, item ->
+            when (v.id) {
+                R.id.item_zfile_list_file_box1 -> {
+                    boxClick(position, item)
+                }
+                R.id.item_zfile_list_file_box2 -> {
+                    if (v is TextView) {
+                        v.isSelected = !(boxMap[position] ?: false)
+                    }
+                    boxClick(position, item)
+                }
+                R.id.item_zfile_list_file_boxLayout -> {
+                    boxLayoutClick(position, item)
+                }
+            }
+        }
     }
 
     private var isQW = false
@@ -35,7 +60,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
     }
 
     // 已选中的数据
-    var selectData = ArrayList<ZFileBean>()
+    var selectData = arrayListOf<ZFileBean>()
 
     var isManage = false
         set(value) {
@@ -55,9 +80,15 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             field = value
         }
 
-    var itemClickByAnim: ((View, Int, ZFileBean) -> Unit)? = null
-    var changeListener: ((Boolean, Int) -> Unit)? = null
-    var qwListener: ((Boolean, ZFileBean, Boolean) -> Unit)? = null
+    /* item Click */
+    @Deprecated("不再使用")
+    var itemClickByAnim: ((v: View, position: Int, item: ZFileBean) -> Unit)? = null
+
+    /* selected or un-selected change */
+    var changeListener: ((isManage: Boolean, size: Int) -> Unit)? = null
+
+    /* qq or wechat selected or un-selected */
+    var qwChangeListener: ((isManage: Boolean, item: ZFileBean, isSelect: Boolean) -> Unit)? = null
 
     override fun setDatas(list: MutableList<ZFileBean>?) {
         if (list.isNullOrEmpty()) {
@@ -94,9 +125,12 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
 
     private fun setFileData(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
         holder.apply {
+            setImage(R.id.item_zfile_list_file_pic, item.filePath)
             setText(R.id.item_zfile_list_file_nameTxt, item.fileName)
             setText(R.id.item_zfile_list_file_dateTxt, item.date)
             setText(R.id.item_zfile_list_file_sizeTxt, item.size)
+            setChecked(R.id.item_zfile_list_file_box1, boxMap[position])
+            setSelected(R.id.item_zfile_list_file_box2, boxMap[position])
             setBgColor(R.id.item_zfile_list_file_line, lineColor)
             setVisibility(R.id.item_zfile_list_file_line, position < itemCount - 1)
             setVisibility(R.id.item_zfile_file_box_pic, !isManage)
@@ -106,28 +140,6 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
                 else -> throwError("boxStyle")
             }
         }
-        val box1 = holder.getView<CheckBox>(R.id.item_zfile_list_file_box1)
-        box1.isChecked = boxMap[position] ?: false
-        box1.setOnClickListener {
-            boxClick(position, item)
-        }
-        val box2 = holder.getView<TextView>(R.id.item_zfile_list_file_box2)
-        box2.isSelected = boxMap[position] ?: false
-        box2.setOnClickListener {
-            box2.isSelected = !(boxMap[position] ?: false)
-            boxClick(position, item)
-        }
-
-        val pic = holder.getView<ImageView>(R.id.item_zfile_list_file_pic).run {
-            ZFileTypeManage.getTypeManager().loadingFile(item.filePath, this)
-            this
-        }
-        holder.getView<FrameLayout>(R.id.item_zfile_list_file_boxLayout).setOnClickListener {
-            boxLayoutClick(position, item)
-        }
-        holder.itemView.setOnClickListener {
-            itemClickByAnim?.invoke(pic, position, item)
-        }
     }
 
     fun boxLayoutClick(position: Int, item: ZFileBean) {
@@ -136,8 +148,14 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             notifyItemChanged(position)
         } else { // 非管理状态
             isManage = !isManage
+            if (config.needTwiceClick) {
+                qwChangeListener?.invoke(isManage, item, false)
+            } else {
+                boxClick(position, item)
+                qwChangeListener?.invoke(isManage, item, true)
+            }
             notifyDataSetChanged()
-            qwListener?.invoke(isManage, item, false)
+//            qwListener?.invoke(isManage, item, false)
         }
         changeListener?.invoke(isManage, selectData.size)
     }
@@ -149,7 +167,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             boxMap[position] = !isSelect
             resetCountMapByClick(item, true)
             changeListener?.invoke(isManage, selectData.size)
-            qwListener?.invoke(isManage, item, false)
+            qwChangeListener?.invoke(isManage, item, false)
         } else {
             val size = item.originaSize.toDouble() / 1048576 // byte -> MB
             if (size > config.maxSize.toDouble()) {
@@ -160,7 +178,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
                     selectData.add(item)
                     boxMap[position] = !isSelect
                     changeListener?.invoke(isManage, selectData.size)
-                    qwListener?.invoke(isManage, item, true)
+                    qwChangeListener?.invoke(isManage, item, true)
                 } else {
                     if (selectData.size >= config.maxLength) {
                         context.toast(config.maxLengthStr)
@@ -170,7 +188,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
                         boxMap[position] = !isSelect
                         resetCountMapByClick(item, false)
                         changeListener?.invoke(isManage, selectData.size)
-                        qwListener?.invoke(isManage, item, true)
+                        qwChangeListener?.invoke(isManage, item, true)
                     }
                 }
             }
@@ -186,13 +204,10 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             if (config.showSelectedCountHint) {
                 val count = getCountByMap(item)
                 setText(R.id.item_zfile_list_folderCountTxt, "$count")
-                setVisibility(R.id.item_zfile_list_folderCountTxt, count > 0 && countMap.keys.indexOf(item.filePath))
+                setVisibility(R.id.item_zfile_list_folderCountTxt, count > 0 && countMap.keys indexOf item.filePath)
             } else {
                 setVisibility(R.id.item_zfile_list_folderCountTxt, false)
             }
-        }
-        holder.itemView.setOnClickListener {
-            itemClickByAnim?.invoke(it, position, item)
         }
     }
 

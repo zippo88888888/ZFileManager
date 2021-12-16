@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/zfile_bgclor"
+    android:background="@color/zfile_bgcolor"
     tools:context=".ui.ZFileQWFragment">
 
     <androidx.recyclerview.widget.RecyclerView

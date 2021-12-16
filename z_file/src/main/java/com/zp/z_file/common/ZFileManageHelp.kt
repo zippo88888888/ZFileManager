@@ -1,19 +1,16 @@
 package com.zp.z_file.common
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.zp.z_file.content.*
+import com.zp.z_file.dsl.result
 import com.zp.z_file.listener.*
-import com.zp.z_file.ui.ZFileListActivity
+import com.zp.z_file.ui.ZFileListActivity2
 import com.zp.z_file.ui.ZFileProxyFragment
 import com.zp.z_file.ui.ZFileQWActivity
-import com.zp.z_file.dsl.result
-import com.zp.z_file.ui.ZFileListActivity2
 
 class ZFileManageHelp {
 
@@ -158,7 +155,7 @@ class ZFileManageHelp {
                     ZFileQWActivity::class.java, ZFileConfiguration.QQ, resultListener
                 )
             }
-            else -> throw IllegalArgumentException(ERROR_MSG)
+            else -> throw ZFileException(ERROR_MSG)
         }
     }
 
@@ -178,7 +175,7 @@ class ZFileManageHelp {
                     ZFileQWActivity::class.java, ZFileConfiguration.WECHAT, resultListener
                 )
             }
-            else -> throw IllegalArgumentException(ERROR_MSG)
+            else -> throw ZFileException(ERROR_MSG)
         }
     }
 
@@ -206,7 +203,7 @@ class ZFileManageHelp {
                     ZFileListActivity2::class.java, path, resultListener
                 )
             }
-            else -> throw IllegalArgumentException(ERROR_MSG)
+            else -> throw ZFileException(ERROR_MSG)
         }
     }
 
@@ -227,50 +224,5 @@ class ZFileManageHelp {
             putExtra(FILE_START_PATH_KEY, path)
         }, resultListener)
     }
-
-    @Deprecated("不推荐使用 下个版本将移除")
-    fun start(fragmentOrActivity: Any) {
-        when (getConfiguration().filePath) {
-            ZFileConfiguration.QQ -> startByQQ(fragmentOrActivity)
-            ZFileConfiguration.WECHAT -> startByWechat(fragmentOrActivity)
-            else -> startByFileManager(fragmentOrActivity, getConfiguration().filePath)
-        }
-    }
-
-    private fun startByQQ(fragmentOrActivity: Any) {
-        when (fragmentOrActivity) {
-            is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
-            is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.QQ) })
-            else -> throw IllegalArgumentException(ERROR_MSG)
-        }
-    }
-
-    private fun startByWechat(fragmentOrActivity: Any) {
-        when (fragmentOrActivity) {
-            is Activity -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
-            is Fragment -> fragmentOrActivity.jumpActivity(ZFileQWActivity::class.java,
-                getMap().apply { put(QW_FILE_TYPE_KEY, ZFileConfiguration.WECHAT) })
-            else -> throw IllegalArgumentException(ERROR_MSG)
-        }
-    }
-
-    private fun startByFileManager(fragmentOrActivity: Any, path: String? = null) {
-        val newPath = if (path.isNullOrEmpty()) SD_ROOT else path
-        if (!newPath.toFile().exists()) {
-            throw ZFileException("$newPath not exist")
-        }
-        when (fragmentOrActivity) {
-            is Activity -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
-            is Fragment -> fragmentOrActivity.jumpActivity(ZFileListActivity::class.java,
-                if (path == null) null else getMap().apply { put(FILE_START_PATH_KEY, path) })
-            else -> throw IllegalArgumentException(ERROR_MSG)
-        }
-    }
-
-    private fun getMap() = ArrayMap<String, Any>()
 
 }

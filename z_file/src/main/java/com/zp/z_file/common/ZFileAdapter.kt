@@ -4,7 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
+import com.zp.z_file.content.ZFileException
+import com.zp.z_file.util.ZFileLog
+import java.util.LinkedHashSet
 
 internal abstract class ZFileAdapter<T>(protected var context: Context) : RecyclerView.Adapter<ZFileViewHolder>() {
 
@@ -14,6 +18,7 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
 
     var itemClick: ((View, Int, T) -> Unit)? = null
     var itemLongClick: ((View, Int, T) -> Boolean)? = null
+    var itemChildClick: ((View, Int, T) -> Unit)? = null
 
     private var layoutID = -1
     private var datas: MutableList<T> = ArrayList()
@@ -70,20 +75,15 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
         val layoutRes = getLayoutID(viewType)
         if (layoutRes > 0) {
             val view = LayoutInflater.from(context).inflate(layoutRes, parent, false)
-            return ZFileViewHolder(view)
+            val holder = ZFileViewHolder(view)
+            bindViewClickListener(holder, viewType)
+            return holder
         } else {
-            throw NullPointerException("adapter layoutId is not null")
+            throw ZFileException("adapter layoutId is not null")
         }
     }
 
     override fun onBindViewHolder(holder: ZFileViewHolder, position: Int) {
-        holder.setOnItemClickListener {
-            itemClick?.invoke(this, position, getItem(position))
-        }
-        holder.setOnItemLongClickListener {
-            val item = getItem(position)
-            itemLongClick?.invoke(this, position, item) ?: true
-        }
         bindView(holder, getItem(position), position)
     }
 
@@ -94,5 +94,51 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
     open fun getLayoutID(viewType: Int) = layoutID
 
     protected abstract fun bindView(holder: ZFileViewHolder, item: T, position: Int)
+
+    // 参考 BRVAH
+    private fun bindViewClickListener(holder: ZFileViewHolder, viewType: Int) {
+
+        holder.setOnItemClickListener {
+            val position = holder.adapterPosition
+            if (position == RecyclerView.NO_POSITION) {
+                showLog()
+                return@setOnItemClickListener
+            }
+            itemClick?.invoke(this, position, getItem(position))
+        }
+
+        holder.setOnItemLongClickListener {
+            val position = holder.adapterPosition
+            if (position == RecyclerView.NO_POSITION) {
+                showLog()
+                return@setOnItemLongClickListener false
+            }
+            val item = getItem(position)
+            itemLongClick?.invoke(this, position, item) ?: true
+        }
+
+        for (id in childClickViewIds) {
+            holder.setOnViewClickListener(id) {
+                val position = holder.adapterPosition
+                if (position == RecyclerView.NO_POSITION) {
+                    showLog()
+                    return@setOnViewClickListener
+                }
+                itemChildClick?.invoke(this, position, getItem(position))
+            }
+        }
+    }
+
+    private fun showLog() = ZFileLog.e("position == RecyclerView.NO_POSITION")
+
+    private val childClickViewIds = LinkedHashSet<Int>()
+
+    private fun getChildClickViewIds() = childClickViewIds
+
+    protected fun addChildClickViewIds(@IdRes vararg viewIds: Int) {
+        for (viewId in viewIds) {
+            childClickViewIds.add(viewId)
+        }
+    }
 
 }

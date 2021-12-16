@@ -6,7 +6,7 @@
         <item name="colorAccent">@color/zfile_base_color</item>
         <item name="colorPrimaryDark">@color/zfile_base_color</item>
         <item name="colorPrimary">@color/zfile_base_color</item>
-        <item name="android:windowBackground">@color/zfile_bgclor</item>
+        <item name="android:windowBackground">@color/zfile_bgcolor</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowContentTransitions">true</item>
     </style>

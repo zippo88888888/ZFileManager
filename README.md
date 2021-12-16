@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.3.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -29,7 +29,7 @@
 
 #### Step 0. 添加依赖
 
-#### [z_file_1_3_2_兼容Android10及以上版本.aar下载](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/assets/zfile_1_3_2.aar)
+#### [最新版本](https://github.com/zippo88888888/ZFileManager/wiki/%E7%89%88%E6%9C%AC)
 
 ```groovy
 
@@ -555,7 +555,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
-[![Travis](https://img.shields.io/badge/ZFile-1.3.2-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.3.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

@@ -1,6 +1,7 @@
 package com.zp.z_file.content
 
 import android.os.Parcelable
+import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.zp.z_file.R
@@ -14,6 +15,11 @@ import java.io.Serializable
 
 /**
  * 配置信息
+ *
+ * 1.3.3 主要更新信息：
+ * 1）嵌套 Fragment 优化，列表优化，移除废弃方法！
+ * 2）新增 [needTwiceClick] 属性
+ * 3）新增 对于 m4a音频文件支持
  *
  * 1.3.2 主要更新信息：
  * 1）支持 直接在 Activity 、 Fragment、 Fragment + ViewPager 中使用
@@ -166,7 +172,7 @@ class ZFileConfiguration : Serializable {
     var isOnlyFile = false
 
     /**
-     * 打开文件需要 FileProvider 一般都是包名 + xxxFileProvider
+     * 打开文件需要 [FileProvider] 一般都是包名 + xxxFileProvider
      * 如果项目中已经存在或其他原因无法修改，请自己实现 [ZFileOpenListener]
      */
     var authority = ""
@@ -178,7 +184,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 标题位置 see [TITLE_LEFT] [TITLE_CENTER]
-     * 设置标题 重写 [R.string.zfile_title] 即可
+     * 设置标题 重写 [R.string.zfile_title] 即可自定义
      */
     var titleGravity = TITLE_LEFT
         set(value) {
@@ -213,6 +219,11 @@ class ZFileConfiguration : Serializable {
     var showBackIcon = true
 
     /**
+     * 是否需要两次点击后才能选择文件
+     */
+    var needTwiceClick = true
+
+    /**
      * 是否显示日志
      */
     var showLog = true
@@ -245,6 +256,7 @@ class ZFileConfiguration : Serializable {
         private var keepDuplicate = false
         private var needLazy = true
         private var showBackIcon = true
+        private var needTwiceClick = true
         private var showLog = true
 
         fun filePath(filePath: String?): Build {
@@ -366,6 +378,11 @@ class ZFileConfiguration : Serializable {
             return this
         }
 
+        fun needTwiceClick(needTwiceClick: Boolean): Build {
+            this.needTwiceClick = needTwiceClick
+            return this
+        }
+
         fun showLog(showLog: Boolean): Build {
             this.showLog = showLog
             return this
@@ -395,6 +412,7 @@ class ZFileConfiguration : Serializable {
             this.keepDuplicate = this@Build.keepDuplicate
             this.needLazy = this@Build.needLazy
             this.showBackIcon = this@Build.showBackIcon
+            this.needTwiceClick = this@Build.needTwiceClick
             this.showLog = this@Build.showLog
         }
 

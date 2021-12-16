@@ -47,7 +47,7 @@
     <string name="zfile_11_title">温馨提示</string>
     <string name="zfile_11_content">访问文件需要您同意“允许访问所有文件权限”才能正常使用！</string>
     <string name="zfile_11_bad">同意“允许访问所有文件权限”才能正常使用！</string>
-    <string name="zifle_permission_bad2">您已拒绝权限的申请，该功能暂时无法使用，请您同意权限后继续！</string>
-    <string name="zifle_permission_bad3">重新获取</string>
+    <string name="zfile_permission_bad2">您已拒绝权限的申请，该功能暂时无法使用，请您同意权限后继续！</string>
+    <string name="zfile_permission_bad3">重新获取</string>
 
 </resources>

@@ -18,7 +18,7 @@ open class AudioType : ZFileType() {
 
     override fun loadingFile(filePath: String, pic: ImageView) {
         val resId = getZFileConfig().resources.audioRes
-        pic.setImageResource(getRes(getZFileConfig().resources.audioRes, R.drawable.ic_zfile_audio))
+        pic.setImageResource(getRes(resId, R.drawable.ic_zfile_audio))
     }
 
 }

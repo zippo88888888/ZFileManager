@@ -22,6 +22,7 @@ import com.zp.z_file.R
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.util.ZFileLog
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -34,6 +35,7 @@ const val GIF = "gif"
 const val MP3 = "mp3"
 const val AAC = "aac"
 const val WAV = "wav"
+const val M4A = "m4a"
 const val MP4 = "mp4"
 const val _3GP = "3gp"
 const val TXT = "txt"
@@ -118,37 +120,10 @@ internal fun Context.getZDisplay() = IntArray(2).apply {
     this[0] = point.x
     this[1] = point.y
 }
-internal fun FragmentActivity.checkFragmentByTag(tag: String) {
+internal infix fun FragmentActivity.checkFragmentByTag(tag: String) {
     val fragment = supportFragmentManager.findFragmentByTag(tag)
     if (fragment != null) {
         supportFragmentManager.beginTransaction().remove(fragment).commit()
-    }
-}
-internal fun Activity.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
-    if (clazz !is Class<*>) return
-    startActivityForResult(Intent(this, clazz).apply {
-        if (!map.isNullOrEmpty()) putExtras(map.toBundle())
-    }, ZFILE_REQUEST_CODE)
-}
-internal fun Fragment.jumpActivity(clazz: Any, map: ArrayMap<String, Any>? = null) {
-    if (clazz !is Class<*>) return
-    startActivityForResult(Intent(context, clazz).apply {
-        if (!map.isNullOrEmpty()) putExtras(map.toBundle())
-    }, ZFILE_REQUEST_CODE)
-}
-internal fun ArrayMap<String, Any>.toBundle() = Bundle().apply {
-    for ((key, value) in this@toBundle) {
-        when (value) {
-            is Int -> putInt(key, value)
-            is Double -> putDouble(key, value)
-            is Float -> putFloat(key, value)
-            is Long -> putLong(key, value)
-            is Boolean -> putBoolean(key, value)
-            is String -> putString(key, value)
-            is Serializable -> putSerializable(key, value)
-            is Parcelable -> putParcelable(key, value)
-            else -> throw IllegalArgumentException("map type Error")
-        }
     }
 }
 internal fun Activity.setStatusBarTransparent() {
@@ -168,7 +143,7 @@ internal fun SwipeRefreshLayout.property(
     height: Int = 0,
     block: () -> Unit
 ): SwipeRefreshLayout {
-    setColorSchemeColors(context.getColorById(color))
+    setColorSchemeColors(context getColorById color)
     if (scale) setProgressViewEndTarget(scale, height)
     setOnRefreshListener(block)
     return this
@@ -179,17 +154,39 @@ internal fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
 internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(applicationContext, msg, duration).show()
 }
-internal fun Int.getFilterArray() = when (this) {
-    ZFILE_QW_PIC -> arrayOf(PNG, JPEG, JPG, GIF)
-    ZFILE_QW_MEDIA -> arrayOf(MP4, _3GP)
-    ZFILE_QW_DOCUMENT -> arrayOf(TXT, JSON, XML, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF)
-    else -> arrayOf("")
+internal fun View.click(time: Long = 600L, block: View.() -> Unit) {
+    triggerDelay = time
+    setOnClickListener {
+        if (clickEnable()) block(it) else ZFileLog.e("点击间隔少于${time}ms，本次点击不做任何处理")
+    }
 }
-internal fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
-internal fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
-internal fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
-internal fun Context.getStringById(stringID: Int) = resources.getString(stringID)
-internal fun <E> Set<E>.indexOf(value: String): Boolean {
+private var View.triggerLastTime: Long
+    get() = getTag(1123460103) as? Long ?: -601L
+    set(value) {
+        setTag(1123460103, value)
+    }
+
+private var View.triggerDelay: Long
+    get() = getTag(1123461123) as? Long ?: 600L
+    set(value) {
+        setTag(1123461123, value)
+    }
+
+private fun View.clickEnable(): Boolean {
+    var flag = false
+    val currentClickTime = System.currentTimeMillis()
+    if (currentClickTime - triggerLastTime >= triggerDelay) {
+        flag = true
+    }
+    triggerLastTime = currentClickTime
+    return flag
+}
+
+internal infix fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
+internal infix fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
+internal infix fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
+internal infix fun Context.getStringById(stringID: Int) = resources.getString(stringID)
+internal infix fun <E> Set<E>.indexOf(value: String): Boolean {
     var flag = false
     forEach forEach@{
         if ((it?.toString()?.indexOf(value) ?: -1) >= 0) {
@@ -203,7 +200,7 @@ internal fun File.getFileType() = this.path.getFileType()
 internal fun String.getFileType() = this.run {
     substring(lastIndexOf(".") + 1, length)
 }
-internal fun String.accept(type: String) =
+internal infix fun String.accept(type: String) =
     this.endsWith(type.toLowerCase(Locale.CHINA)) || this.endsWith(type.toUpperCase(Locale.CHINA))
 internal fun String.getFileName() = File(this).name
 internal fun String.getFileNameOnly() = getFileName().run {
@@ -216,7 +213,7 @@ internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.fileName
     filePath = this@toPathBean.filePath
 }
-internal fun ZFileBean.toQWBean(isSelected: Boolean = true) = ZFileQWBean(this, isSelected)
+internal infix fun ZFileBean.toQWBean(isSelected: Boolean) = ZFileQWBean(this, isSelected)
 internal fun File.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.name
     filePath = this@toPathBean.path

@@ -85,16 +85,20 @@ abstract class ZFragmentListener {
     abstract fun selectResult(selectList: MutableList<ZFileBean>?)
 
     /**
-     * [Activity] 中直接调用 [Activity.finish] 即可
+     * [Activity] 中直接调用 [Activity.finish] 即可，如有需要，重写即可
      */
-    abstract fun onActivityBackPressed()
+    open fun onActivityBackPressed(activity: FragmentActivity) {
+        activity.finish()
+    }
+
+//    abstract fun onActivityBackPressed() 方法已弃用
 
     /**
      * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败
      * @param activity [FragmentActivity]
      */
     open fun onSDPermissionsFiled(activity: FragmentActivity) {
-        activity.toast(activity.getStringById(R.string.zfile_permission_bad))
+        activity.toast(activity getStringById R.string.zfile_permission_bad)
     }
 
     /**
@@ -102,7 +106,7 @@ abstract class ZFragmentListener {
      * 请注意：Android 11 及以上版本 才有
      */
     open fun onExternalStorageManagerFiled(activity: FragmentActivity) {
-        activity.toast(activity.getStringById(R.string.zfile_11_bad))
+        activity.toast(activity getStringById R.string.zfile_11_bad)
     }
 }
 
@@ -149,7 +153,7 @@ open class ZFileTypeListener {
     open fun getFileType(filePath: String): ZFileType {
         return when (ZFileHelp.getFileTypeBySuffix(filePath)) {
             PNG, JPG, JPEG, GIF -> ImageType()
-            MP3, AAC, WAV -> AudioType()
+            MP3, AAC, WAV, M4A -> AudioType()
             MP4, _3GP -> VideoType()
             TXT, XML, JSON -> TxtType()
             ZIP -> ZipType()
@@ -182,21 +186,23 @@ open class ZFileOpenListener {
      * 打开图片
      */
     open fun openImage(filePath: String, view: View) {
-        view.context.startActivity(Intent(view.context, ZFilePicActivity::class.java).apply {
+        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
+        pic.context.startActivity(Intent(pic.context, ZFilePicActivity::class.java).apply {
             putExtra("picFilePath", filePath)
-        }, ActivityOptions.makeSceneTransitionAnimation(view.context as Activity, view,
-            view.context.getStringById(R.string.zfile_sharedElement_pic)).toBundle())
+        }, ActivityOptions.makeSceneTransitionAnimation(pic.context as Activity, pic,
+            pic.context getStringById R.string.zfile_sharedElement_pic).toBundle())
     }
 
     /**
      * 打开视频
      */
     open fun openVideo(filePath: String, view: View) {
-        view.context.startActivity(
-            Intent(view.context, ZFileVideoPlayActivity::class.java).apply {
+        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
+        pic.context.startActivity(
+            Intent(pic.context, ZFileVideoPlayActivity::class.java).apply {
                 putExtra("videoFilePath", filePath)
-            }, ActivityOptions.makeSceneTransitionAnimation(view.context as Activity, view,
-                view.context.getStringById(R.string.zfile_sharedElement_video)).toBundle())
+            }, ActivityOptions.makeSceneTransitionAnimation(pic.context as Activity, pic,
+                pic.context getStringById R.string.zfile_sharedElement_video).toBundle())
     }
 
     /**

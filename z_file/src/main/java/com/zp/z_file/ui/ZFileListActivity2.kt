@@ -50,9 +50,5 @@ internal class ZFileListActivity2 : ZFileActivity() {
             finish()
         }
 
-        override fun onActivityBackPressed() {
-            finish()
-        }
-
     }
 }

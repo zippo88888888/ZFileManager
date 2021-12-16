@@ -2,10 +2,12 @@ package com.zp.z_file.common
 
 import android.util.SparseArray
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zp.z_file.content.getColorById
+import java.io.File
 
 @Suppress("UNCHECKED_CAST")
 internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,8 +33,13 @@ internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         pic.setImageResource(res)
     }
 
+    fun setImage(id: Int, path: String) {
+        val pic = getView<ImageView>(id)
+        ZFileTypeManage.getTypeManager().loadingFile(path, pic)
+    }
+
     fun setBgColor(id: Int, color: Int) {
-        getView<View>(id).setBackgroundColor(itemView.context.getColorById(color))
+        getView<View>(id).setBackgroundColor(itemView.context getColorById color)
     }
 
     fun setVisibility(id: Int, visibility: Int) {
@@ -43,8 +50,16 @@ internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         if (isVisibility) setVisibility(id, View.VISIBLE) else setVisibility(id, View.GONE)
     }
 
+    fun setChecked(id: Int, checked: Boolean?) {
+        getView<CheckBox>(id).isChecked = checked ?: false
+    }
+
+    fun setSelected(id: Int, selected: Boolean?) {
+        getView<View>(id).isSelected = selected ?: false
+    }
+
     fun setOnViewClickListener(id: Int, listener: View.() -> Unit) {
-        getView<View>(id).setOnClickListener {
+        itemView.findViewById<View>(id)?.setOnClickListener {
             listener.invoke(it)
         }
     }

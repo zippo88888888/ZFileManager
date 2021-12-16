@@ -159,7 +159,7 @@ internal object ZFileUtil {
             return false
         }
         if (getZFileConfig().keepDuplicate) {
-            val duplicateStr = context.getStringById(R.string.zfile_duplicate)
+            val duplicateStr = context getStringById R.string.zfile_duplicate
             while (true) {
                 if (outFile.exists()) {
                     ZFileLog.i("文件已存在 ---> 重命名为副本")
@@ -229,7 +229,7 @@ internal object ZFileUtil {
                     var file = File(outPutDir + File.separator + name)
 
                     if (getZFileConfig().keepDuplicate) {
-                        val duplicateStr = context.getStringById(R.string.zfile_duplicate)
+                        val duplicateStr = context getStringById R.string.zfile_duplicate
                         while (true) {
                             if (file.exists()) {
                                 ZFileLog.i("文件已存在 ---> 重命名为副本")

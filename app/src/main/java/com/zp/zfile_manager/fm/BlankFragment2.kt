@@ -35,7 +35,7 @@ class BlankFragment2 : Fragment() {
             .commit()
 
         // Fragment + (VP + Fragment) 同 Activity + (VP + Fragment)
-        // 区别在于 使用childFragmentManager 以及 找到正确的 FragmentTag
+        // 区别在于 使用 childFragmentManager or supportFragmentManager 以及 找到正确的 FragmentTag
     }
 
     fun showPermissionDialog() {
@@ -63,9 +63,9 @@ class BlankFragment2 : Fragment() {
         /**
          * 直接调用 [Activity.finish] 即可
          */
-        override fun onActivityBackPressed() {
-            activity?.finish()
-        }
+//        override fun onActivityBackPressed() {
+//            activity?.finish()
+//        }
 
         /**
          * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败

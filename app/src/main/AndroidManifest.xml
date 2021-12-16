@@ -13,15 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".fm.FragmentSampleActivity2"
-            android:theme="@style/ZFile_BaseTheme" />
-        <activity
-            android:name=".diy.SunActivity"
-            android:theme="@style/SunTheme" />
-        <activity android:name=".dsl.DslFragmentActivity" />
-        <activity android:name=".dsl.DslActivity" />
-        <activity android:name=".super_.SuperActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -33,7 +24,6 @@
                 android:resource="@xml/file_manage_paths" />
         </provider>
 
-        <activity android:name=".JavaSampleActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +31,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".fm.FragmentSampleActivity2"
+            android:theme="@style/ZFile_BaseTheme" />
+        <activity
+            android:name=".diy.SunActivity"
+            android:theme="@style/SunTheme" />
+        <activity android:name=".dsl.DslFragmentActivity" />
+        <activity android:name=".dsl.DslActivity" />
+        <activity android:name=".super_.SuperActivity" />
+        <activity android:name=".JavaSampleActivity" />
     </application>
 
 </manifest>

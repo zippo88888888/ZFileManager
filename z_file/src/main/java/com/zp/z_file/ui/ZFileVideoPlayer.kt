@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.Surface
 import android.view.TextureView
+import com.zp.z_file.content.ZFileException
 import com.zp.z_file.content.isNull
 import com.zp.z_file.util.ZFileLog
 
@@ -132,8 +133,10 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
             return
         }
         if (videoPath.isNull() && assetsVideoName.isNull()) {
-            ZFileLog.e("视频播放地址不能为空")
-            return
+            throw ZFileException("videoPath is Null or assetsVideoName is Null")
+        }
+        if (!videoPath.isNull() && !assetsVideoName.isNull()) {
+            throw ZFileException("videoPath or assetsVideoName, You can only choose one")
         }
         if (isPlaying()) {
             ZFileLog.i("视频正在播放...")
@@ -188,7 +191,7 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
         when (sizeType) {
             CENTER_MODE -> sizeCenter()
             CENTER_CROP_MODE -> sizeCenterCrop()
-            else -> throw IllegalArgumentException("参数错误")
+            else -> throw ZFileException("sizeType error")
         }
     }
 

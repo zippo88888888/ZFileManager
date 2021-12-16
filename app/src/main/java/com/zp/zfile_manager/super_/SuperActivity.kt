@@ -40,7 +40,7 @@ class SuperActivity : AppCompatActivity() {
         }
 
         super_audioTxt.setOnClickListener {
-            showDialog(arrayOf(MP3, AAC, WAV))
+            showDialog(arrayOf(MP3, AAC, WAV, M4A))
         }
 
         super_fileTxt.setOnClickListener {

@@ -66,12 +66,12 @@ internal class ZFileQWFragment : ZFileFragment() {
     private fun initAdapter() {
         if (qwAdapter == null) {
             qwAdapter = ZFileListAdapter(context!!, true).run {
-                itemClickByAnim = { v, _, item ->
+                itemClick = { v, _, item ->
                     ZFileUtil.openFile(item.filePath, v)
                 }
-                qwListener = { isManage, item, isSelect ->
+                qwChangeListener = { isManage, item, isSelect ->
                     if (isManage) {
-                        (context as? ZFileQWActivity)?.observer(item.toQWBean(isSelect))
+                        (context as? ZFileQWActivity)?.observer(item toQWBean isSelect)
                     }
                 }
                 isManage = qwManage

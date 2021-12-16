@@ -105,7 +105,7 @@ class ZFileListFragment : Fragment() {
             val startPath = getZFileConfig().filePath
             if (startPath == ZFileConfiguration.QQ || startPath == ZFileConfiguration.WECHAT) {
                 throw ZFileException(
-                    "startPath must be real path or empty, if you want user \" qq \" or \" wechat \", " +
+                    "startPath must be real path or empty, if you want use \" qq \" or \" wechat \", " +
                             "please use \" getZFileHelp().start() \""
                 )
             }
@@ -175,7 +175,7 @@ class ZFileListFragment : Fragment() {
             R.id.menu_zfile_down -> {
                 val list = fileListAdapter?.selectData
                 if (list.isNullOrEmpty()) {
-                    setBarTitle(mActivity.getStringById(R.string.zfile_title))
+                    setBarTitle(mActivity getStringById R.string.zfile_title)
                     fileListAdapter?.isManage = false
                     barShow = false
                     setMenuState()
@@ -223,7 +223,7 @@ class ZFileListFragment : Fragment() {
         }
         zfile_list_emptyPic.setImageResource(emptyRes)
         setHiddenState()
-        setBarTitle(mActivity.getStringById(R.string.zfile_title))
+        setBarTitle(mActivity getStringById R.string.zfile_title)
         zfile_list_againBtn.setOnClickListener {
             callPermission()
         }
@@ -274,16 +274,16 @@ class ZFileListFragment : Fragment() {
         val filePath = getZFileConfig().filePath
         val pathList = ArrayList<ZFilePathBean>()
         if (filePath.isNullOrEmpty() || filePath == SD_ROOT) {
-            pathList.add(ZFilePathBean(mActivity.getStringById(R.string.zfile_root_path), "root"))
+            pathList.add(ZFilePathBean(mActivity getStringById R.string.zfile_root_path, "root"))
         } else {
-            pathList.add(ZFilePathBean("${mActivity.getStringById(R.string.zfile_path)}${filePath.getFileName()}", filePath))
+            pathList.add(ZFilePathBean("${mActivity getStringById R.string.zfile_path}${filePath.getFileName()}", filePath))
         }
         filePathAdapter.addAll(pathList)
     }
 
     private fun initListRecyclerView() {
         fileListAdapter = ZFileListAdapter(mActivity).run {
-            itemClickByAnim = { v, _, item ->
+            itemClick = { v, _, item ->
                 if (item.isFile) {
                     ZFileUtil.openFile(item.filePath, v)
                 } else {
@@ -481,7 +481,7 @@ class ZFileListFragment : Fragment() {
         val path = getThisFilePath()
         if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
-                setBarTitle(mActivity.getStringById(R.string.zfile_title))
+                setBarTitle(mActivity getStringById R.string.zfile_title)
                 fileListAdapter?.isManage = false
                 barShow = false
                 setMenuState()
@@ -489,7 +489,7 @@ class ZFileListFragment : Fragment() {
                 if (zFragmentListener == null) {
                     mActivity.onBackPressed()
                 } else {
-                    zFragmentListener?.onActivityBackPressed()
+                    zFragmentListener?.onActivityBackPressed(mActivity)
                 }
             }
         } else { // 返回上一级
@@ -521,7 +521,7 @@ class ZFileListFragment : Fragment() {
                 .setNegativeButton(R.string.zfile_cancel) { d, _ ->
                     d.dismiss()
                     if (zFragmentListener == null) {
-                        mActivity.toast(mActivity.getStringById(R.string.zfile_11_bad))
+                        mActivity.toast(mActivity getStringById R.string.zfile_11_bad)
                         mActivity.finish()
                     } else {
                         zFragmentListener?.onExternalStorageManagerFiled(mActivity)
@@ -562,7 +562,7 @@ class ZFileListFragment : Fragment() {
             else {
                 zfile_list_errorLayout.visibility = View.VISIBLE
                 if (zFragmentListener == null) {
-                    mActivity.toast(mActivity.getStringById(R.string.zfile_permission_bad))
+                    mActivity.toast(mActivity getStringById R.string.zfile_permission_bad)
                     mActivity.finish()
                 } else {
                     zFragmentListener?.onSDPermissionsFiled(mActivity)

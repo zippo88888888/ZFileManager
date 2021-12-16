@@ -16,10 +16,10 @@ internal object ZFileQWUtil {
         val titles = getZFileConfig().qwData.titles
         if (titles.isNullOrEmpty()) {
             return arrayOf(
-                context.getStringById(R.string.zfile_pic),
-                context.getStringById(R.string.zfile_video),
-                context.getStringById(R.string.zfile_txt),
-                context.getStringById(R.string.zfile_other)
+                context getStringById R.string.zfile_pic,
+                context getStringById R.string.zfile_video,
+                context getStringById R.string.zfile_txt,
+                context getStringById R.string.zfile_other
             )
         }
         if (titles.size != QW_SIZE) {
