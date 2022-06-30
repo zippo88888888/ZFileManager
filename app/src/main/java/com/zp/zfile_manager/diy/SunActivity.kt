@@ -4,37 +4,39 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.zp.z_file.ui.ZFileVideoPlayer
-import com.zp.zfile_manager.R
-import kotlinx.android.synthetic.main.activity_sun.*
+import com.zp.zfile_manager.databinding.ActivitySunBinding
 
 class SunActivity : AppCompatActivity() {
 
+    private lateinit var vb: ActivitySunBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sun)
-        sun_back.setOnClickListener {
+        vb = ActivitySunBinding.inflate(layoutInflater)
+        setContentView(vb.root)
+        vb.sunBack.setOnClickListener {
             onBackPressed()
         }
-        sun_phoneBg1.background.alpha = 100
-        sun_loginBtn2.background.alpha = 100
-        sun_videoPlayer.sizeType = ZFileVideoPlayer.CENTER_CROP_MODE
-        sun_videoPlayer.videoPlayError = {
+        vb.sunPhoneBg1.background.alpha = 100
+        vb.sunLoginBtn2.background.alpha = 100
+        vb.sunVideoPlayer.sizeType = ZFileVideoPlayer.CENTER_CROP_MODE
+        vb.sunVideoPlayer.videoPlayError = {
             Toast.makeText(this@SunActivity.applicationContext, "播放失败", Toast.LENGTH_SHORT).show()
         }
-        sun_videoPlayer.assetsVideoName = "sun.mp4"
-        sun_videoPlayer.post {
-            sun_videoPlayer.play()
+        vb.sunVideoPlayer.assetsVideoName = "sun.mp4"
+        vb.sunVideoPlayer.post {
+            vb.sunVideoPlayer.play()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (sun_videoPlayer.isPause()) sun_videoPlayer.play()
+        if (vb.sunVideoPlayer.isPause()) vb.sunVideoPlayer.play()
     }
 
     override fun onPause() {
         super.onPause()
-        if (sun_videoPlayer.isPlaying()) sun_videoPlayer.pause()
+        if (vb.sunVideoPlayer.isPlaying()) vb.sunVideoPlayer.pause()
     }
 
 }

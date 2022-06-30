@@ -15,6 +15,12 @@ internal abstract class ZFileFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+    ): View? = create(inflater, container, savedInstanceState)
+
+    open fun create(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         if (rootView == null) {
             rootView = inflater.inflate(getContentView(), container, false)
@@ -22,7 +28,7 @@ internal abstract class ZFileFragment : Fragment() {
         return rootView
     }
 
-    abstract fun getContentView(): Int
+    open fun getContentView(): Int = 0
 
     abstract fun initAll()
 

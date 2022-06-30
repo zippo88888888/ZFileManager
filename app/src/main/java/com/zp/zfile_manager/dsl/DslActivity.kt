@@ -16,23 +16,24 @@ import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.R
 import com.zp.zfile_manager.content.Content
+import com.zp.zfile_manager.databinding.ActivityDslBinding
 import com.zp.zfile_manager.diy.MyFileTypeListener
-import kotlinx.android.synthetic.main.activity_dsl.*
-import kotlinx.android.synthetic.main.layout_result_txt.*
 
 class DslActivity : AppCompatActivity() {
 
+    private lateinit var vb: ActivityDslBinding
     private var anim: ObjectAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dsl)
+        vb = ActivityDslBinding.inflate(layoutInflater)
+        setContentView(vb.root)
         anim = getAnim()
         anim?.start()
-        dsl_startBtn.setOnClickListener {
+        vb.dslStartBtn.setOnClickListener {
             dsl()
         }
-        dsl_fragmentBtn.setOnClickListener {
+        vb.dslFragmentBtn.setOnClickListener {
             startActivity(Intent(this, DslFragmentActivity::class.java))
         }
     }
@@ -53,7 +54,7 @@ class DslActivity : AppCompatActivity() {
         selectList?.forEach {
             sb.append(it).append("\n\n")
         }
-        main_resultTxt.text = sb.toString()
+        vb.dslInclude.mainResultTxt.text = sb.toString()
     }
 
     override fun onDestroy() {
@@ -67,7 +68,7 @@ class DslActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun getAnim() = ObjectAnimator.ofFloat(dsl_dslTxt, "rotation", 0f, 360f).run {
+    private fun getAnim() = ObjectAnimator.ofFloat(vb.dslDslTxt, "rotation", 0f, 360f).run {
         duration = 5000L
         repeatCount = -1
         interpolator = LinearInterpolator()

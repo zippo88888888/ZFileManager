@@ -22,6 +22,7 @@ import com.zp.z_file.R
 import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
+import com.zp.z_file.databinding.FragmentZfileListBinding
 import com.zp.z_file.dsl.ZFileDsl
 import com.zp.z_file.listener.ZFragmentListener
 import com.zp.z_file.ui.adapter.ZFileListAdapter
@@ -30,7 +31,6 @@ import com.zp.z_file.ui.dialog.ZFileSortDialog
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileUtil
-import kotlinx.android.synthetic.main.activity_zfile_list.*
 import java.io.File
 
 /**
@@ -44,10 +44,11 @@ import java.io.File
  */
 class ZFileListFragment : Fragment() {
 
+    private var vb: FragmentZfileListBinding? = null
+
     private lateinit var mActivity: FragmentActivity
 
     private var isFirstLoad = true
-    private var rootView: View? = null
 
     private var toManagerPermissionPage = false
 
@@ -55,7 +56,7 @@ class ZFileListFragment : Fragment() {
     private lateinit var filePathAdapter: ZFileAdapter<ZFilePathBean>
     private var fileListAdapter: ZFileListAdapter? = null
 
-    private var index = 0
+    private var pageLoadIndex = 0
     private var rootPath = "" // 根目录
     private var specifyPath: String? = "" // 指定目录
     private var nowPath: String? = "" // 当前目录
@@ -127,10 +128,8 @@ class ZFileListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (rootView == null) {
-            rootView = inflater.inflate(R.layout.activity_zfile_list, container, false)
-        }
-        return rootView
+        vb = FragmentZfileListBinding.inflate(inflater, container, false)
+        return vb?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -162,7 +161,8 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun setMenuState() {
-        zfile_list_toolBar.menu.apply {
+        // zfile_list_toolBar
+        vb?.zfileListToolBar?.menu?.apply {
             findItem(R.id.menu_zfile_down).isVisible = barShow
             findItem(R.id.menu_zfile_px).isVisible = !barShow
             findItem(R.id.menu_zfile_show).isVisible = !barShow
@@ -215,16 +215,18 @@ class ZFileListFragment : Fragment() {
         rootPath = specifyPath ?: ""
         backList.add(rootPath)
         nowPath = rootPath
-        zfile_list_toolBar.apply {
+        vb?.zfileListToolBar?.apply {
             if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
             inflateMenu(R.menu.zfile_list_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { back() }
         }
-        zfile_list_emptyPic.setImageResource(emptyRes)
+        // zfile_list_emptyPic
+        vb?.zfileListEmptyPic?.setImageResource(emptyRes)
         setHiddenState()
         setBarTitle(mActivity getStringById R.string.zfile_title)
-        zfile_list_againBtn.setOnClickListener {
+        // zfile_list_againBtn
+        vb?.zfileListAgainBtn?.setOnClickListener {
             callPermission()
         }
         callPermission()
@@ -232,8 +234,10 @@ class ZFileListFragment : Fragment() {
 
     private fun initRV() {
         hasPermission = true
-        zfile_list_errorLayout.visibility = View.GONE
-        zfile_list_refreshLayout.property() {
+        // zfile_list_errorLayout
+        vb?.zfileListErrorLayout?.visibility = View.GONE
+        // zfile_list_refreshLayout
+        vb?.zfileListRefreshLayout?.property() {
             getData(nowPath)
         }
         initPathRecyclerView()
@@ -260,11 +264,15 @@ class ZFileListFragment : Fragment() {
             }
 
         }
-        zfile_list_pathRecyclerView.apply {
-            layoutManager = LinearLayoutManager(activity).run {
-                orientation = LinearLayoutManager.HORIZONTAL
-                this
+
+        val llM = object : LinearLayoutManager(activity, HORIZONTAL, false) {
+            override fun canScrollHorizontally(): Boolean {
+                return false
             }
+        }
+        // zfile_list_pathRecyclerView
+        vb?.zfileListPathRecyclerView?.apply {
+            layoutManager = llM
             adapter = filePathAdapter
         }
         getPathData()
@@ -290,7 +298,8 @@ class ZFileListFragment : Fragment() {
                     ZFileLog.i("进入 ${item.filePath}")
                     backList.add(item.filePath)
                     filePathAdapter.addItem(filePathAdapter.itemCount, item.toPathBean())
-                    zfile_list_pathRecyclerView.scrollToPosition(filePathAdapter.itemCount - 1)
+                    // zfile_list_pathRecyclerView
+                    vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
                     getData(item.filePath)
                     nowPath = item.filePath
                 }
@@ -324,12 +333,13 @@ class ZFileListFragment : Fragment() {
             }
             this
         }
-        zfile_list_listRecyclerView.apply {
+        // zfile_list_listRecyclerView
+        vb?.zfileListListRecyclerView?.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = fileListAdapter
         }
         getData(getZFileConfig().filePath)
-        index ++
+        pageLoadIndex ++
     }
 
     private fun getData(filePath: String?) {
@@ -337,25 +347,30 @@ class ZFileListFragment : Fragment() {
             ZFileLog.e("no permission")
             return
         }
-        zfile_list_refreshLayout.isRefreshing = true
+        // zfile_list_refreshLayout
+        vb?.zfileListRefreshLayout?.isRefreshing = true
         val key = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
         if (rootPath.isEmpty()) {
             rootPath = key
         }
         getZFileConfig().filePath = filePath
-        if (index != 0) {
+        if (pageLoadIndex != 0) {
             filePathAdapter.addItem(filePathAdapter.itemCount, File(key).toPathBean())
-            zfile_list_pathRecyclerView.scrollToPosition(filePathAdapter.itemCount - 1)
+            // zfile_list_pathRecyclerView
+            vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
         }
         ZFileUtil.getList(mActivity) {
             if (isNullOrEmpty()) {
                 fileListAdapter?.clear()
-                zfile_list_emptyLayout.visibility = View.VISIBLE
+                // zfile_list_emptyLayout
+                vb?.zfileListEmptyLayout?.visibility = View.VISIBLE
             } else {
                 fileListAdapter?.setDatas(this)
-                zfile_list_emptyLayout.visibility = View.GONE
+                // zfile_list_emptyLayout
+                vb?.zfileListEmptyLayout?.visibility = View.GONE
             }
-            zfile_list_refreshLayout.isRefreshing = false
+            // zfile_list_refreshLayout
+            vb?.zfileListRefreshLayout?.isRefreshing = false
         }
     }
 
@@ -499,15 +514,17 @@ class ZFileListFragment : Fragment() {
             getData(lastPath)
             nowPath = lastPath
             filePathAdapter.remove(filePathAdapter.itemCount - 1)
-            zfile_list_pathRecyclerView.scrollToPosition(filePathAdapter.itemCount - 1)
+            // zfile_list_pathRecyclerView
+            vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
         }
     }
 
     private fun callPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+        if (ZFilePermissionUtil.isRorESM()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initRV()
         } else {
-            zfile_list_errorLayout.visibility = View.VISIBLE
+            // zfile_list_errorLayout
+            vb?.zfileListErrorLayout?.visibility = View.VISIBLE
             val builder = AlertDialog.Builder(mActivity)
                 .setTitle(R.string.zfile_11_title)
                 .setMessage(R.string.zfile_11_content)
@@ -560,7 +577,8 @@ class ZFileListFragment : Fragment() {
         if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initRV()
             else {
-                zfile_list_errorLayout.visibility = View.VISIBLE
+                // zfile_list_errorLayout
+                vb?.zfileListErrorLayout?.visibility = View.VISIBLE
                 if (zFragmentListener == null) {
                     mActivity.toast(mActivity getStringById R.string.zfile_permission_bad)
                     mActivity.finish()
@@ -585,14 +603,14 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun setHiddenState() {
-        zfile_list_toolBar.post {
-            val menu = zfile_list_toolBar.menu
-            val showMenuItem = menu.findItem(R.id.menu_zfile_show)
-            val hiddenMenuItem = menu.findItem(R.id.menu_zfile_hidden)
+        vb?.zfileListToolBar?.post {
+            val menu = vb?.zfileListToolBar?.menu
+            val showMenuItem = menu?.findItem(R.id.menu_zfile_show)
+            val hiddenMenuItem = menu?.findItem(R.id.menu_zfile_hidden)
             if (getZFileConfig().showHiddenFile) {
-                showMenuItem.isChecked = true
+                showMenuItem?.isChecked = true
             } else {
-                hiddenMenuItem.isChecked = true
+                hiddenMenuItem?.isChecked = true
             }
         }
     }
@@ -604,13 +622,14 @@ class ZFileListFragment : Fragment() {
     private fun setBarTitle(title: String) {
         when (getZFileConfig().titleGravity) {
             ZFileConfiguration.TITLE_LEFT -> {
-                zfile_list_toolBar.title = title
-                zfile_list_centerTitle.visibility = View.GONE
+                vb?.zfileListToolBar?.title = title
+                // zfile_list_centerTitle
+                vb?.zfileListCenterTitle?.visibility = View.GONE
             }
             else -> {
-                zfile_list_toolBar.title = ""
-                zfile_list_centerTitle.visibility = View.VISIBLE
-                zfile_list_centerTitle.text = title
+                vb?.zfileListToolBar?.title = ""
+                vb?.zfileListCenterTitle?.visibility = View.VISIBLE
+                vb?.zfileListCenterTitle?.text = title
             }
         }
     }

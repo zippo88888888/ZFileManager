@@ -10,24 +10,30 @@ import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.fileType
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
-import com.zp.zfile_manager.R
 import com.zp.zfile_manager.content.Content
-import kotlinx.android.synthetic.main.fragment_dsl.*
-import kotlinx.android.synthetic.main.layout_result_txt.*
+import com.zp.zfile_manager.databinding.FragmentDslBinding
 
 class DslFragment : Fragment() {
+
+    private var vb: FragmentDslBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_dsl, container, false)
+        vb = FragmentDslBinding.inflate(inflater, container, false)
+        return vb?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dsl_fragmentStartBtn.setOnClickListener {
+        vb?.dslFragmentStartBtn?.setOnClickListener {
             dsl()
         }
+    }
+
+    override fun onDestroyView() {
+        vb = null
+        super.onDestroyView()
     }
 
     private fun dsl() {
@@ -46,7 +52,7 @@ class DslFragment : Fragment() {
                 this?.forEach {
                     sb.append(it).append("\n\n")
                 }
-                main_resultTxt.text = sb.toString()
+                vb?.dslInclude2?.mainResultTxt?.text = sb.toString()
             }
         }
     }

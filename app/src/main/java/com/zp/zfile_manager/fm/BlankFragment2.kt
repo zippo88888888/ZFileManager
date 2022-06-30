@@ -1,7 +1,6 @@
 package com.zp.zfile_manager.fm
 
 import android.Manifest
-import android.app.Activity
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -59,13 +58,6 @@ class BlankFragment2 : Fragment() {
             }
             activity?.finish()
         }
-
-        /**
-         * 直接调用 [Activity.finish] 即可
-         */
-//        override fun onActivityBackPressed() {
-//            activity?.finish()
-//        }
 
         /**
          * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败

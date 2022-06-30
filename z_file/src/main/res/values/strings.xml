@@ -27,6 +27,7 @@
     <string name="zfile_info_type">文件类型：</string>
     <string name="zfile_info_size">文件大小：</string>
     <string name="zfile_info_time">修改时间：</string>
+    <string name="zfile_info_time2">创建时间：</string>
     <string name="zfile_info_path">文件路径：</string>
     <string name="zfile_info_more">显示更多</string>
     <string name="zfile_info_duration">媒体时长：</string>

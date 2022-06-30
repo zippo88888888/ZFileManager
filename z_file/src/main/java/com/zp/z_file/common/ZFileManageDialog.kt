@@ -11,9 +11,7 @@ import androidx.fragment.app.DialogFragment
 internal abstract class ZFileManageDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val layoutID = getContentView()
-        if (layoutID <= 0) throw NullPointerException("DialogFragment ContentView is not null")
-        return inflater.inflate(getContentView(), container, false)
+        return create(inflater, container, savedInstanceState)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = createDialog(savedInstanceState)
@@ -27,7 +25,18 @@ internal abstract class ZFileManageDialog : DialogFragment() {
         }
     }
 
-    abstract fun getContentView(): Int
+    open fun create(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val layoutID = getContentView()
+        if (layoutID <= 0) throw NullPointerException("DialogFragment ContentView is not null")
+        return inflater.inflate(getContentView(), container, false)
+    }
+
+    open fun getContentView(): Int = 0
+
     abstract fun createDialog(savedInstanceState: Bundle?): Dialog
     abstract fun init(savedInstanceState: Bundle?)
 

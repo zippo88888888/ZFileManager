@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 30 // 29  30
     buildToolsVersion "30.0.3"  // 29.0.3  30.0.3
@@ -20,10 +21,12 @@ android {
         }
     }
 
-    // Kotlin Parcelable 支持
-    androidExtensions {
-        experimental = true
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -32,6 +35,10 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
 }

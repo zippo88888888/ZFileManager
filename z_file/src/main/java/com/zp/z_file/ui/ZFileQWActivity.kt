@@ -11,7 +11,6 @@ import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -21,12 +20,14 @@ import androidx.viewpager.widget.ViewPager
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
+import com.zp.z_file.databinding.ActivityZfileQwBinding
 import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileQWUtil
 import com.zp.z_file.util.ZFileUtil
-import kotlinx.android.synthetic.main.activity_zfile_qw.*
 
 internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener {
+
+    private val vb by inflate<ActivityZfileQwBinding>()
 
     private var toManagerPermissionPage = false
 
@@ -41,6 +42,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
     override fun getContentView() = R.layout.activity_zfile_qw
 
+    override fun create() = Unit
+
     override fun init(savedInstanceState: Bundle?) {
         type = getZFileConfig().filePath!!
         setBarTitle(if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件")
@@ -48,16 +51,17 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     }
 
     private fun initAll() {
-        zfile_qw_toolBar.apply {
+        vb.zfileQwToolBar.apply {
             if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
             inflateMenu(R.menu.zfile_qw_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { onBackPressed() }
         }
-        zfile_qw_viewPager.addOnPageChangeListener(this)
-        zfile_qw_tabLayout.setupWithViewPager(zfile_qw_viewPager)
+        vb.zfileQwViewPager.addOnPageChangeListener(this)
+        vb.zfileQwTabLayout.setupWithViewPager( vb.zfileQwViewPager)
         vpAdapter = ZFileQWAdapter(type, isManage, this, supportFragmentManager)
-        zfile_qw_viewPager.adapter = vpAdapter
+        vb.zfileQwViewPager.adapter = vpAdapter
+        vb.zfileQwViewPager.offscreenPageLimit = 4
     }
 
     fun observer(bean: ZFileQWBean) {
@@ -66,7 +70,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
             val size = selectArray.size
             if (size >= getZFileConfig().maxLength) {
                 toast(getZFileConfig().maxLengthStr)
-                getVPFragment(zfile_qw_viewPager.currentItem)?.removeLastSelectData(bean.zFileBean)
+                getVPFragment( vb.zfileQwViewPager.currentItem)?.removeLastSelectData(bean.zFileBean)
             } else {
                 selectArray[item.filePath] = item
             }
@@ -80,7 +84,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         getMenu().isVisible = true
     }
 
-    private fun getMenu() = zfile_qw_toolBar.menu.findItem(R.id.menu_zfile_qw_down)
+    private fun getMenu() =  vb.zfileQwToolBar.menu.findItem(R.id.menu_zfile_qw_down)
 
     private fun menuItemClick(menu: MenuItem?): Boolean {
         when (menu?.itemId) {
@@ -107,7 +111,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
     private fun getVPFragment(currentItem: Int): ZFileQWFragment? {
         val fragmentId = vpAdapter.getItemId(currentItem)
-        val tag = "android:switcher:${zfile_qw_viewPager.id}:$fragmentId"
+        val tag = "android:switcher:${vb.zfileQwViewPager.id}:$fragmentId"
         return supportFragmentManager.findFragmentByTag(tag) as? ZFileQWFragment
     }
 
@@ -171,13 +175,13 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     private fun setBarTitle(title: String) {
         when (getZFileConfig().titleGravity) {
             ZFileConfiguration.TITLE_LEFT -> {
-                zfile_qw_toolBar.title = title
-                zfile_qw_centerTitle.visibility = View.GONE
+                vb.zfileQwToolBar.title = title
+                vb.zfileQwCenterTitle.visibility = View.GONE
             }
             else -> {
-                zfile_qw_toolBar.title = ""
-                zfile_qw_centerTitle.visibility = View.VISIBLE
-                zfile_qw_centerTitle.text = title
+                vb.zfileQwToolBar.title = ""
+                vb.zfileQwCenterTitle.visibility = View.VISIBLE
+                vb.zfileQwCenterTitle.text = title
             }
         }
     }

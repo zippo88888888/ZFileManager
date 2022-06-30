@@ -8,8 +8,7 @@ import java.io.Serializable
  * QQ、Wechat基本配置信息
  * 通过简单配置，即可 修改标题，文件类型，文件路径，获取相应的数据
  *
- * 不支持配置 QQ、Wechat 文件获取
- * 若需要自定义获取 QQ、Wechat 文件，请实现 [ZQWFileLoadListener] 所有方法
+ * 若需要完全自定义获取 QQ、Wechat 文件，请实现 [ZQWFileLoadListener] 所有方法
  */
 class ZFileQWData : Serializable {
 

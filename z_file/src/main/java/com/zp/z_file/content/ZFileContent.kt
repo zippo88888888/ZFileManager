@@ -8,6 +8,7 @@ import android.graphics.Point
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -17,7 +18,11 @@ import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewbinding.ViewBinding
 import com.zp.z_file.R
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.common.ZFileManageDialog
@@ -27,6 +32,8 @@ import java.io.File
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 const val PNG = "png"
 const val JPG = "jpg"
@@ -80,6 +87,7 @@ typealias ZFileAsyncImpl = ZFileStipulateAsync
 
 // 下面属性、方法暂不对外开放 =======================================================================
 
+internal const val I_NAME = "inflate"
 internal const val ZFILE_FRAGMENT_TAG = "ZFileListFragment"
 
 internal const val QW_SIZE = 4
@@ -120,7 +128,7 @@ internal fun Context.getZDisplay() = IntArray(2).apply {
     this[0] = point.x
     this[1] = point.y
 }
-internal infix fun FragmentActivity.checkFragmentByTag(tag: String) {
+internal fun FragmentActivity.checkFragmentByTag(tag: String) {
     val fragment = supportFragmentManager.findFragmentByTag(tag)
     if (fragment != null) {
         supportFragmentManager.beginTransaction().remove(fragment).commit()
@@ -247,6 +255,16 @@ internal val lineColor: Int
         return if (getZFileConfig().resources.lineColor == ZFILE_DEFAULT) R.color.zfile_line_color
         else getZFileConfig().resources.lineColor
     }
+
+internal inline fun <reified VB : ViewBinding> AppCompatActivity.inflate(): Lazy<VB> = lazy {
+    binding<VB>(layoutInflater).run {
+        setContentView(root)
+        this
+    }
+}
+internal inline fun <reified VB : ViewBinding> binding(layoutInflater: LayoutInflater): VB =
+    (VB::class.java.getMethod(I_NAME, LayoutInflater::class.java)
+        .invoke(null, layoutInflater)) as VB
 
 
 

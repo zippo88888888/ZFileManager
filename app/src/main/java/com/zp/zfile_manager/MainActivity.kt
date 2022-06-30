@@ -19,20 +19,22 @@ import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
+import com.zp.zfile_manager.databinding.ActivityMainBinding
 import com.zp.zfile_manager.dsl.DslActivity
 import com.zp.zfile_manager.fm.FragmentSampleActivity2
 import com.zp.zfile_manager.super_.SuperActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.layout_result_txt.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var vb: ActivityMainBinding
 
     private var rbId = R.id.main_rb_af
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        main_defaultMangerBtn.setOnClickListener {
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(vb.root)
+        vb.mainDefaultMangerBtn.setOnClickListener {
             zfile {
                 config {
                     getZFileConfig().apply {
@@ -46,10 +48,10 @@ class MainActivity : AppCompatActivity() {
                 result { setFileListData(this) }
             }
         }
-        main_fileMangerBtn.setOnClickListener {
+        vb.mainFileMangerBtn.setOnClickListener {
             callPermission()
         }
-        main_fragmentBtn2.setOnClickListener {
+        vb.mainFragmentBtn2.setOnClickListener {
             when (rbId) {
                 R.id.main_rb_af -> {
                     FragmentSampleActivity2.jump(this, 1)
@@ -62,13 +64,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        main_rg.setOnCheckedChangeListener { _, checkedId ->
+        vb.mainRg.setOnCheckedChangeListener { _, checkedId ->
             rbId = checkedId
         }
-        main_javaBtn.setOnClickListener {
+        vb.mainJavaBtn.setOnClickListener {
             startActivity(Intent(this, JavaSampleActivity::class.java))
         }
-        main_dslMangerBtn.setOnClickListener {
+        vb.mainDslMangerBtn.setOnClickListener {
             startActivity(Intent(this, DslActivity::class.java))
         }
     }
@@ -78,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         fileList?.forEach {
             sb.append(it).append("\n\n")
         }
-        main_resultTxt.text = sb.toString()
+        vb.mainInclude.mainResultTxt.text = sb.toString()
     }
 
     private fun jump() {

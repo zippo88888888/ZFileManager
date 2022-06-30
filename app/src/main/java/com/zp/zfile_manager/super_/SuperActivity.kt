@@ -14,61 +14,62 @@ import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.content.Content.FILTER
 import com.zp.zfile_manager.content.Content.QQ_MAP
 import com.zp.zfile_manager.content.Content.TITLES
+import com.zp.zfile_manager.databinding.ActivitySuperBinding
 import com.zp.zfile_manager.diy.MyQWFileListener
 import com.zp.zfile_manager.diy.SunActivity
-import kotlinx.android.synthetic.main.activity_super.*
 
 class SuperActivity : AppCompatActivity() {
 
+    private lateinit var vb: ActivitySuperBinding
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_super)
+        vb = ActivitySuperBinding.inflate(layoutInflater)
+        setContentView(vb.root)
         dialog = ProgressDialog(this).run {
             setMessage("获取中，请稍后...")
             setCancelable(false)
             this
         }
 
-        super_picTxt.setOnClickListener {
+        vb.superPicTxt.setOnClickListener {
             showDialog(arrayOf(PNG, JPEG, JPG, GIF))
         }
 
-        super_videoTxt.setOnClickListener {
+        vb.superVideoTxt.setOnClickListener {
             showDialog(arrayOf(MP4, _3GP))
         }
 
-        super_audioTxt.setOnClickListener {
+        vb.superAudioTxt.setOnClickListener {
             showDialog(arrayOf(MP3, AAC, WAV, M4A))
         }
 
-        super_fileTxt.setOnClickListener {
+        vb.superFileTxt.setOnClickListener {
             showDialog(arrayOf(TXT, JSON, XML))
         }
 
-        super_wpsTxt.setOnClickListener {
+        vb.superWpsTxt.setOnClickListener {
             showDialog(arrayOf(DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF))
         }
 
-        super_apkTxt.setOnClickListener {
+        vb.superApkTxt.setOnClickListener {
             showDialog(arrayOf("apk"))
         }
 
-        super_qqTxt.setOnClickListener {
+        vb.superQqTxt.setOnClickListener {
             toQW(ZFileConfiguration.QQ)
         }
 
-        super_wechatTxt.setOnClickListener {
+        vb.superWechatTxt.setOnClickListener {
             toQW(ZFileConfiguration.WECHAT)
         }
 
-        super_otherTxt.setOnClickListener {
-            Toast.makeText(this, "我只是一个占位格，好看的", Toast.LENGTH_SHORT).show()
+        vb.superOtherTxt.setOnClickListener {
             startActivity(Intent(this, SunActivity::class.java))
         }
 
-        super_group.setOnCheckedChangeListener { _, checkedId ->
+        vb.superGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.super_diyRadio -> {
                     getZFileHelp().setQWFileLoadListener(MyQWFileListener())
@@ -79,7 +80,7 @@ class SuperActivity : AppCompatActivity() {
             }
         }
 
-        super_innerTxt.setOnClickListener {
+        vb.superInnerTxt.setOnClickListener {
             getZFileHelp().setConfiguration(getZFileConfig().apply {
                 needLongClick = false
                 isOnlyFolder = true
@@ -157,7 +158,7 @@ class SuperActivity : AppCompatActivity() {
         list?.forEach {
             sb.append(it).append("\n\n")
         }
-        super_resultTxt.text = sb.toString()
+        vb.superResultTxt.text = sb.toString()
     }
 
     override fun onDestroy() {

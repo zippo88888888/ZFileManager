@@ -2,7 +2,6 @@ package com.zp.z_file.listener
 
 import android.Manifest
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.R
-import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.common.ZFileCommonDialog
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
@@ -189,8 +187,7 @@ open class ZFileOpenListener {
         val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
         pic.context.startActivity(Intent(pic.context, ZFilePicActivity::class.java).apply {
             putExtra("picFilePath", filePath)
-        }, ActivityOptions.makeSceneTransitionAnimation(pic.context as Activity, pic,
-            pic.context getStringById R.string.zfile_sharedElement_pic).toBundle())
+        })
     }
 
     /**
@@ -201,8 +198,8 @@ open class ZFileOpenListener {
         pic.context.startActivity(
             Intent(pic.context, ZFileVideoPlayActivity::class.java).apply {
                 putExtra("videoFilePath", filePath)
-            }, ActivityOptions.makeSceneTransitionAnimation(pic.context as Activity, pic,
-                pic.context getStringById R.string.zfile_sharedElement_video).toBundle())
+            }
+        )
     }
 
     /**

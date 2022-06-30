@@ -13,6 +13,7 @@ class MyFileTypeListener : ZFileTypeListener() {
         when (ZFileHelp.getFileTypeBySuffix(filePath)) {
             TXT, XML, JSON -> MyTxtType()
             Content.APK -> ApkType()
+            Content.MOV -> MovType()
             else -> super.getFileType(filePath)
         }
 }

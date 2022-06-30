@@ -9,18 +9,19 @@ import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zp.z_file.content.ZFileBean
-import com.zp.zfile_manager.R
-import kotlinx.android.synthetic.main.dialog_super.*
+import com.zp.zfile_manager.databinding.DialogSuperBinding
 
 /**
  * 数据已经获取到了，具体怎么操作就交给你了！
  */
 class SuperDialog : DialogFragment() {
 
+    private var vb: DialogSuperBinding? = null
+
     companion object {
         fun newInstance(list: ArrayList<ZFileBean>) = SuperDialog().apply {
             arguments = Bundle().run {
-                putSerializable("list", list)
+                putParcelableArrayList("list", list)
                 this
             }
         }
@@ -33,7 +34,8 @@ class SuperDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_super, container, false)
+        vb = DialogSuperBinding.inflate(inflater, container, false)
+        return vb?.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) =
@@ -43,15 +45,15 @@ class SuperDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.i("ZFileManager", "数据已经获取到了，具体怎么操作就交给你了！")
-        super_downPic.setOnClickListener {
+        vb?.superDownPic?.setOnClickListener {
             dismiss()
         }
-        super_cacelPic.setOnClickListener {
+        vb?.superCacelPic?.setOnClickListener {
             dismiss()
         }
-        val list = arguments?.getSerializable("list") as ArrayList<ZFileBean>
+        val list = arguments?.getParcelableArrayList<ZFileBean>("list") as ArrayList<ZFileBean>
         superAdapter = SuperAdapter(list)
-        super_recyclerView.apply {
+        vb?.superRecyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = superAdapter
         }
@@ -61,6 +63,11 @@ class SuperDialog : DialogFragment() {
         val display = context!!.getTDisplay()
         dialog?.window?.setLayout(display[0], display[1])
         super.onStart()
+    }
+
+    override fun onDestroyView() {
+        vb = null
+        super.onDestroyView()
     }
 
     private fun Context.getTDisplay() = IntArray(2).apply {

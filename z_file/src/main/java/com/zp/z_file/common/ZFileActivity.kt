@@ -7,11 +7,14 @@ internal abstract class ZFileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getContentView())
+        create()
         init(savedInstanceState)
     }
 
-    abstract fun getContentView(): Int
+    open fun create() = setContentView(getContentView())
+
+    open fun getContentView(): Int = 0
+
     abstract fun init(savedInstanceState: Bundle?)
 
 

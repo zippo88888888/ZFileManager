@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileType
@@ -13,11 +15,11 @@ import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileInfoBean
 import com.zp.z_file.content.setNeedWH
+import com.zp.z_file.databinding.DialogZfileInfoBinding
 import com.zp.z_file.type.AudioType
 import com.zp.z_file.type.ImageType
 import com.zp.z_file.type.VideoType
 import com.zp.z_file.util.ZFileOtherUtil
-import kotlinx.android.synthetic.main.dialog_zfile_info.*
 import java.lang.ref.WeakReference
 
 internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
@@ -28,10 +30,21 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
         }
     }
 
+    private var vb: DialogZfileInfoBinding? = null
+
     private var handler: InfoHandler? = null
     private lateinit var thread: Thread
     private var filePath = ""
     private lateinit var fileType: ZFileType
+
+    override fun create(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        vb = DialogZfileInfoBinding.inflate(inflater, container, false)
+        return vb?.root
+    }
 
     override fun getContentView() = R.layout.dialog_zfile_info
 
@@ -47,41 +60,41 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
         thread = Thread(this)
         thread.start()
 
-        zfile_dialog_info_fileName.text = bean.fileName
-        zfile_dialog_info_fileType.text = bean.filePath.run {
+        vb?.zfileDialogInfoFileName?.text = bean.fileName
+        vb?.zfileDialogInfoFileType?.text = bean.filePath.run {
             substring(lastIndexOf(".") + 1, length)
         }
-        zfile_dialog_info_fileDate.text = bean.date
-        zfile_dialog_info_fileSize.text = bean.size
-        zfile_dialog_info_filePath.text = bean.filePath
+        vb?.zfileDialogInfoFileDate?.text = bean.date
+        vb?.zfileDialogInfoFileSize?.text = bean.size
+        vb?.zfileDialogInfoFilePath?.text = bean.filePath
 
-        zfile_dialog_info_moreBox.setOnClickListener {
-            zfile_dialog_info_moreLayout.visibility = if (zfile_dialog_info_moreBox.isChecked) View.VISIBLE
+        vb?.zfileDialogInfoMoreBox?.setOnClickListener {
+            vb?.zfileDialogInfoMoreLayout?.visibility = if (vb?.zfileDialogInfoMoreBox?.isChecked == true) View.VISIBLE
             else View.GONE
         }
         when (fileType) {
             is ImageType -> {
-                zfile_dialog_info_moreBox.visibility = View.VISIBLE
-                zfile_dialog_info_fileDurationLayout.visibility = View.GONE
-                zfile_dialog_info_fileOther.text = "无"
+                vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
+                vb?.zfileDialogInfoFileDurationLayout?.visibility = View.GONE
+                vb?.zfileDialogInfoFileOther?.text = "无"
                 val wh = ZFileOtherUtil.getImageWH(filePath)
-                zfile_dialog_info_fileFBL.text = String.format("%d * %d", wh[0], wh[1])
+                vb?.zfileDialogInfoFileFBL?.text = String.format("%d * %d", wh[0], wh[1])
             }
             is AudioType -> {
-                zfile_dialog_info_moreBox.visibility = View.VISIBLE
-                zfile_dialog_info_fileFBLLayout.visibility = View.GONE
-                zfile_dialog_info_fileOther.text = "无"
+                vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
+                vb?.zfileDialogInfoFileFBLLayout?.visibility = View.GONE
+                vb?.zfileDialogInfoFileOther?.text = "无"
             }
             is VideoType -> {
-                zfile_dialog_info_moreBox.visibility = View.VISIBLE
-                zfile_dialog_info_fileOther.text = "无"
+                vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
+                vb?.zfileDialogInfoFileOther?.text = "无"
             }
             else -> {
-                zfile_dialog_info_moreBox.visibility = View.GONE
-                zfile_dialog_info_moreLayout.visibility = View.GONE
+                vb?.zfileDialogInfoMoreBox?.visibility = View.GONE
+                vb?.zfileDialogInfoMoreLayout?.visibility = View.GONE
             }
         }
-        zfile_dialog_info_down.setOnClickListener { dismiss() }
+        vb?.zfileDialogInfoDown?.setOnClickListener { dismiss() }
     }
 
     override fun onStart() {
@@ -90,6 +103,7 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
     }
 
     override fun onDestroyView() {
+        vb = null
         super.onDestroyView()
         handler?.removeMessages(0)
         handler?.removeCallbacks(this)
@@ -116,11 +130,11 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
                 week.get()?.apply {
                     when (fileType) {
                         is AudioType -> {
-                            zfile_dialog_info_fileDuration.text = bean.duration
+                            vb?.zfileDialogInfoFileDuration?.text = bean.duration
                         }
                         is VideoType -> {
-                            zfile_dialog_info_fileDuration.text = bean.duration
-                            zfile_dialog_info_fileFBL.text =
+                            vb?.zfileDialogInfoFileDuration?.text = bean.duration
+                            vb?.zfileDialogInfoFileFBL?.text =
                                 String.format("%s * %s", bean.width, bean.height)
                         }
                     }

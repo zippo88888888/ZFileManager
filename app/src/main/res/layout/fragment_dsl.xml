@@ -16,7 +16,9 @@
             android:layout_height="wrap_content"
             android:text="start"/>
 
-        <include layout="@layout/layout_result_txt" />
+        <include
+            android:id="@+id/dsl_include2"
+            layout="@layout/layout_result_txt" />
 
     </LinearLayout>
 

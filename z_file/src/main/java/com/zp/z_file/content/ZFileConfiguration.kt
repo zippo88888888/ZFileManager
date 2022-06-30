@@ -1,6 +1,5 @@
 package com.zp.z_file.content
 
-import android.os.Parcelable
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -10,11 +9,13 @@ import com.zp.z_file.ui.ZFileVideoPlayer
 import com.zp.z_file.listener.*
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.listener.ZQWFileLoadListener
-import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
 /**
  * 配置信息
+ *
+ * 1.4.0 主要更新信息：
+ * 1）移除已过时配置
  *
  * 1.3.3 主要更新信息：
  * 1）嵌套 Fragment 优化，列表优化，移除废弃方法！
@@ -142,7 +143,7 @@ class ZFileConfiguration : Serializable {
     var boxStyle = STYLE2
 
     /**
-     * 是否需要长按事件
+     * 是否需要长按事件，如只需要文件选择不需要文件操作，设为false即可！
      */
     var needLongClick = true
 
@@ -432,7 +433,6 @@ class ZFileConfiguration : Serializable {
      * @property folderRes Int       文件夹
      * @property lineColor Int       列表分割线颜色
      */
-    @Parcelize
     data class ZFileResources @JvmOverloads constructor(
         var audioRes: Int = ZFILE_DEFAULT,
         var txtRes: Int = ZFILE_DEFAULT,
@@ -445,7 +445,7 @@ class ZFileConfiguration : Serializable {
         var emptyRes: Int = ZFILE_DEFAULT,
         var folderRes: Int = ZFILE_DEFAULT,
         var lineColor: Int = ZFILE_DEFAULT
-    ) : Serializable, Parcelable
+    ) : Serializable
 
 }
 

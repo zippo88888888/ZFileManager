@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.3.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -8,8 +8,8 @@
 ### 2. 支持音频、视频播放，图片查看，zip解压，文件重命名、复制、移动、删除、查看详情
 ### 3. 支持查看指定文件类型，支持文件类型拓展，支持嵌套在Fragment中使用
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问
-### 5. 支持QQ、微信文件选择（支持自定义获取）
-### 6. 高度可定制化，支持Android 10++、AndroidX、DSL，兼容Java
+### 5. 支持QQ、微信文件选择 && 支持自定义获取QQ、微信文件
+### 6. 不含任何三方框架，高度可定制化，支持Android 10/11/12/++、AndroidX、DSL
 
 
 ### 部分截图
@@ -33,21 +33,15 @@
 
 ```groovy
 
-    // Android 10++ 以上  暂时只提供 aar， maven 上传太难搞了，但后续肯定会提供的，先aar使用
+    // Android 10 及以上版本  暂只提供 aar
 
-    // Android 10 及以下版本使用
+    // Android 10 及以下版本使用（不推荐使用）
     implementation 'com.github.zp:z_file:1.2.6' 
 
-    如果报错加上
-    
-    // Kotlin Parcelable 支持
-    androidExtensions {
-        experimental = true
-    }
 
 ```
 
-#### Step 1. 实现ZFileImageListener，并在调用前或Application中初始化 
+#### Step 1. 实现ZFileImageListener，并在调用前配置
 ```Kotlin
 
 class MyFileImageListener : ZFileImageListener() {
@@ -64,7 +58,7 @@ class MyFileImageListener : ZFileImageListener() {
     }
 }
 
-// 在调用前或Application中初始化 
+// 在调用前配置
 getZFileHelp().init(MyFileImageListener())
 ```
 #### Step 2. 在Activity或Fragment中使用
@@ -77,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_defaultMangerBtn.setOnClickListener {
-            // DSL 方式
+            // DSL 方式  （推荐）
             zfile { 
                 result {
                     setFileListData(this)
@@ -100,102 +94,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-
-```
-
-## 高级用法   
-> ###### ZFileManager提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
-
-### 文件类型拓展
-
-#### Step 0. 新建一个类：ZFileType，重写 openFile()、loadingFile()方法
-
-```kotlin
-
-// 自定义的类型
-const val APK = "apk"
-
-/**
- * 自定义Apk文件类型
- */
-class ApkType : ZFileType() {
-
-    /**
-     * 打开文件
-     * @param filePath  文件路径
-     * @param view      当前视图
-     */
-    override fun openFile(filePath: String, view: View) {
-        Toast.makeText(view.context, "打开自定义拓展文件", Toast.LENGTH_SHORT).show()
-    }
-
-    /**
-     * 加载文件
-     * @param filePath 文件路径
-     * @param pic      文件展示的图片
-     */
-    override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(R.mipmap.ic_launcher_round)
-    }
-    
-}
-
-```
-
-#### Step 1. 新建一个类：ZFileTypeListener，重写 getFileType()方法 （有多个自定义类型，公用即可）
-```kotlin
-
-class MyFileTypeListener : ZFileTypeListener() {
-
-    override fun getFileType(filePath: String) =
-        when (ZFileHelp.getFileTypeBySuffix(filePath)) {
-            APK -> ApkType()
-            else -> super.getFileType(filePath)
-        }
-}
-
-```
-
-#### Step 2. 在调用前或Application中配置
-
-```kotlin
-getZFileHelp().setFileTypeListener(MyFileTypeListener())
-
-```
-
-### QQ或微信文件选择
-
-> QQ、微信默认根据时间倒序排序，不显示隐藏文件，过滤规则默认，只显示文件，不支持长按操作
-其他配置与文件管理保持一致！具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/super_/SuperActivity.kt)
-，参考 [腾讯文件](https://imtt.dd.qq.com/16891/apk/24CB038F3A67CDBE10C5A0D9B2AD10E9.apk?fsname=com.tencent.FileManager_5.0.4.0001_5040001.apk&csr=1bbd)
-```kotlin
-
-    super_qqTxt.setOnClickListener {
-        // 打开QQ文件选择
-        getZFileHelp().setConfiguration(getZFileConfig().apply {
-            filePath = ZFileConfiguration.QQ // 必须设置
-        }).result(this) {
-            setResult(this)
-        }
-    }
-
-    super_wechatTxt.setOnClickListener {
-        // 打开微信文件选择
-        getZFileHelp().setConfiguration(getZFileConfig().apply {
-            filePath = ZFileConfiguration.WECHAT // 必须设置
-        }).result(this) {
-            setResult(this)
-        }
-    }
-
-    private fun setResult(selectList: MutableList<ZFileBean>?) {
-        val sb = StringBuilder()
-        selectList?.forEach {
-            sb.append(it).append("\n\n")
-        }
-        super_resultTxt.text = sb.toString()        
-    }
 
 
 ```
@@ -270,6 +168,104 @@ class MainActivity : AppCompatActivity() {
     
 ```
 
+## 高级用法   
+> ###### ZFileManager提供了对外的帮助类 [ZFileHelp](https://github.com/zippo88888888/ZFileManager/blob/master/z_file/src/main/java/com/zp/z_file/util/ZFileHelp.kt)
+
+### 文件类型拓展
+
+#### Step 0. 新建一个类：ZFileType，重写 openFile()、loadingFile()方法
+
+```kotlin
+
+// 自定义的类型
+const val APK = "apk"
+```
+
+```kotlin
+/**
+ * 自定义Apk文件类型
+ */
+class ApkType : ZFileType() {
+
+    /**
+     * 打开文件
+     * @param filePath  文件路径
+     * @param view      当前视图
+     */
+    override fun openFile(filePath: String, view: View) {
+        Toast.makeText(view.context, "打开自定义拓展文件", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 加载文件
+     * @param filePath 文件路径
+     * @param pic      文件展示的图片
+     */
+    override fun loadingFile(filePath: String, pic: ImageView) {
+        pic.setImageResource(R.mipmap.ic_launcher_round)
+    }
+    
+}
+
+```
+
+#### Step 1. 新建一个类：ZFileTypeListener，重写 getFileType()方法 （有多个自定义类型，公用即可）
+```kotlin
+
+class MyFileTypeListener : ZFileTypeListener() {
+
+    override fun getFileType(filePath: String) =
+        when (ZFileHelp.getFileTypeBySuffix(filePath)) {
+            APK -> ApkType()
+            else -> super.getFileType(filePath)
+        }
+}
+
+```
+
+#### Step 2. 在调用前配置
+
+```kotlin
+getZFileHelp().setFileTypeListener(MyFileTypeListener())
+
+```
+
+### QQ或微信文件选择
+
+> QQ、微信默认根据时间倒序排序，不显示隐藏文件，过滤规则默认，只显示文件，不支持长按操作
+其他配置与文件管理保持一致！具体可查看[这里](https://github.com/zippo88888888/ZFileManager/blob/master/app/src/main/java/com/zp/zfile_manager/super_/SuperActivity.kt)
+，参考 [腾讯文件](https://imtt.dd.qq.com/16891/apk/24CB038F3A67CDBE10C5A0D9B2AD10E9.apk?fsname=com.tencent.FileManager_5.0.4.0001_5040001.apk&csr=1bbd)
+```kotlin
+
+    super_qqTxt.setOnClickListener {
+        // 打开QQ文件选择
+        getZFileHelp().setConfiguration(getZFileConfig().apply {
+            filePath = ZFileConfiguration.QQ // 必须设置
+        }).result(this) {
+            setResult(this)
+        }
+    }
+
+    super_wechatTxt.setOnClickListener {
+        // 打开微信文件选择
+        getZFileHelp().setConfiguration(getZFileConfig().apply {
+            filePath = ZFileConfiguration.WECHAT // 必须设置
+        }).result(this) {
+            setResult(this)
+        }
+    }
+
+    private fun setResult(selectList: MutableList<ZFileBean>?) {
+        val sb = StringBuilder()
+        selectList?.forEach {
+            sb.append(it).append("\n\n")
+        }
+        super_resultTxt.text = sb.toString()        
+    }
+
+
+```
+
 ##### 搞定，是不是很简单 ^_^
 
 > ###### 切，简单是简单，但是你这个获取文件实现的方式不优雅，你这个QQ、微信文件根本不能获取，你界面上的图片太low了，打开文件你全部都是调用系统方式打开的(作者你个渣渣)，我只想选择文件，不想要长按事件，文件操作我怎么用都感觉不正确，还有长按事件弹出的功能有些不是我想要的...
@@ -293,7 +289,7 @@ class MyFileLoadListener : ZFileLoadListener {
     }
 }
 
-// 在调用前或Application中配置
+// 在调用前配置
 getZFileHelp().setFileLoadListener(MyFileLoadListener())
 
 
@@ -350,6 +346,7 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
     
        // 使用
        getZFileHelp().setConfiguration(getZFileConfig().apply {
+          filePath = ZFileConfiguration.QQ
           qwData = ZFileQWData().apply {
               titles = TITLES
               filterArrayMap = FILTER
@@ -377,13 +374,23 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
      * QQ、Wechat 配置信息
      */
     var qwData = ZFileQWData()
+    
+    /**
+     * 内置图片资源配置
+     */
+    var resources = ZFileResources()
+    
+     /**
+     * 最大选取数量
+     */
+    var maxLength = 9
 
     ...
     ...
     ...
 
     /**
-     * 是否需要长按事件
+     * 是否需要长按事件 如只需要文件选择不需要文件操作，设为false即可！
      */
     var needLongClick = true
 
@@ -397,40 +404,10 @@ getZFileHelp().setFileLoadListener(MyFileLoadListener())
      */
     var longClickOperateTitles: Array<String>? = null
 
-    /**
-     * 相关资源配置 设置：[ZFILE_DEFAULT] 将使用默认资源
-     * @property audioRes Int        音频
-     * @property txtRes Int          文本
-     * @property pdfRes Int          PDF
-     * @property pptRes Int          PPT
-     * @property wordRes Int         Word
-     * @property excelRes Int        Excel
-     * @property zipRes Int          ZIP
-     * @property otherRes Int        其他类型
-     * @property emptyRes Int        空资源
-     * @property folderRes Int       文件夹
-     * @property lineColor Int       列表分割线颜色
-     */
-    @Parcelize
-    data class ZFileResources @JvmOverloads constructor(
-        var audioRes: Int = R.drawable.ic_zfile_audio,
-        var txtRes: Int = R.drawable.ic_zfile_txt,
-        var pdfRes: Int = R.drawable.ic_zfile_pdf,
-        var pptRes: Int = R.drawable.ic_zfile_ppt,
-        var wordRes: Int = R.drawable.ic_zfile_word,
-        var excelRes: Int = R.drawable.ic_zfile_excel,
-        var zipRes: Int = R.drawable.ic_zfile_zip,
-        var otherRes: Int = R.drawable.ic_zfile_other,
-        var emptyRes: Int = R.drawable.ic_zfile_empty,
-        var folderRes: Int = R.drawable.ic_zfile_folder,
-        var lineColor: Int = R.color.zfile_line_color
-    ) : Serializable, Parcelable
-    
-    // 在调用前或Application中配置
+    // 在调用前配置
      getZFileHelp().setConfiguration(getZFileConfig().apply {
             resources = ZFileResources(R.drawable.ic_diy_audio)
             maxLength = 6
-            maxLengthStr = "666"
             ...
             ...
             ...
@@ -457,7 +434,7 @@ class MyFileOpenListener : ZFileOpenListener() {
     override fun openOther(filePath: String, view: View) = Unit // 其他文件
 }
 
-// 在调用前或Application中配置
+// 在调用前配置
 getZFileHelp().setFileOpenListener(MyFileOpenListener())
 
 ```
@@ -544,7 +521,7 @@ class MyFileOperateListener : ZFileOperateListener() {
     }
 }
 
-// 在调用前或Application中配置
+// 在调用前配置
 getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 ```
@@ -555,7 +532,7 @@ getZFileHelp().setFileOperateListener(MyFileOperateListener())
 
 > ##### 还是不行，emmmm 源码给你 想怎么弄就怎么弄  溜了溜了
 
-[![Travis](https://img.shields.io/badge/ZFile-1.3.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.0-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

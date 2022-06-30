@@ -6,6 +6,7 @@ import com.zp.z_file.content.*
 object Content {
 
     const val APK = "apk"
+    const val MOV = "mov"
 
     const val AUTHORITY = "com.zp.zfile_manager.ZFileManagerProvider"
 

@@ -3,6 +3,9 @@ package com.zp.z_file.ui.dialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zp.z_file.R
@@ -10,8 +13,8 @@ import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
+import com.zp.z_file.databinding.DialogZfileSelectFolderBinding
 import com.zp.z_file.util.ZFileUtil
-import kotlinx.android.synthetic.main.dialog_zfile_select_folder.*
 
 internal class ZFileSelectFolderDialog : ZFileManageDialog() {
 
@@ -23,6 +26,9 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             }
         }
     }
+
+    private var vb: DialogZfileSelectFolderBinding? = null
+
     private var tipStr = ""
     private var filePath: String? = ""
     private var isOnlyFolder = false
@@ -40,6 +46,15 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
 
     override fun getContentView() = R.layout.dialog_zfile_select_folder
 
+    override fun create(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        vb = DialogZfileSelectFolderBinding.inflate(inflater, container, false)
+        return vb?.root
+    }
+
     override fun createDialog(savedInstanceState: Bundle?) =
         Dialog(context!!, R.style.Zfile_Select_Folder_Dialog).apply {
             window?.setGravity(Gravity.BOTTOM)
@@ -51,15 +66,15 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
         filePath = getZFileConfig().filePath
         isOnlyFile = getZFileConfig().isOnlyFile
         isOnlyFolder = getZFileConfig().isOnlyFolder
-        zfile_select_folder_closePic.setOnClickListener {
+        vb?.zfileSelectFolderClosePic?.setOnClickListener {
             dismiss()
         }
-        zfile_select_folder_downPic.setOnClickListener {
+        vb?.zfileSelectFolderDownPic?.setOnClickListener {
             selectFolder?.invoke(if (getZFileConfig().filePath.isNullOrEmpty()) SD_ROOT else getZFileConfig().filePath!!)
             recoverData()
             dismiss()
         }
-        zfile_select_folder_title.text = String.format("%s到根目录", tipStr)
+        vb?.zfileSelectFolderTitle?.text = String.format("%s到根目录", tipStr)
         initRecyclerView()
     }
 
@@ -79,11 +94,11 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             backList.add(item.filePath)
             getData()
         }
-        val lp = zfile_select_folder_recyclerView.layoutParams as LinearLayout.LayoutParams
-        lp.apply {
+        val lp = vb?.zfileSelectFolderRecyclerView?.layoutParams as? LinearLayout.LayoutParams
+        lp?.apply {
             bottomMargin = context!!.getStatusBarHeight()
         }
-        zfile_select_folder_recyclerView.apply {
+        vb?.zfileSelectFolderRecyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = folderAdapter
             layoutParams = lp
@@ -99,9 +114,9 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     private fun getData() {
         val filePath = getZFileConfig().filePath
         if (filePath.isNullOrEmpty() || filePath == SD_ROOT) {
-            zfile_select_folder_title.text = String.format("%s到根目录", tipStr)
+            vb?.zfileSelectFolderTitle?.text = String.format("%s到根目录", tipStr)
         } else {
-            zfile_select_folder_title.text = String.format("%s到%s", tipStr, filePath.toFile().name)
+            vb?.zfileSelectFolderTitle?.text = String.format("%s到%s", tipStr, filePath.toFile().name)
         }
         ZFileUtil.getList(context!!) {
             if (isNullOrEmpty()) {
@@ -110,6 +125,11 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
                 folderAdapter?.setDatas(this)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        vb = null
+        super.onDestroyView()
     }
 
     override fun onBackPressed(): Boolean {

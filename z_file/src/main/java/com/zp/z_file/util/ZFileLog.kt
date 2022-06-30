@@ -28,8 +28,8 @@ internal object ZFileLog {
     private fun log(type: Int, TAG: String, msg: String?) {
         if (getZFileConfig().showLog) {
             when (type) {
-                E -> Log.e(TAG, msg ?: "Null")
-                I -> Log.i(TAG, msg ?: "Null")
+                E -> Log.e(TAG, msg ?: "msg is Null")
+                I -> Log.i(TAG, msg ?: "msg is Null")
             }
         }
     }

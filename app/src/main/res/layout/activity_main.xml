@@ -62,6 +62,8 @@
         android:layout_height="wrap_content"
         android:text="DSL" />
 
-    <include layout="@layout/layout_result_txt" />
+    <include
+        android:id="@+id/main_include"
+        layout="@layout/layout_result_txt" />
 
 </LinearLayout>
