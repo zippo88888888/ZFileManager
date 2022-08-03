@@ -12,6 +12,7 @@ import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
+import com.zp.z_file.util.ZFileUtil
 
 internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(context) {
 
@@ -79,10 +80,6 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
             }
             field = value
         }
-
-    /* item Click */
-    @Deprecated("不再使用")
-    var itemClickByAnim: ((v: View, position: Int, item: ZFileBean) -> Unit)? = null
 
     /* selected or un-selected change */
     var changeListener: ((isManage: Boolean, size: Int) -> Unit)? = null

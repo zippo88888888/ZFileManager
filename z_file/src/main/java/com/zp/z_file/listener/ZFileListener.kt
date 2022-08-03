@@ -15,8 +15,7 @@ import com.zp.z_file.common.ZFileCommonDialog
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
-import com.zp.z_file.ui.*
-import com.zp.z_file.ui.ZFileListActivity
+import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
@@ -28,7 +27,6 @@ import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
-import java.util.*
 
 /**
  * 图片或视频 显示
@@ -171,6 +169,8 @@ open class ZFileOpenListener {
 
     /**
      * 打开音频
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openAudio(filePath: String, view: View) {
         (view.context as? AppCompatActivity)?.apply {
@@ -182,28 +182,35 @@ open class ZFileOpenListener {
 
     /**
      * 打开图片
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openImage(filePath: String, view: View) {
-        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
-        pic.context.startActivity(Intent(pic.context, ZFilePicActivity::class.java).apply {
-            putExtra("picFilePath", filePath)
-        })
+//        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
+        view.context?.let {
+            it.startActivity(Intent(it, ZFilePicActivity::class.java).apply {
+                putExtra("picFilePath", filePath)
+            })
+        }
     }
 
     /**
      * 打开视频
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openVideo(filePath: String, view: View) {
-        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
-        pic.context.startActivity(
-            Intent(pic.context, ZFileVideoPlayActivity::class.java).apply {
+        view.context?.let {
+            it.startActivity(Intent(it, ZFileVideoPlayActivity::class.java).apply {
                 putExtra("videoFilePath", filePath)
-            }
-        )
+            })
+        }
     }
 
     /**
      * 打开Txt
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openTXT(filePath: String, view: View) {
         ZFileOpenUtil.openTXT(filePath, view)
@@ -211,59 +218,62 @@ open class ZFileOpenListener {
 
     /**
      * 打开zip
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openZIP(filePath: String, view: View) {
-        AlertDialog.Builder(view.context).apply {
-            setTitle("请选择")
-            setItems(arrayOf("打开", "解压")) { dialog, which ->
-                if (which == 0) {
-                    ZFileOpenUtil.openZIP(filePath, view)
-                } else {
-                    zipSelect(filePath, view)
+        view.context?.let {
+            AlertDialog.Builder(it).apply {
+                setTitle("请选择")
+                setItems(arrayOf("打开", "解压")) { dialog, which ->
+                    if (which == 0) {
+                        ZFileOpenUtil.openZIP(filePath, view)
+                    } else {
+                        zipSelect(filePath, it)
+                    }
+                    dialog.dismiss()
                 }
-                dialog.dismiss()
+                setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
+                show()
             }
-            setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
-            show()
         }
     }
 
-    private fun zipSelect(filePath: String, view: View) {
-        val activity = view.context
-        if (activity is AppCompatActivity) {
-            activity.checkFragmentByTag("ZFileSelectFolderDialog")
+    private fun zipSelect(filePath: String, context: Context) {
+        if (context is AppCompatActivity) {
+            context.checkFragmentByTag("ZFileSelectFolderDialog")
             val dialog = ZFileSelectFolderDialog.newInstance("解压")
             dialog.selectFolder = {
-                getZFileHelp().getFileOperateListener().zipFile(filePath, this, activity) {
+                getZFileHelp().getFileOperateListener().zipFile(filePath, this, context) {
                     ZFileLog.i(if (this) "解压成功" else "解压失败")
-                    when (activity) {
-                        is ZFileListActivity -> {
-                            activity.observer(this)
-                        }
-                        else -> {
-                            val fragment = activity.supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag)
-                            if (fragment is ZFileListFragment) {
-                                fragment.observer(this)
-                            } else {
-                                ZFileLog.e("文件解压成功，但是无法立刻刷新界面！")
-                            }
-                        }
+                    val fragment =
+                        context.supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag)
+                    if (fragment is ZFileListFragment) {
+                        fragment.observer(this)
+                    } else {
+                        ZFileLog.e("文件解压成功，但是无法立刻刷新界面！")
                     }
                 }
             }
-            dialog.show(activity.supportFragmentManager, "ZFileSelectFolderDialog")
+            dialog.show(context.supportFragmentManager, "ZFileSelectFolderDialog")
+        } else {
+            ZFileLog.e("文件解压 showDialog 失败")
         }
     }
 
     /**
      * 打开word
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openDOC(filePath: String, view: View) {
         ZFileOpenUtil.openDOC(filePath, view)
     }
 
     /**
-     * 打开表格
+     * 打开xls
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openXLS(filePath: String, view: View) {
         ZFileOpenUtil.openXLS(filePath, view)
@@ -271,6 +281,8 @@ open class ZFileOpenListener {
 
     /**
      * 打开PPT
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openPPT(filePath: String, view: View) {
         ZFileOpenUtil.openPPT(filePath, view)
@@ -278,11 +290,18 @@ open class ZFileOpenListener {
 
     /**
      * 打开PDF
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
      */
     open fun openPDF(filePath: String, view: View) {
         ZFileOpenUtil.openPDF(filePath, view)
     }
 
+    /**
+     * 打开其他文件类型
+     * @param filePath String   文件路径
+     * @param view View         RecyclerView itemView
+     */
     open fun openOther(filePath: String, view: View) {
         ZFileLog.e("【${filePath.getFileType()}】不支持预览该文件 ---> $filePath")
         view.toast("暂不支持预览该文件")
@@ -367,7 +386,6 @@ open class ZFileOperateListener {
 
     /**
      * 解压文件
-     * 请注意，文件解压目前只支持压缩包里面只有一个文件的情况，多个暂不支持，如有需要，请自己实现
      * @param sourceFile String     源文件地址
      * @param targetFile String     目标文件地址
      */
@@ -385,9 +403,9 @@ open class ZFileOperateListener {
      */
     open fun fileInfo(bean: ZFileBean, context: Context) {
         val tag = ZFileInfoDialog::class.java.simpleName
-        (context as? AppCompatActivity)?.apply {
-            checkFragmentByTag(tag)
-            ZFileInfoDialog.newInstance(bean).show(supportFragmentManager, tag)
+        (context as? AppCompatActivity)?.let {
+            it.checkFragmentByTag(tag)
+            ZFileInfoDialog.newInstance(bean).show(it.supportFragmentManager, tag)
         }
 
     }

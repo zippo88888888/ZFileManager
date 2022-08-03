@@ -78,8 +78,12 @@ internal class ZFileQWFragment : Fragment() {
     private fun initAdapter() {
         if (qwAdapter == null) {
             qwAdapter = ZFileListAdapter(context!!, true).run {
-                itemClick = { v, _, item ->
-                    ZFileUtil.openFile(item.filePath, v)
+                itemClick = { v, position, item ->
+                    if (getZFileConfig().clickAndAutoSelected) {
+                        boxLayoutClick(position, item)
+                    } else {
+                        ZFileUtil.openFile(item.filePath, v)
+                    }
                 }
                 qwChangeListener = { isManage, item, isSelect ->
                     if (isManage) {

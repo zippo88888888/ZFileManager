@@ -219,7 +219,7 @@
                 android:id="@+id/super_innerTxt"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="简单模拟内部存储"
+                android:text="只是个文件选择器"
                 android:gravity="center"
                 android:textColor="#000000"
                 android:background="?selectableItemBackground"/>

@@ -2,12 +2,9 @@ package com.zp.z_file.content
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
-import android.os.Bundle
 import android.os.Environment
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,24 +13,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewbinding.ViewBinding
 import com.zp.z_file.R
-import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
 import com.zp.z_file.util.ZFileLog
 import java.io.File
-import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 const val PNG = "png"
 const val JPG = "jpg"
@@ -82,13 +71,12 @@ const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
 
-@Deprecated("请使用ZFileStipulateAsync替代")
-typealias ZFileAsyncImpl = ZFileStipulateAsync
-
 // 下面属性、方法暂不对外开放 =======================================================================
 
 internal const val I_NAME = "inflate"
 internal const val ZFILE_FRAGMENT_TAG = "ZFileListFragment"
+
+internal const val ZIP_BUFFER_SIZE = 16384
 
 internal const val QW_SIZE = 4
 
@@ -157,7 +145,7 @@ internal fun SwipeRefreshLayout.property(
     return this
 }
 internal fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-    context.toast(msg, duration)
+    context?.toast(msg, duration)
 }
 internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(applicationContext, msg, duration).show()
@@ -255,7 +243,6 @@ internal val lineColor: Int
         return if (getZFileConfig().resources.lineColor == ZFILE_DEFAULT) R.color.zfile_line_color
         else getZFileConfig().resources.lineColor
     }
-
 internal inline fun <reified VB : ViewBinding> AppCompatActivity.inflate(): Lazy<VB> = lazy {
     binding<VB>(layoutInflater).run {
         setContentView(root)

@@ -94,14 +94,9 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             backList.add(item.filePath)
             getData()
         }
-        val lp = vb?.zfileSelectFolderRecyclerView?.layoutParams as? LinearLayout.LayoutParams
-        lp?.apply {
-            bottomMargin = context!!.getStatusBarHeight()
-        }
         vb?.zfileSelectFolderRecyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = folderAdapter
-            layoutParams = lp
         }
         getZFileConfig().apply {
             isOnlyFile = false
@@ -118,7 +113,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
         } else {
             vb?.zfileSelectFolderTitle?.text = String.format("%s到%s", tipStr, filePath.toFile().name)
         }
-        ZFileUtil.getList(context!!) {
+        ZFileUtil.getList(requireContext()) {
             if (isNullOrEmpty()) {
                 folderAdapter?.clear()
             } else {

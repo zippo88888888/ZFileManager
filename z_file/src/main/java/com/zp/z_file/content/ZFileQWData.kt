@@ -44,37 +44,29 @@ class ZFileQWData : Serializable {
      */
     class Build {
 
-        private var titles: Array<String>? = null
-        private var filterArrayMap: ArrayMap<Int, Array<String>>? = null
-        private var qqFilePathArrayMap: ArrayMap<Int, MutableList<String>>? = null
-        private var wechatFilePathArrayMap: ArrayMap<Int, MutableList<String>>? = null
+        private var qwData = ZFileQWData()
 
         fun titles(titles: Array<String>?): Build {
-            this.titles = titles
+            qwData.titles = titles
             return this
         }
 
         fun filterArrayMap(filterArray: ArrayMap<Int, Array<String>>?): Build {
-            this.filterArrayMap = filterArray
+            qwData.filterArrayMap = filterArray
             return this
         }
 
         fun qqFilePathArrayMap(qqFilePathArray: ArrayMap<Int, MutableList<String>>?): Build {
-            this.qqFilePathArrayMap = qqFilePathArray
+            qwData.qqFilePathArrayMap = qqFilePathArray
             return this
         }
 
         fun wechatFilePathArrayMap(wechatFilePathArray: ArrayMap<Int, MutableList<String>>?): Build {
-            this.wechatFilePathArrayMap = wechatFilePathArray
+            qwData.wechatFilePathArrayMap = wechatFilePathArray
             return this
         }
 
-        fun build() = ZFileQWData().apply {
-            this.titles = this@Build.titles
-            this.filterArrayMap = this@Build.filterArrayMap
-            this.qqFilePathArrayMap = this@Build.qqFilePathArrayMap
-            this.wechatFilePathArrayMap = this@Build.wechatFilePathArrayMap
-        }
+        fun build() = qwData
     }
 
 }

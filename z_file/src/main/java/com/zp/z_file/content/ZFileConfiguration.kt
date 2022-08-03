@@ -9,10 +9,15 @@ import com.zp.z_file.ui.ZFileVideoPlayer
 import com.zp.z_file.listener.*
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.listener.ZQWFileLoadListener
+import com.zp.z_file.util.ZFileLog
 import java.io.Serializable
 
 /**
  * 配置信息
+ *
+ * 1.4.1 主要更新信息：
+ * 1）修复 错误的提示语句，新增 [clickAndAutoSelected] 属性
+ * 2）完善zip文件解压，修复展位图不展示问题
  *
  * 1.4.0 主要更新信息：
  * 1）移除已过时配置
@@ -43,25 +48,31 @@ class ZFileConfiguration : Serializable {
 
         /** QQ目录 */
         const val QQ = "ZFILE_QQ_FILE_PATH"
+
         /** 微信目录 */
         const val WECHAT = "ZFILE_WECHAT_FILE_PATH"
 
         /** 默认 */
         const val BY_DEFAULT = 0x1000
+
         /** 根据名字 */
         const val BY_NAME = 0x1001
+
         /** 根据最后修改时间 */
         const val BY_DATE = 0x1003
+
         /** 根据大小 */
         const val BY_SIZE = 0x1004
 
         /** 升序 */
         const val ASC = 0x2001
+
         /** 降序 */
         const val DESC = 0x2002
 
         /** 样式一 */
         const val STYLE1 = 1
+
         /** 样式二 */
         const val STYLE2 = 2
 
@@ -73,10 +84,12 @@ class ZFileConfiguration : Serializable {
 
         /** 标题居左 */
         const val TITLE_LEFT = 0
+
         /** 标题居中 */
         const val TITLE_CENTER = 1
+
         /** 标题居右 */
-        @Deprecated("在我国肯定没人有这种BT需求，有的话我zhiboduodiao")
+        @Deprecated("肯定没人有这种BT需求，有的话我zhiboduodiao")
         const val TITLE_RIGHT = 2
     }
 
@@ -121,6 +134,10 @@ class ZFileConfiguration : Serializable {
      * 文件选取大小的限制，单位：M
      */
     var maxSize = 10
+        set(value) {
+            field = value
+            maxSizeStr = "您只能选取小于${field}M的文件"
+        }
 
     /**
      * 超过最大选择大小文字提醒
@@ -131,6 +148,10 @@ class ZFileConfiguration : Serializable {
      * 最大选取数量
      */
     var maxLength = 9
+        set(value) {
+            field = value
+            maxLengthStr = "您最多可以选取${field}个文件"
+        }
 
     /**
      * 超过最大选择数量文字提醒
@@ -143,7 +164,18 @@ class ZFileConfiguration : Serializable {
     var boxStyle = STYLE2
 
     /**
-     * 是否需要长按事件，如只需要文件选择不需要文件操作，设为false即可！
+     * 单个文件点击 是否自动选中文件，如只需要文件选择 设为true即可
+     * true：直接选中文件，跳过打开、预览文件的步骤， 此时 [needTwiceClick] 属性将会自动设为 false
+     * false：打开、预览文件
+     */
+    var clickAndAutoSelected = false
+        set(value) {
+            field = value
+            needTwiceClick = !field
+        }
+
+    /**
+     * 是否需要长按事件，如只需要文件选择不需要文件操作，设为false即可
      */
     var needLongClick = true
 
@@ -200,7 +232,12 @@ class ZFileConfiguration : Serializable {
      * 复制、移动、重命名、解压缩 操作 如果存在相同的文件时 是否需要保留副本
      * false：默认直接覆盖或者移除； true：表示保留原文件，同时新增副本文件
      */
+    @Deprecated("已不再推荐使用")
     var keepDuplicate = false
+        set(value) {
+            ZFileLog.e("该值将会永远默认false，已不再推荐使用，下一版本将移除该属性！")
+            field = value
+        }
 
     /**
      * 是否开启懒加载
@@ -234,188 +271,140 @@ class ZFileConfiguration : Serializable {
      */
     class Build {
 
-        private var filePath: String? = null
-        private var qwData = ZFileQWData()
-        private var resources = ZFileResources()
-        private var showHiddenFile = false
-        private var sortordBy = BY_DEFAULT
-        private var sortord = ASC
-        private var fileFilterArray: Array<String>? = null
-        private var maxSize = 10
-        private var maxSizeStr = "您只能选取小于${maxSize}M的文件"
-        private var maxLength = 9
-        private var maxLengthStr = "您最多可以选取${maxLength}个文件"
-        private var boxStyle = STYLE1
-        private var needLongClick = true
-        private var isOnlyFileHasLongClick = true
-        private var longClickOperateTitles: Array<String>? = null
-        private var isOnlyFolder = false
-        private var isOnlyFile = false
-        private var authority = ""
-        private var showSelectedCountHint = false
-        private var titleGravity = TITLE_LEFT
-        private var keepDuplicate = false
-        private var needLazy = true
-        private var showBackIcon = true
-        private var needTwiceClick = true
-        private var showLog = true
+        private var configuration = ZFileConfiguration()
 
         fun filePath(filePath: String?): Build {
-            this.filePath = filePath
+            configuration.filePath = filePath
             return this
         }
 
         fun qwData(qwData: ZFileQWData): Build {
-            this.qwData = qwData
+            configuration.qwData = qwData
             return this
         }
 
         fun resources(resources: ZFileResources): Build {
-            this.resources = resources
+            configuration.resources = resources
             return this
         }
 
         fun showHiddenFile(showHiddenFile: Boolean): Build {
-            this.showHiddenFile = showHiddenFile
+            configuration.showHiddenFile = showHiddenFile
             return this
         }
 
         fun sortordBy(sortordBy: Int): Build {
-            this.sortordBy = sortordBy
+            configuration.sortordBy = sortordBy
             return this
         }
 
         fun sortord(sortord: Int): Build {
-            this.sortord = sortord
+            configuration.sortord = sortord
             return this
         }
 
         fun fileFilterArray(fileFilterArray: Array<String>?): Build {
-            this.fileFilterArray = fileFilterArray
+            configuration.fileFilterArray = fileFilterArray
             return this
         }
 
         fun maxSize(maxSize: Int): Build {
-            this.maxSize = maxSize
+            configuration.maxSize = maxSize
             return this
         }
 
         fun maxSizeStr(maxSizeStr: String): Build {
-            this.maxSizeStr = maxSizeStr
+            configuration.maxSizeStr = maxSizeStr
             return this
         }
 
         fun maxLength(maxLength: Int): Build {
-            this.maxLength = maxLength
+            configuration.maxLength = maxLength
             return this
         }
 
         fun maxLengthStr(maxLengthStr: String): Build {
-            this.maxLengthStr = maxLengthStr
+            configuration.maxLengthStr = maxLengthStr
             return this
         }
 
         fun boxStyle(boxStyle: Int): Build {
-            this.boxStyle = boxStyle
+            configuration.boxStyle = boxStyle
+            return this
+        }
+
+        fun clickAndAutoSelected(clickAndAutoSelected: Boolean): Build {
+            configuration.clickAndAutoSelected = clickAndAutoSelected
             return this
         }
 
         fun needLongClick(needLongClick: Boolean): Build {
-            this.needLongClick = needLongClick
+            configuration.needLongClick = needLongClick
             return this
         }
 
         fun isOnlyFileHasLongClick(isOnlyFileHasLongClick: Boolean): Build {
-            this.isOnlyFileHasLongClick = isOnlyFileHasLongClick
+            configuration.isOnlyFileHasLongClick = isOnlyFileHasLongClick
             return this
         }
 
         fun longClickOperateTitles(longClickOperateTitles: Array<String>?): Build {
-            this.longClickOperateTitles = longClickOperateTitles
+            configuration.longClickOperateTitles = longClickOperateTitles
             return this
         }
 
         fun isOnlyFolder(isOnlyFolder: Boolean): Build {
-            this.isOnlyFolder = isOnlyFolder
+            configuration.isOnlyFolder = isOnlyFolder
             return this
         }
 
         fun isOnlyFile(isOnlyFile: Boolean): Build {
-            this.isOnlyFile = isOnlyFile
+            configuration.isOnlyFile = isOnlyFile
             return this
         }
 
         fun authority(authority: String): Build {
-            this.authority = authority
+            configuration.authority = authority
             return this
         }
 
         fun showSelectedCountHint(showSelectedCountHint: Boolean): Build {
-            this.showSelectedCountHint = showSelectedCountHint
+            configuration.showSelectedCountHint = showSelectedCountHint
             return this
         }
 
         fun titleGravity(titleGravity: Int): Build {
-            if (titleGravity in TITLE_LEFT..TITLE_RIGHT) {
-                this.titleGravity = titleGravity
-            } else {
-                throwError("boxStyle")
-            }
+            configuration.titleGravity = titleGravity
             return this
         }
 
+        @Deprecated("已不再推荐使用")
         fun keepDuplicate(keepDuplicate: Boolean): Build {
-            this.keepDuplicate = keepDuplicate
+            configuration.keepDuplicate = keepDuplicate
             return this
         }
 
         fun needLazy(needLazy: Boolean): Build {
-            this.needLazy = needLazy
+            configuration.needLazy = needLazy
             return this
         }
 
         fun showBackIcon(showBackIcon: Boolean): Build {
-            this.showBackIcon = showBackIcon
+            configuration.showBackIcon = showBackIcon
             return this
         }
 
         fun needTwiceClick(needTwiceClick: Boolean): Build {
-            this.needTwiceClick = needTwiceClick
+            configuration.needTwiceClick = needTwiceClick
             return this
         }
 
         fun showLog(showLog: Boolean): Build {
-            this.showLog = showLog
+            configuration.showLog = showLog
             return this
         }
 
-        fun build() = ZFileConfiguration().apply {
-            this.filePath = this@Build.filePath
-            this.qwData = this@Build.qwData
-            this.resources = this@Build.resources
-            this.showHiddenFile = this@Build.showHiddenFile
-            this.sortordBy = this@Build.sortordBy
-            this.sortord = this@Build.sortord
-            this.fileFilterArray = this@Build.fileFilterArray
-            this.maxSize = this@Build.maxSize
-            this.maxSizeStr = this@Build.maxSizeStr
-            this.maxLength = this@Build.maxLength
-            this.maxLengthStr = this@Build.maxLengthStr
-            this.boxStyle = this@Build.boxStyle
-            this.needLongClick = this@Build.needLongClick
-            this.isOnlyFileHasLongClick = this@Build.isOnlyFileHasLongClick
-            this.longClickOperateTitles = this@Build.longClickOperateTitles
-            this.isOnlyFolder = this@Build.isOnlyFolder
-            this.isOnlyFile = this@Build.isOnlyFile
-            this.authority = this@Build.authority
-            this.showSelectedCountHint = this@Build.showSelectedCountHint
-            this.titleGravity = this@Build.titleGravity
-            this.keepDuplicate = this@Build.keepDuplicate
-            this.needLazy = this@Build.needLazy
-            this.showBackIcon = this@Build.showBackIcon
-            this.needTwiceClick = this@Build.needTwiceClick
-            this.showLog = this@Build.showLog
-        }
+        fun build() = configuration
 
     }
 

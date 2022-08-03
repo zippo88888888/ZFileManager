@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.content.*
+import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.result
+import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.R
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.content.Content.FILTER
@@ -81,14 +83,17 @@ class SuperActivity : AppCompatActivity() {
         }
 
         vb.superInnerTxt.setOnClickListener {
-            getZFileHelp().setConfiguration(getZFileConfig().apply {
-                needLongClick = false
-                isOnlyFolder = true
-                sortordBy = ZFileConfiguration.BY_NAME
-                sortord = ZFileConfiguration.ASC
-                authority = Content.AUTHORITY
-            }).result(this) {
-                setResultData(this)
+            zfile {
+                config {
+                    getZFileConfig().apply {
+                        needLongClick = false
+                        clickAndAutoSelected = true
+                        titleGravity = ZFileConfiguration.TITLE_CENTER
+                        sortordBy = ZFileConfiguration.BY_NAME
+                        sortord = ZFileConfiguration.ASC
+                    }
+                }
+                result { setResultData(this) }
             }
         }
     }

@@ -25,8 +25,7 @@ internal class ZFileQWAsync(
     override fun onPreExecute() {
         val loadListener = getZFileHelp().getQWFileLoadListener()
         val array = loadListener?.getQWFilePathArray(fileType, type)
-        val list: MutableList<String>
-        list = if (array.isNullOrEmpty()) {
+        val list = if (array.isNullOrEmpty()) {
             getQWFilePathArray()
         } else {
             array

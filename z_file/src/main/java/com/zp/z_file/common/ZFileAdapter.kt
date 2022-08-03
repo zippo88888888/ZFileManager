@@ -55,6 +55,14 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
     }
 
     open fun remove(position: Int, changeDataNow: Boolean = true) {
+        remove(position, changeDataNow, null)
+    }
+
+    open fun remove(
+        position: Int,
+        changeDataNow: Boolean = true,
+        nullBlock: ((Boolean) -> Unit)? = null
+    ) {
         if (itemCount > 0) {
             datas.removeAt(position)
             if (changeDataNow) {
@@ -62,6 +70,7 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
                 notifyItemRangeChanged(position, itemCount)
             }
         }
+        nullBlock?.invoke(datas.isNullOrEmpty())
     }
 
     open fun clear(changeDataNow: Boolean = true) {

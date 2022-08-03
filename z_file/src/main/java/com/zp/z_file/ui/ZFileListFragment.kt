@@ -291,9 +291,13 @@ class ZFileListFragment : Fragment() {
 
     private fun initListRecyclerView() {
         fileListAdapter = ZFileListAdapter(mActivity).run {
-            itemClick = { v, _, item ->
+            itemClick = { v, position, item ->
                 if (item.isFile) {
-                    ZFileUtil.openFile(item.filePath, v)
+                    if (getZFileConfig().clickAndAutoSelected) {
+                        boxLayoutClick(position, item)
+                    } else {
+                        ZFileUtil.openFile(item.filePath, v)
+                    }
                 } else {
                     ZFileLog.i("进入 ${item.filePath}")
                     backList.add(item.filePath)
@@ -423,7 +427,9 @@ class ZFileListFragment : Fragment() {
                 mActivity
             ) {
                 if (this) {
-                    fileListAdapter?.remove(index)
+                    fileListAdapter?.remove(index, nullBlock = {
+                        vb?.zfileListEmptyLayout?.visibility = if (it) View.VISIBLE else View.GONE
+                    })
                     ZFileLog.i("文件删除成功")
                 } else {
                     ZFileLog.i("文件删除失败")
@@ -447,7 +453,9 @@ class ZFileListFragment : Fragment() {
         } else { // 移动文件
             getZFileHelp().getFileOperateListener().moveFile(item.filePath, targetPath, mActivity) {
                 if (this) {
-                    fileListAdapter?.remove(position)
+                    fileListAdapter?.remove(position, nullBlock = {
+                        vb?.zfileListEmptyLayout?.visibility = if (it) View.VISIBLE else View.GONE
+                    })
                     ZFileLog.i("文件移动成功")
                 } else {
                     ZFileLog.e("文件移动失败")

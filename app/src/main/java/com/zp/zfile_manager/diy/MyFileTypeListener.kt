@@ -11,7 +11,7 @@ class MyFileTypeListener : ZFileTypeListener() {
 
     override fun getFileType(filePath: String) =
         when (ZFileHelp.getFileTypeBySuffix(filePath)) {
-            TXT, XML, JSON -> MyTxtType()
+            TXT, XML, JSON, "html" -> MyTxtType()
             Content.APK -> ApkType()
             Content.MOV -> MovType()
             else -> super.getFileType(filePath)

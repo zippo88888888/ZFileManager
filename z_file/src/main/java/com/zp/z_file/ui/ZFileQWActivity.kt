@@ -130,7 +130,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     }
 
     private fun callPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+        if (ZFilePermissionUtil.isRorESM()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
         } else {
             val builder = AlertDialog.Builder(this)

@@ -50,29 +50,30 @@ internal object ZFileOpenUtil {
         open(filePath, PDF, view.context)
     }
 
-    private fun open(filePath: String, type: String, context: Context) {
-        try {
-            context.startActivity(Intent(Intent.ACTION_VIEW).apply {
-                addCategory("android.intent.category.DEFAULT")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val contentUri = FileProvider.getUriForFile(
-                        context,
-                        getZFileConfig().authority, File(filePath)
-                    )
-                    setDataAndType(contentUri, type)
-                } else {
-                    val uri = Uri.fromFile(File(filePath))
-                    setDataAndType(uri, type)
-                }
-            })
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ZFileLog.e("ZFileConfiguration.authority 未设置？？？")
-            context.toast("文件类型可能不匹配或找不到打开该文件类型的程序，打开失败")
+    private fun open(filePath: String, type: String, context: Context?) {
+        context?.let {
+            try {
+                it.startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    addCategory("android.intent.category.DEFAULT")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        val contentUri = FileProvider.getUriForFile(
+                            it,
+                            getZFileConfig().authority, File(filePath)
+                        )
+                        setDataAndType(contentUri, type)
+                    } else {
+                        val uri = Uri.fromFile(File(filePath))
+                        setDataAndType(uri, type)
+                    }
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ZFileLog.e("ZFileConfiguration.authority 未设置？？？")
+                it.toast("文件类型可能不匹配或找不到打开该文件类型的程序，打开失败")
+            }
         }
-
     }
 
 }
