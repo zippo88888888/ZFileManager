@@ -22,8 +22,8 @@
 
 ## 基本使用
 
-> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**
-> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**
+> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**  
+> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**  
 > **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**
 
 
