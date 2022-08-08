@@ -92,13 +92,19 @@ class FragmentSampleActivity2 : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (type == 3) {
-            (supportFragmentManager.findFragmentByTag("BlankFragment2") as? BlankFragment2)?.onBackPressed()
-        } else {
-            if (vb.fs2Vp.currentItem == 1) {
+        when (type) {
+            1 -> {
                 (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
-            } else {
-                finish()
+            }
+            3 -> {
+                (supportFragmentManager.findFragmentByTag("BlankFragment2") as? BlankFragment2)?.onBackPressed()
+            }
+            else -> {
+                if (vb.fs2Vp.currentItem == 1) {
+                    (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
+                } else {
+                    finish()
+                }
             }
         }
     }
