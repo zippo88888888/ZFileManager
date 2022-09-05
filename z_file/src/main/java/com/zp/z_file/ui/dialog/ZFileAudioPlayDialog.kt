@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.content.setNeedWH
+import com.zp.z_file.content.toast
 import com.zp.z_file.databinding.DialogZfileAudioPlayBinding
 import com.zp.z_file.util.ZFileOtherUtil
 import java.lang.ref.WeakReference
@@ -21,14 +22,17 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
     private var vb: DialogZfileAudioPlayBinding? = null
 
     companion object {
+
+        private const val UNIT = -1
+        private const val PLAY = 0
+        private const val PAUSE = 1
+
         fun getInstance(filePath: String) = ZFileAudioPlayDialog().apply {
             arguments = Bundle().apply { putString("filePath", filePath) }
         }
     }
 
-    private val UNIT = -1
-    private val PLAY = 0
-    private val PAUSE = 1
+
 
     private var filePath = ""
 
@@ -158,6 +162,13 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
         audioHandler?.removeCallbacks(this)
         audioHandler?.removeCallbacksAndMessages(null)
         audioHandler = null
+    }
+
+    override fun onPause() {
+        if (playerState == PLAY) {
+            vb?.dialogZfileAudioPlay?.performClick()
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

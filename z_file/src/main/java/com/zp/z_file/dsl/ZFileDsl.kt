@@ -17,6 +17,14 @@ fun Fragment.zfile(block: ZFileDsl.() -> Unit) {
 }
 
 /**
+ * 重置 所有配置
+ * @param imageLoadReset Boolean    是否重置 [imageLoade]
+ */
+fun ZFileDsl.resetAll(imageLoadReset: Boolean = false) {
+    resetAll(imageLoadReset)
+}
+
+/**
  * 设置 [ZFileImageListener]  配置 图片类型和视频类型的显示方式
  */
 fun ZFileDsl.imageLoade(block: () -> ZFileImageListener) {
@@ -59,6 +67,13 @@ fun ZFileDsl.fileOpen(block: () -> ZFileOpenListener) {
 }
 
 /**
+ * 设置 [ZFileOtherListener] 配置 其他
+ */
+fun ZFileDsl.fileOther(block: () -> ZFileOtherListener) {
+    setOther(block)
+}
+
+/**
  * 设置 [ZFileConfiguration] 文件的相关配置信息
  */
 fun ZFileDsl.config(block: () -> ZFileConfiguration) {
@@ -72,6 +87,9 @@ fun ZFileDsl.result(block: MutableList<ZFileBean>?.() -> Unit) {
     startManger(block)
 }
 
+/**
+ * 获取返回的数据  [ZFileManageHelp.start] 的扩展函数
+ */
 fun ZFileManageHelp.result(fragmentOrActivity: Any, block: MutableList<ZFileBean>?.() -> Unit) {
     start(fragmentOrActivity, object : ZFileSelectResultListener {
         override fun selectResult(selectList: MutableList<ZFileBean>?) {
@@ -86,6 +104,10 @@ internal fun zfile(fragmentOrActivity: Any, block: ZFileDsl.() -> Unit) {
 }
 
 class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
+
+    internal fun resetAll(imageLoadReset: Boolean = false) {
+        getZFileHelp().resetAll(imageLoadReset)
+    }
 
     internal fun setImageLoade(initBlock: () -> ZFileImageListener) {
         getZFileHelp().init(initBlock())
@@ -109,6 +131,10 @@ class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
 
     internal fun setFileOpen(fileOpenBlock: () -> ZFileOpenListener) {
         getZFileHelp().setFileOpenListener(fileOpenBlock())
+    }
+
+    internal fun setOther(otherBlock: () -> ZFileOtherListener) {
+        getZFileHelp().setOtherFileListener(otherBlock())
     }
 
     internal fun setConfig(configBlock: () -> ZFileConfiguration) {

@@ -9,35 +9,39 @@ import com.zp.z_file.ui.ZFileVideoPlayer
 import com.zp.z_file.listener.*
 import com.zp.z_file.async.ZFileStipulateAsync
 import com.zp.z_file.listener.ZQWFileLoadListener
-import com.zp.z_file.util.ZFileLog
 import java.io.Serializable
 
 /**
- * 配置信息
+ * 配置信息（单列保存，一处设置，全局通用）
+ *
+ * 1.4.2 主要更新信息：
+ * 1) 修复在特定条件下无法获取文件的bug
+ * 2) 新增音频、视频 播放中自动暂停，防止打扰来电等操作（避免社死 >_<:: ）
+ * 3) 新增 [ZFileOtherListener]，其他多处优化
  *
  * 1.4.1 主要更新信息：
- * 1）修复 错误的提示语句，新增 [clickAndAutoSelected] 属性
- * 2）完善zip文件解压，修复展位图不展示问题
+ * 1) 修复 错误的提示语句，新增 [clickAndAutoSelected] 属性
+ * 2) 完善zip文件解压，修复展位图不展示问题
  *
  * 1.4.0 主要更新信息：
- * 1）移除已过时配置
+ * 1) 移除已过时配置
  *
  * 1.3.3 主要更新信息：
- * 1）嵌套 Fragment 优化，列表优化，移除废弃方法！
- * 2）新增 [needTwiceClick] 属性
- * 3）新增 对于 m4a音频文件支持
+ * 1) 嵌套 Fragment 优化，列表优化，移除废弃方法！
+ * 2) 新增 [needTwiceClick] 属性
+ * 3) 新增 对于 m4a音频文件支持
  *
  * 1.3.2 主要更新信息：
- * 1）支持 直接在 Activity 、 Fragment、 Fragment + ViewPager 中使用
- * 2）文件复制优化
+ * 1) 支持 直接在 Activity 、 Fragment、 Fragment + ViewPager 中使用
+ * 2) 文件复制优化
  *
  * 1.3.1 主要更新信息：
- * 1）新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZQWFileLoadListener] 即可实现
- * 2）修复 QQ、Wechat 部分路径下无法获取数据的bug
+ * 1) 新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZQWFileLoadListener] 即可实现
+ * 2) 修复 QQ、Wechat 部分路径下无法获取数据的bug
  *
  * 1.3.0 主要更新信息：
  * 1) Android 11 12 支持，完善 WPS 文件类型
- * 2) 新增 [titleGravity] [keepDuplicate] 配置
+ * 2) 新增 [titleGravity] 配置
  * 3) 删除文件崩溃、解压缩中文乱码问题修复
  * 4) [ZFileVideoPlayer] internal ---> open, ZFileAsyncImpl 重命名为 [ZFileStipulateAsync]
  *
@@ -95,7 +99,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 起始访问位置，空为SD卡根目录
-     * 还可指定QQ或微信目录 see [QQ] [WECHAT]
+     * 还可指定 [QQ] 或 [WECHAT] 目录
      */
     var filePath: String? = null
 
@@ -115,12 +119,12 @@ class ZFileConfiguration : Serializable {
     var showHiddenFile = false
 
     /**
-     * 根据什么排序 see [BY_DEFAULT] [BY_NAME] [BY_DATE] [BY_SIZE]
+     * 根据什么排序 see [BY_DEFAULT]、[BY_NAME]、[BY_DATE]、[BY_SIZE]
      */
     var sortordBy = BY_DEFAULT
 
     /**
-     * 排序方式 see [ASC] [DESC]
+     * 排序方式 see [ASC]、[DESC]
      */
     var sortord = ASC
 
@@ -159,7 +163,7 @@ class ZFileConfiguration : Serializable {
     var maxLengthStr = "您最多可以选取${maxLength}个文件"
 
     /**
-     * 选中的样式 see [STYLE1] [STYLE2]
+     * 选中的样式 see [STYLE1]、[STYLE2]
      */
     var boxStyle = STYLE2
 
@@ -175,18 +179,19 @@ class ZFileConfiguration : Serializable {
         }
 
     /**
-     * 是否需要长按事件，如只需要文件选择不需要文件操作，设为false即可
+     * 需要长按事件  默认为true；
+     * 如只需要文件选择不需要文件操作，设为false即可
      */
     var needLongClick = true
 
     /**
-     * 默认只有文件才有长按事件
-     * 长按暂不支持对于文件夹的操作，如有需要，请实现 [ZFileOperateListener]
+     * 只有文件才有长按事件  默认为true；
+     * 长按不支持对于文件夹的操作，如需要对于文件夹的操作，请实现 [ZFileOperateListener] 所有方法
      */
     var isOnlyFileHasLongClick = true
 
     /**
-     * 长按后需要显示的操作类型 see [RENAME] [COPY] [MOVE] [DELETE] [INFO]
+     * 长按后需要显示的操作类型 see [RENAME]、[COPY]、[MOVE]、[DELETE]、[INFO]
      * 空默认为 arrayOf(RENAME, COPY, MOVE, DELETE, INFO)
      * 目前只可以是这几种类型，个数、顺序可以自定义，文字不支持自定义
      */
@@ -217,7 +222,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 标题位置 see [TITLE_LEFT] [TITLE_CENTER]
-     * 设置标题 重写 [R.string.zfile_title] 即可自定义
+     * 重写 [R.string.zfile_title] 即可自定义标题，默认展示 “文件管理”
      */
     var titleGravity = TITLE_LEFT
         set(value) {
@@ -229,17 +234,6 @@ class ZFileConfiguration : Serializable {
         }
 
     /**
-     * 复制、移动、重命名、解压缩 操作 如果存在相同的文件时 是否需要保留副本
-     * false：默认直接覆盖或者移除； true：表示保留原文件，同时新增副本文件
-     */
-    @Deprecated("已不再推荐使用")
-    var keepDuplicate = false
-        set(value) {
-            ZFileLog.e("该值将会永远默认false，已不再推荐使用，下一版本将移除该属性！")
-            field = value
-        }
-
-    /**
      * 是否开启懒加载
      * 嵌套在 VP + Fragment 使用
      */
@@ -247,7 +241,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * Fragment TAG，可以通过 [FragmentManager.findFragmentByTag] 获取 [ZFileListFragment]
-     * 嵌套在 VP + Fragment 使用，see [FragmentPagerAdapter.makeFragmentName]
+     * 在 ViewPager + Fragment 时，需要根据 [FragmentPagerAdapter.makeFragmentName] 设置 Tag
      */
     var fragmentTag = ZFILE_FRAGMENT_TAG
 
@@ -257,7 +251,7 @@ class ZFileConfiguration : Serializable {
     var showBackIcon = true
 
     /**
-     * 是否需要两次点击后才能选择文件
+     * 是否需要两次点击后才能选择文件(参考百度网盘)  false：点击后立刻自动选中文件；true：默认
      */
     var needTwiceClick = true
 
@@ -273,137 +267,234 @@ class ZFileConfiguration : Serializable {
 
         private var configuration = ZFileConfiguration()
 
+        /**
+         * 起始访问位置
+         * @param filePath String?  空为SD卡根目录 还可指定 [QQ] 或 [WECHAT] 目录
+         */
         fun filePath(filePath: String?): Build {
             configuration.filePath = filePath
             return this
         }
 
+        /**
+         * QQ、Wechat 配置信息
+         */
         fun qwData(qwData: ZFileQWData): Build {
             configuration.qwData = qwData
             return this
         }
 
+        /**
+         * 图片资源配置
+         */
         fun resources(resources: ZFileResources): Build {
             configuration.resources = resources
             return this
         }
 
+        /**
+         * 是否显示隐藏文件
+         */
         fun showHiddenFile(showHiddenFile: Boolean): Build {
             configuration.showHiddenFile = showHiddenFile
             return this
         }
 
+        /**
+         * 根据什么排序
+         * @param sortordBy Int     [BY_DEFAULT]、[BY_NAME]、[BY_DATE]、[BY_SIZE]
+         */
         fun sortordBy(sortordBy: Int): Build {
             configuration.sortordBy = sortordBy
             return this
         }
 
+        /**
+         * 排序方式
+         * @param sortord Int   [ASC] or [DESC]
+         */
         fun sortord(sortord: Int): Build {
             configuration.sortord = sortord
             return this
         }
 
+        /**
+         * 过滤规则，默认显示所有的文件类型
+         * 如 arrayOf(PNG, JPG, JPEG, GIF) 只显示图片类型
+         */
         fun fileFilterArray(fileFilterArray: Array<String>?): Build {
             configuration.fileFilterArray = fileFilterArray
             return this
         }
 
+        /**
+         * 文件选取大小的限制，单位：M
+         */
         fun maxSize(maxSize: Int): Build {
             configuration.maxSize = maxSize
             return this
         }
 
+        /**
+         * 超过最大选择大小文字提醒
+         */
         fun maxSizeStr(maxSizeStr: String): Build {
             configuration.maxSizeStr = maxSizeStr
             return this
         }
 
+        /**
+         * 最大选取数量
+         */
         fun maxLength(maxLength: Int): Build {
             configuration.maxLength = maxLength
             return this
         }
 
+        /**
+         * 超过最大选择数量文字提醒
+         */
         fun maxLengthStr(maxLengthStr: String): Build {
             configuration.maxLengthStr = maxLengthStr
             return this
         }
 
+        /**
+         * 选中的样式
+         * @param boxStyle Int  [STYLE1] or [STYLE2]
+         */
         fun boxStyle(boxStyle: Int): Build {
             configuration.boxStyle = boxStyle
             return this
         }
 
+        /**
+         * 单个文件点击 是否自动选中文件，如只需要文件选择 设为true即可
+         * true：直接选中文件，跳过打开、预览文件的步骤， 此时 [ZFileConfiguration.needTwiceClick] 属性将会自动设为 false
+         * false：打开、预览文件
+         */
         fun clickAndAutoSelected(clickAndAutoSelected: Boolean): Build {
             configuration.clickAndAutoSelected = clickAndAutoSelected
             return this
         }
 
+        /**
+         * 需要长按事件  默认为true；
+         * 如只需要文件选择不需要文件操作，设为false即可
+         */
         fun needLongClick(needLongClick: Boolean): Build {
             configuration.needLongClick = needLongClick
             return this
         }
 
+        /**
+         * 只有文件才有长按事件  默认为true；
+         * 长按不支持对于文件夹的操作，如需要对于文件夹的操作，请实现 [ZFileOperateListener] 所有方法
+         */
         fun isOnlyFileHasLongClick(isOnlyFileHasLongClick: Boolean): Build {
             configuration.isOnlyFileHasLongClick = isOnlyFileHasLongClick
             return this
         }
 
+        /**
+         * 长按后需要显示的操作类型 see [RENAME] [COPY] [MOVE] [DELETE] [INFO]
+         * 空默认为 arrayOf(RENAME, COPY, MOVE, DELETE, INFO)
+         * 目前只可以是这几种类型，个数、顺序可以自定义，文字不支持自定义
+         */
         fun longClickOperateTitles(longClickOperateTitles: Array<String>?): Build {
             configuration.longClickOperateTitles = longClickOperateTitles
             return this
         }
 
+        /**
+         * 是否只需要显示文件夹
+         * 慎用！！！
+         */
         fun isOnlyFolder(isOnlyFolder: Boolean): Build {
             configuration.isOnlyFolder = isOnlyFolder
             return this
         }
 
+        /**
+         * 是否只需要显示文件
+         * 慎用！！！
+         */
         fun isOnlyFile(isOnlyFile: Boolean): Build {
             configuration.isOnlyFile = isOnlyFile
             return this
         }
 
+        /**
+         * 打开文件需要 [FileProvider] 一般都是包名 + xxxFileProvider
+         * 如果项目中已经存在或其他原因无法修改，请自己实现 [ZFileOpenListener]
+         */
         fun authority(authority: String): Build {
             configuration.authority = authority
             return this
         }
 
+        /**
+         * 是否需要显示 已选择的文件个数 提示
+         */
         fun showSelectedCountHint(showSelectedCountHint: Boolean): Build {
             configuration.showSelectedCountHint = showSelectedCountHint
             return this
         }
 
+        /**
+         * 标题位置 《设置标题 重写 [R.string.zfile_title] 即可自定义》
+         * @param titleGravity Int  [TITLE_LEFT] or [TITLE_CENTER]
+         */
         fun titleGravity(titleGravity: Int): Build {
             configuration.titleGravity = titleGravity
             return this
         }
 
-        @Deprecated("已不再推荐使用")
-        fun keepDuplicate(keepDuplicate: Boolean): Build {
-            configuration.keepDuplicate = keepDuplicate
-            return this
-        }
-
+        /**
+         * 是否开启懒加载
+         * 嵌套在 VP + Fragment 使用
+         */
         fun needLazy(needLazy: Boolean): Build {
             configuration.needLazy = needLazy
             return this
         }
 
+        /**
+         * Fragment TAG，可以通过 [FragmentManager.findFragmentByTag] 获取 [ZFileListFragment]
+         * 嵌套在 VP + Fragment 使用，see [FragmentPagerAdapter.makeFragmentName]
+         */
+        fun fragmentTag(fragmentTag: String): Build {
+            configuration.fragmentTag = fragmentTag
+            return this
+        }
+
+        /**
+         * 是否显示 返回按钮图标
+         */
         fun showBackIcon(showBackIcon: Boolean): Build {
             configuration.showBackIcon = showBackIcon
             return this
         }
 
+        /**
+         * 是否需要两次点击后才能选择文件
+         */
         fun needTwiceClick(needTwiceClick: Boolean): Build {
             configuration.needTwiceClick = needTwiceClick
             return this
         }
 
+        /**
+         * 是否显示日志
+         */
         fun showLog(showLog: Boolean): Build {
             configuration.showLog = showLog
             return this
         }
 
+        /**
+         * 构建 [ZFileConfiguration]
+         */
         fun build() = configuration
 
     }
@@ -418,7 +509,7 @@ class ZFileConfiguration : Serializable {
      * @property excelRes Int        Excel
      * @property zipRes Int          ZIP
      * @property otherRes Int        其他类型
-     * @property emptyRes Int        空资源
+     * @property emptyRes Int        空资源，还可以重写 [ZFileOtherListener.getFileListEmptyLayoutId] 达到完全自定义
      * @property folderRes Int       文件夹
      * @property lineColor Int       列表分割线颜色
      */

@@ -2,6 +2,7 @@ package com.zp.z_file.listener
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
@@ -11,7 +12,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.R
-import com.zp.z_file.common.ZFileCommonDialog
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
@@ -20,6 +20,7 @@ import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
 import com.zp.z_file.ui.dialog.ZFileInfoDialog
+import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import com.zp.z_file.ui.dialog.ZFileRenameDialog
 import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
 import com.zp.z_file.util.ZFileHelp
@@ -27,6 +28,11 @@ import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
+
+/*
+本库内置丰富的api、内置丰富的配置属性，足以胜任开发者的个性化需求！
+极高自定义（文件获取、文件操作、文件类型扩展、UI展示、主题、提示语句等），简单配置即可满足需求
+ */
 
 /**
  * 图片或视频 显示
@@ -52,7 +58,6 @@ abstract class ZFileImageListener {
 interface ZFileSelectResultListener {
 
     fun selectResult(selectList: MutableList<ZFileBean>?)
-
 
 }
 
@@ -87,8 +92,6 @@ abstract class ZFragmentListener {
         activity.finish()
     }
 
-//    abstract fun onActivityBackPressed() 方法已弃用
-
     /**
      * 获取 [Manifest.permission.WRITE_EXTERNAL_STORAGE] 权限失败
      * @param activity [FragmentActivity]
@@ -119,21 +122,21 @@ abstract class ZQWFileLoadListener {
 
     /**
      * 获取过滤规则
-     * @param fileType Int      文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     * @param fileType Int      文件类型 see [ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
      */
     abstract fun getFilterArray(fileType: Int): Array<String>
 
     /**
      * 获取 QQ 或 WeChat 文件路径
-     * @param qwType String         QQ 或 WeChat  see [ZFileConfiguration.QQ] [ZFileConfiguration.WECHAT]
-     * @param fileType Int          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     * @param qwType String         QQ 或 WeChat  see [ZFileConfiguration.QQ]、[ZFileConfiguration.WECHAT]
+     * @param fileType Int          文件类型 see [ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
      * @return MutableList<String>  文件路径集合（因为QQ或WeChat保存的文件可能存在多个路径）
      */
     abstract fun getQWFilePathArray(qwType: String, fileType: Int): MutableList<String>
 
     /**
      * 获取数据
-     * @param fileType Int                          文件类型 see [ZFILE_QW_PIC] [ZFILE_QW_MEDIA] [ZFILE_QW_DOCUMENT] [ZFILE_QW_OTHER]
+     * @param fileType Int                          文件类型 see [ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
      * @param qwFilePathArray MutableList<String>   QQ 或 WeChat 文件路径集合
      * @param filterArray Array<String>             过滤规则
      */
@@ -186,7 +189,6 @@ open class ZFileOpenListener {
      * @param view View         RecyclerView itemView
      */
     open fun openImage(filePath: String, view: View) {
-//        val pic = view.findViewById<ImageView>(R.id.item_zfile_list_file_pic)
         view.context?.let {
             it.startActivity(Intent(it, ZFilePicActivity::class.java).apply {
                 putExtra("picFilePath", filePath)
@@ -309,7 +311,8 @@ open class ZFileOpenListener {
 }
 
 /**
- * 文件操作，耗时的文件操作建议放在 非 UI线程中
+ * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请重写该类的所有方法）！
+ * 耗时的文件操作建议放在 非 UI线程中
  */
 open class ZFileOperateListener {
 
@@ -346,7 +349,9 @@ open class ZFileOperateListener {
         fileNewName: String,
         context: Context,
         block: (Boolean, String) -> Unit
-    ) = ZFileUtil.renameFile(filePath, fileNewName, context, block)
+    ) {
+        ZFileUtil.renameFile(filePath, fileNewName, context, block)
+    }
 
     /**
      * 复制文件
@@ -359,7 +364,9 @@ open class ZFileOperateListener {
         targetFile: String,
         context: Context,
         block: Boolean.() -> Unit
-    ) = ZFileUtil.copyFile(sourceFile, targetFile, context, block)
+    ) {
+        ZFileUtil.copyFile(sourceFile, targetFile, context, block)
+    }
 
     /**
      * 移动文件
@@ -372,16 +379,26 @@ open class ZFileOperateListener {
         targetFile: String,
         context: Context,
         block: Boolean.() -> Unit
-    ) = ZFileUtil.cutFile(sourceFile, targetFile, context, block)
+    ) {
+        ZFileUtil.cutFile(sourceFile, targetFile, context, block)
+    }
 
     /**
      * 删除文件
      * @param filePath String   源文件地址
      */
     open fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
-        ZFileCommonDialog(context).showDialog2({
-            ZFileUtil.deleteFile(filePath, context, block)
-        }, {}, "您确定要删除吗？", "删除", "取消")
+        AlertDialog.Builder(context).apply {
+            setTitle("温馨提示")
+            setMessage("您确定要删除吗？")
+            setPositiveButton("删除") { _, _ ->
+                ZFileUtil.deleteFile(filePath, context, block)
+            }
+            setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            show()
+        }
     }
 
     /**
@@ -409,4 +426,39 @@ open class ZFileOperateListener {
         }
 
     }
+}
+
+/**
+ * 其他操作相关
+ */
+open class ZFileOtherListener {
+
+    /**
+     * 耗时的文件操作（如复制、移动文件等） 展示的 Dialog
+     * @param context Context   Context
+     * @param title String?     标题
+     */
+    open fun getLoadingDialog(
+        context: Context,
+        title: String? = context getStringById R.string.zfile_loading
+    ): Dialog {
+        return ZFileLoadingDialog(context, title)
+    }
+
+    /**
+     * 获取 权限失败 时的 布局
+     * 请注意：布局中必须包含控件 id：zfile_permission_againBtn
+     * 该id对应视图功能：用户点击后再次申请权限
+     */
+    open fun getPermissionFailedLayoutId(): Int {
+        return ZFILE_DEFAULT
+    }
+
+    /**
+     * 获取 当前目录没有文件时（为空） 的布局
+     */
+    open fun getFileListEmptyLayoutId(): Int {
+        return ZFILE_DEFAULT
+    }
+
 }

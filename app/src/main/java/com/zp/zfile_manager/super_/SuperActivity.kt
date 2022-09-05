@@ -101,26 +101,31 @@ class SuperActivity : AppCompatActivity() {
     private fun toQW(path: String) {
         Log.e("ZFileManager", "请注意：QQ、微信目前只能获取用户手动保存到手机里面的文件，" +
                 "且保存文件到手机的目录用户没有修改")
-        Log.i("ZFileManager", "参考自腾讯自己的\"腾讯文件\"App，能力有限，部分文件无法获取")
+        Log.i("ZFileManager", "参考自腾讯自己的\"腾讯文件\"App，部分文件无法获取")
         jump(path)
     }
 
     private fun jump(path: String) {
-        getZFileHelp().setConfiguration(getZFileConfig().apply {
-            boxStyle = ZFileConfiguration.STYLE2
-            filePath = path
-            authority = Content.AUTHORITY
-            if (path == ZFileConfiguration.QQ) { // 打开QQ， 模拟自定义获取
-                qwData = ZFileQWData().apply {
-                    titles = TITLES
-                    filterArrayMap = FILTER
-                    qqFilePathArrayMap = QQ_MAP
+        zfile {
+            config {
+                getZFileConfig().apply {
+                    boxStyle = ZFileConfiguration.STYLE2
+                    filePath = path
+                    authority = Content.AUTHORITY
+                    if (path == ZFileConfiguration.QQ) { // 打开QQ时，简单配置
+                        qwData = ZFileQWData().apply {
+                            titles = TITLES
+                            filterArrayMap = FILTER
+                            qqFilePathArrayMap = QQ_MAP
+                        }
+                    } else {
+                        qwData = ZFileQWData()
+                    }
                 }
-            } else {
-                qwData = ZFileQWData()
             }
-        }).result(this) {
-            setResultData(this)
+            result {
+                setResultData(this)
+            }
         }
     }
 
@@ -166,9 +171,4 @@ class SuperActivity : AppCompatActivity() {
         vb.superResultTxt.text = sb.toString()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // 这里重置，防止该页面销毁后其他演示页面无法正常获取数据！
-        getZFileHelp().resetAll()
-    }
 }

@@ -38,8 +38,6 @@
         <activity
             android:name=".diy.SunActivity"
             android:theme="@style/SunTheme" />
-        <activity android:name=".dsl.DslFragmentActivity" />
-        <activity android:name=".dsl.DslActivity" />
         <activity android:name=".super_.SuperActivity" />
         <activity android:name=".JavaSampleActivity" />
     </application>

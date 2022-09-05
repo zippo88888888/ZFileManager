@@ -90,6 +90,16 @@ class ZFileManageHelp {
     }
 
     /**
+     * 其他操作
+     */
+    private var otherFileListener: ZFileOtherListener? = null
+    internal fun getOtherListener() = otherFileListener
+    fun setOtherFileListener(otherListener: ZFileOtherListener?): ZFileManageHelp {
+        this.otherFileListener = otherListener
+        return this
+    }
+
+    /**
      * 文件的相关配置信息
      */
     private var config = ZFileConfiguration()
@@ -112,6 +122,7 @@ class ZFileManageHelp {
 
     /**
      * 重置所有配置信息
+     * @param imageLoadReset Boolean  是否重置 [ZFileImageListener]
      */
     @JvmOverloads
     fun resetAll(imageLoadReset: Boolean = false) {
@@ -121,6 +132,7 @@ class ZFileManageHelp {
         fileTypeListener = ZFileTypeListener()
         fileOperateListener = ZFileOperateListener()
         fileOpenListener = ZFileOpenListener()
+        otherFileListener = null
         config = ZFileConfiguration()
     }
 

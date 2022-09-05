@@ -33,6 +33,14 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
         }
     }
 
+    override fun onPause() {
+        if (vb.videoPlayer.isPlaying()) {
+            vb.videoPlayer.pause()
+            vb.videoPlayerButton.visibility = View.VISIBLE
+        }
+        super.onPause()
+    }
+
     override fun onBackPressed() {
         vb.videoImg.visibility = View.VISIBLE
         super.onBackPressed()

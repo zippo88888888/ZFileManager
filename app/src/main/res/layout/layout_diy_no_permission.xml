@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/zfile_white"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="自定义权限申请失败视图展示\n没有权限"/>
+
+
+    <!-- TODO zfile_permission_againBtn 必须设置 -->
+    <Button
+        android:id="@+id/zfile_permission_againBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="重新获取" />
+
+</LinearLayout>

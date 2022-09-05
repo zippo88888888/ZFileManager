@@ -154,9 +154,17 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     }
 
     private fun checkHasPermission() {
-        val hasPermission = ZFilePermissionUtil.hasPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+        val hasPermission = ZFilePermissionUtil.hasPermission(
+            this, ZFilePermissionUtil.READ_EXTERNAL_STORAGE,
+            ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
+        )
         if (hasPermission) {
-            ZFilePermissionUtil.requestPermission(this, ZFilePermissionUtil.WRITE_EXTERNAL_CODE, ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE)
+            ZFilePermissionUtil.requestPermission(
+                this,
+                ZFilePermissionUtil.WRITE_EXTERNAL_CODE,
+                ZFilePermissionUtil.READ_EXTERNAL_STORAGE,
+                ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
+            )
         } else {
             initAll()
         }

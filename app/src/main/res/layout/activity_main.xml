@@ -10,57 +10,75 @@
         android:layout_height="wrap_content"
         android:text="START" />
 
-    <Button
-        android:id="@+id/main_fileMangerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SUPER" />
-
-    <Button
-        android:id="@+id/main_fragmentBtn2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="嵌套 FRAGMENT" />
-
     <RadioGroup
-        android:id="@+id/main_rg"
+        android:id="@+id/main_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
         <RadioButton
+            android:id="@+id/main_defaultRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="默认"/>
+
+        <RadioButton
+            android:id="@+id/main_diyRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自定义"/>
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/main_fragmentBtn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FRAGMENT" />
+
+    <RadioGroup
+        android:id="@+id/main_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RadioButton
             android:id="@+id/main_rb_af"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="A+F" />
+            android:text="Activity + Fragment" />
 
         <RadioButton
             android:id="@+id/main_rb_vpf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="A+(VP+F)"/>
+            android:text="Activity + (ViewPager + Fragment)"/>
 
         <RadioButton
             android:id="@+id/main_rb_ff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="A+(F+F)"/>
+            android:text="Activity + (Fragment + Fragment)"/>
 
     </RadioGroup>
+
+
+    <Button
+        android:id="@+id/main_fileMangerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="SUPER" />
 
     <Button
         android:id="@+id/main_javaBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="JAVA" />
-
-    <Button
-        android:id="@+id/main_dslMangerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="DSL" />
 
     <include
         android:id="@+id/main_include"

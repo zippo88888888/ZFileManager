@@ -14,8 +14,8 @@ import com.zp.z_file.content.getColorById
 import com.zp.z_file.content.getStringById
 
 internal class ZFileLoadingDialog(
-        context: Context,
-        private var title: String? = context getStringById R.string.zfile_loading
+    context: Context,
+    private var title: String? = context getStringById R.string.zfile_loading
 ) : AlertDialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {

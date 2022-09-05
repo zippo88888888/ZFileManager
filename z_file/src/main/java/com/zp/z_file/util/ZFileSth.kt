@@ -36,11 +36,12 @@ internal object ZFileSth {
             else -> "解压"
         }
         (context as? Activity)?.let {
-            val dialog = ZFileLoadingDialog(it, "${msg}中...").run {
-                setCanceledOnTouchOutside(false)
-                show()
-                this
-            }
+            val dialog = getZFileHelp().getOtherListener()?.getLoadingDialog(it, "${msg}中...")
+                ?: ZFileLoadingDialog(it, "${msg}中...").run {
+                    setCanceledOnTouchOutside(false)
+                    this
+                }
+            dialog.show()
             thread {
                 val isSuccess = when (type) {
                     COPY_TYPE -> copyFile(filePath, outPath, context)
@@ -64,22 +65,10 @@ internal object ZFileSth {
     private fun copyFile(sourceFile: String, targetFile: String, context: Context): Boolean {
         var success = true
         val oldFile = File(sourceFile)
-        var outFile = File("${targetFile}/${oldFile.name}")
+        val outFile = File("${targetFile}/${oldFile.name}")
         if (oldFile.path == outFile.path) {
             ZFileLog.e("复制文件 --->>> 目录相同，不做任何处理！")
             return false
-        }
-        val keepDuplicate = if (getZFileConfig().keepDuplicate) false else false
-        if (keepDuplicate) {
-            val duplicateStr = context getStringById R.string.zfile_duplicate
-            while (true) {
-                if (outFile.exists()) {
-                    ZFileLog.i("文件已存在 ---> 重命名为副本")
-                    outFile = File("${targetFile}/${duplicateStr}${outFile.name}")
-                } else {
-                    break
-                }
-            }
         }
         var inputChannel: FileChannel? = null
         var outputChannel: FileChannel? = null

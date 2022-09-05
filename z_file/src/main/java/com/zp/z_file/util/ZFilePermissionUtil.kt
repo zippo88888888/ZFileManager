@@ -14,6 +14,8 @@ internal object ZFilePermissionUtil {
 
     /** 读写SD卡权限  */
     const val WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    const val READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
+
     const val WRITE_EXTERNAL_CODE = 0x1001
 
     /**

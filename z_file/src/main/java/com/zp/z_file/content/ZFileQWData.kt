@@ -13,7 +13,7 @@ import java.io.Serializable
 class ZFileQWData : Serializable {
 
     /**
-     * 显示的标题 ，空使用默认
+     * 显示的标题 ，空使用默认  size必须为 [QW_SIZE]
      */
     var titles: Array<String>? = null
 
@@ -46,26 +46,51 @@ class ZFileQWData : Serializable {
 
         private var qwData = ZFileQWData()
 
+        /**
+         * 显示的标题 ，空使用默认  size必须为 [QW_SIZE]
+         * @param titles Array<String>?     标题
+         */
         fun titles(titles: Array<String>?): Build {
             qwData.titles = titles
             return this
         }
 
+        /**
+         * QQ、Wechat 文件过滤规则的 Map ，空使用默认
+         * @param filterArray ArrayMap<Int, Array<String>>?
+         * Int             表示 文件类型 [ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
+         * Array<String>   表示 过滤规则
+         */
         fun filterArrayMap(filterArray: ArrayMap<Int, Array<String>>?): Build {
             qwData.filterArrayMap = filterArray
             return this
         }
 
+        /**
+         * QQ 保存至本地SD卡上路径的 Map ，空使用默认
+         *  @param qqFilePathArray ArrayMap<Int, MutableList<String>>?
+         * Int                  表示 文件类型 see[ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
+         * MutableList<String>  表示 SD卡上的路径
+         */
         fun qqFilePathArrayMap(qqFilePathArray: ArrayMap<Int, MutableList<String>>?): Build {
             qwData.qqFilePathArrayMap = qqFilePathArray
             return this
         }
 
+        /**
+         * Wechat 保存至本地SD卡上路径的 Map ，空使用默认
+         *  @param wechatFilePathArray ArrayMap<Int, MutableList<String>>?
+         * Int                  表示 文件类型 see[ZFILE_QW_PIC]、[ZFILE_QW_MEDIA]、[ZFILE_QW_DOCUMENT]、[ZFILE_QW_OTHER]
+         * MutableList<String>  表示 SD卡上的路径
+         */
         fun wechatFilePathArrayMap(wechatFilePathArray: ArrayMap<Int, MutableList<String>>?): Build {
             qwData.wechatFilePathArrayMap = wechatFilePathArray
             return this
         }
 
+        /**
+         * 构建 [ZFileQWData]
+         */
         fun build() = qwData
     }
 

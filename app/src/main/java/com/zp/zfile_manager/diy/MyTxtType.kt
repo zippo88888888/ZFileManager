@@ -5,7 +5,7 @@ import com.zp.z_file.type.TxtType
 import com.zp.zfile_manager.R
 
 /**
- * 改变 txt 原本显示的图标
+ * 改变 内置txt类型 显示的图标
  */
 class MyTxtType : TxtType() {
 

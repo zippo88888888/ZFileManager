@@ -71,7 +71,6 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
         }
         vb?.zfileSelectFolderDownPic?.setOnClickListener {
             selectFolder?.invoke(if (getZFileConfig().filePath.isNullOrEmpty()) SD_ROOT else getZFileConfig().filePath!!)
-            recoverData()
             dismiss()
         }
         vb?.zfileSelectFolderTitle?.text = String.format("%s到根目录", tipStr)
@@ -137,6 +136,11 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
             getData()
         }
         return true
+    }
+
+    override fun dismiss() {
+        recoverData()
+        super.dismiss()
     }
 
     private fun recoverData() {

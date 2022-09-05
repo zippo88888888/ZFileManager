@@ -30,27 +30,27 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
         listFiles?.forEach {
             if (config.showHiddenFile) { // 是否显示隐藏文件
                 val bean = ZFileBean(
-                        it.name,
-                        it.isFile,
-                        it.path,
-                        ZFileOtherUtil.getFormatFileDate(it.lastModified()) ?: "未知时间",
-                        it.lastModified().toString(),
-                        ZFileOtherUtil.getFileSize(it.length()),
-                        it.length(),
-                        it.parent
+                    it.name,
+                    it.isFile,
+                    it.path,
+                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
+                    it.lastModified().toString(),
+                    ZFileOtherUtil.getFileSize(it.length()),
+                    it.length(),
+                    it.parent
                 )
                 list.add(bean)
             } else {
                 if (!it.isHidden) {
                     val bean = ZFileBean(
-                            it.name,
-                            it.isFile,
-                            it.path,
-                            ZFileOtherUtil.getFormatFileDate(it.lastModified()) ?: "未知时间",
-                            it.lastModified().toString(),
-                            ZFileOtherUtil.getFileSize(it.length()),
-                            it.length(),
-                            it.parent
+                        it.name,
+                        it.isFile,
+                        it.path,
+                        ZFileOtherUtil.getFormatFileDate(it.lastModified()),
+                        it.lastModified().toString(),
+                        ZFileOtherUtil.getFileSize(it.length()),
+                        it.length(),
+                        it.parent
                     )
                     list.add(bean)
                 }

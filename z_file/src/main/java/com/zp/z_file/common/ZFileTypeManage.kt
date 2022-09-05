@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageView
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.getZFileHelp
-import com.zp.z_file.type.OtherType
 
 /**
  * 文件类型 管理
@@ -20,21 +19,16 @@ internal class ZFileTypeManage {
         fun getTypeManager() = Builder.MANAGER
     }
 
-    var fileType: ZFileType = OtherType()
-
     fun openFile(filePath: String, view: View) {
-        fileType = getFileType(filePath)
-        fileType.openFile(filePath, view)
+        getFileType(filePath).openFile(filePath, view)
     }
 
     fun loadingFile(filePath: String, pic: ImageView) {
-        fileType = getFileType(filePath)
-        fileType.loadingFile(filePath, pic)
+        getFileType(filePath).loadingFile(filePath, pic)
     }
 
     fun infoFile(bean: ZFileBean, context: Context) {
-        fileType = getFileType(bean.filePath)
-        fileType.infoFile(bean, context)
+        getFileType(bean.filePath).infoFile(bean, context)
     }
 
     fun getFileType(filePath: String) =

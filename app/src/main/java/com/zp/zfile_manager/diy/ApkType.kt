@@ -1,9 +1,12 @@
 package com.zp.zfile_manager.diy
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.zp.z_file.common.ZFileType
+import com.zp.z_file.content.ZFileBean
 import com.zp.zfile_manager.R
 
 
@@ -30,4 +33,17 @@ class ApkType : ZFileType() {
         pic.setImageResource(R.mipmap.ic_launcher)
     }
 
+    /**
+     * 文件详情
+     */
+    override fun infoFile(bean: ZFileBean, context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("自定义文件详情")
+            setMessage("这是一个Android系统的apk安装文件，也可以使用压缩软件将其解压！")
+            setPositiveButton("我知道了") { dialog, _ ->
+                dialog.dismiss()
+            }
+            show()
+        }
+    }
 }

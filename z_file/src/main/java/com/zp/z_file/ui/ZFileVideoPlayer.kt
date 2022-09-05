@@ -34,6 +34,9 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
      */
     var completionAutoPlayer = true
 
+    /**
+     * 视频裁切类型
+     */
     var sizeType = CENTER_MODE
 
     /** 视频准备完毕 */
@@ -65,35 +68,32 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attributes: AttributeSet?) : this(context, attributes, 0)
     constructor(context: Context, attributes: AttributeSet?, defStyleAttr: Int) : super(context, attributes, defStyleAttr) {
+        player = MediaPlayer()
         surfaceTextureListener = this
     }
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-        if (player == null) {
-            player = MediaPlayer()
-
-            player?.setOnPreparedListener {
-                ZFileLog.i("媒体装载完成")
-                setVolume()
-                videoPrepared?.invoke(it)
-            }
-            player?.setOnBufferingUpdateListener { _, percent ->
-                ZFileLog.i("缓存中：$percent")
-            }
-            player?.setOnCompletionListener {
-                ZFileLog.i("播放完成")
-                if (completionAutoPlayer) play()
-                videoCompletion?.invoke(it)
-            }
-            player?.setOnVideoSizeChangedListener { _, videoWidth, videoHeight ->
-                this.videoWidth = videoWidth
-                this.videoHeight = videoHeight
-                checkViewSizeByMode()
-            }
-            player?.setOnErrorListener { _, _, _ ->
-                ZFileLog.e("播放失败")
-                false
-            }
+        player?.setOnPreparedListener {
+            ZFileLog.i("媒体装载完成")
+            setVolume()
+            videoPrepared?.invoke(it)
+        }
+        player?.setOnBufferingUpdateListener { _, percent ->
+            ZFileLog.i("缓存中：$percent")
+        }
+        player?.setOnCompletionListener {
+            ZFileLog.i("播放完成")
+            if (completionAutoPlayer) play()
+            videoCompletion?.invoke(it)
+        }
+        player?.setOnVideoSizeChangedListener { _, videoWidth, videoHeight ->
+            this.videoWidth = videoWidth
+            this.videoHeight = videoHeight
+            checkViewSizeByMode()
+        }
+        player?.setOnErrorListener { _, _, _ ->
+            ZFileLog.e("播放失败")
+            false
         }
         val s = Surface(surface)
         player?.setSurface(s)
@@ -200,9 +200,9 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
         val sy = height.toFloat() / videoHeight.toFloat()
         val matrix = Matrix()
         val maxScale = sx.coerceAtLeast(sy)
-        matrix.preTranslate(((width - videoWidth) / 2).toFloat(), ((height - videoHeight) / 2).toFloat())
+        matrix.preTranslate((width - videoWidth) / 2f, (height - videoHeight) / 2f)
         matrix.preScale(videoWidth / width.toFloat(), videoHeight / height.toFloat())
-        matrix.postScale(maxScale, maxScale, (width / 2).toFloat(), (height / 2).toFloat())
+        matrix.postScale(maxScale, maxScale, width / 2f, height / 2f)
         setTransform(matrix)
         postInvalidate()
     }
@@ -211,12 +211,12 @@ open class ZFileVideoPlayer : TextureView, TextureView.SurfaceTextureListener {
         val sx = width.toFloat() / videoWidth.toFloat()
         val sy = height.toFloat() / videoHeight.toFloat()
         val matrix = Matrix()
-        matrix.preTranslate(((width - videoWidth) / 2).toFloat(), ((height - videoHeight) / 2).toFloat())
+        matrix.preTranslate((width - videoWidth) / 2f, (height - videoHeight) / 2f)
         matrix.preScale(videoWidth / width.toFloat(), videoHeight / height.toFloat())
         if (sx >= sy) {
-            matrix.postScale(sy, sy, (width / 2).toFloat(), (height / 2).toFloat())
+            matrix.postScale(sy, sy, width / 2f, height / 2f)
         } else {
-            matrix.postScale(sx, sx, (width / 2).toFloat(), (height / 2).toFloat())
+            matrix.postScale(sx, sx, width / 2f, height / 2f)
         }
         setTransform(matrix)
         postInvalidate()

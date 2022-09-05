@@ -42,12 +42,16 @@ internal object ZFileUtil {
         context: Context,
         block: (Boolean, String) -> Unit
     ) {
+        ZFileLog.i("重命名文件的目录：$filePath")
+        ZFileLog.i("重命名文件的新名字：$newName")
         val activity = context as Activity
-        val dialog = ZFileLoadingDialog(activity, "重命名中...").run {
-            setCancelable(false)
-            show()
-            this
-        }
+        val title = "重命名中..."
+        val dialog = getZFileHelp().getOtherListener()?.getLoadingDialog(activity, title)
+            ?: ZFileLoadingDialog(activity, title).run {
+                setCancelable(false)
+                this
+            }
+        dialog.show()
         thread {
             val isSuccess = try {
                 val oldFile = filePath.toFile()

@@ -3,6 +3,7 @@ package com.zp.zfile_manager
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -15,12 +16,14 @@ import androidx.core.content.ContextCompat
 import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
+import com.zp.z_file.content.getZFileHelp
 import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.databinding.ActivityMainBinding
-import com.zp.zfile_manager.dsl.DslActivity
+import com.zp.zfile_manager.diy.MyFileOtherListener
+import com.zp.zfile_manager.diy.MyFileTypeListener
 import com.zp.zfile_manager.fm.FragmentSampleActivity2
 import com.zp.zfile_manager.super_.SuperActivity
 
@@ -34,9 +37,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb.root)
+        vb.mainGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.main_defaultRadio -> {
+                    getZFileHelp().resetAll()
+                }
+                R.id.main_diyRadio -> {
+                    getZFileHelp()
+                        .setFileTypeListener(MyFileTypeListener())
+                        .setOtherFileListener(MyFileOtherListener())
+                }
+            }
+        }
         vb.mainDefaultMangerBtn.setOnClickListener {
             zfile {
                 config {
+                    // getZFileConfig() 单列保存，一处设置，全局通用
                     getZFileConfig().apply {
                         boxStyle = ZFileConfiguration.STYLE2
                         maxLength = 6
@@ -69,9 +85,6 @@ class MainActivity : AppCompatActivity() {
         }
         vb.mainJavaBtn.setOnClickListener {
             startActivity(Intent(this, JavaSampleActivity::class.java))
-        }
-        vb.mainDslMangerBtn.setOnClickListener {
-            startActivity(Intent(this, DslActivity::class.java))
         }
     }
 
@@ -107,8 +120,7 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton(com.zp.z_file.R.string.zfile_down) { d, _ ->
                     toManagerPermissionPage = true
-                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                    startActivity(intent)
+                    toFileManagerPage()
                     d.dismiss()
                 }
                 .setNegativeButton(com.zp.z_file.R.string.zfile_cancel) { d, _ ->
@@ -120,9 +132,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkHasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val hasPermission = hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            val hasPermission = hasPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
             if (hasPermission) {
-                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
             } else {
                 jump()
             }
@@ -144,6 +159,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun toFileManagerPage() {
+        try {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    Uri.parse("package:${packageName}")
+                ))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            startActivity(Intent( Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+        }
+    }
+
 
     private fun hasPermission(vararg permissions: String) =
         permissions.any { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }

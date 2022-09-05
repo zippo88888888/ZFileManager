@@ -3,15 +3,14 @@ package com.zp.z_file.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.provider.Settings
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -161,7 +160,6 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun setMenuState() {
-        // zfile_list_toolBar
         vb?.zfileListToolBar?.menu?.apply {
             findItem(R.id.menu_zfile_down).isVisible = barShow
             findItem(R.id.menu_zfile_px).isVisible = !barShow
@@ -171,6 +169,11 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun menuItemClick(menu: MenuItem?): Boolean {
+        if (!hasPermission) {
+            ZFileLog.e("no permission")
+            callPermission()
+            return true
+        }
         when (menu?.itemId) {
             R.id.menu_zfile_down -> {
                 val list = fileListAdapter?.selectData
@@ -221,22 +224,16 @@ class ZFileListFragment : Fragment() {
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { back() }
         }
-        // zfile_list_emptyPic
-        vb?.zfileListEmptyPic?.setImageResource(emptyRes)
         setHiddenState()
         setBarTitle(mActivity getStringById R.string.zfile_title)
-        // zfile_list_againBtn
-        vb?.zfileListAgainBtn?.setOnClickListener {
-            callPermission()
-        }
+        initViewStub()
         callPermission()
     }
 
     private fun initRV() {
         hasPermission = true
-        // zfile_list_errorLayout
-        vb?.zfileListErrorLayout?.visibility = View.GONE
-        // zfile_list_refreshLayout
+        setPermissionState(View.GONE)
+
         vb?.zfileListRefreshLayout?.property() {
             getData(nowPath)
         }
@@ -270,7 +267,6 @@ class ZFileListFragment : Fragment() {
                 return false
             }
         }
-        // zfile_list_pathRecyclerView
         vb?.zfileListPathRecyclerView?.apply {
             layoutManager = llM
             adapter = filePathAdapter
@@ -302,7 +298,6 @@ class ZFileListFragment : Fragment() {
                     ZFileLog.i("进入 ${item.filePath}")
                     backList.add(item.filePath)
                     filePathAdapter.addItem(filePathAdapter.itemCount, item.toPathBean())
-                    // zfile_list_pathRecyclerView
                     vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
                     getData(item.filePath)
                     nowPath = item.filePath
@@ -337,7 +332,6 @@ class ZFileListFragment : Fragment() {
             }
             this
         }
-        // zfile_list_listRecyclerView
         vb?.zfileListListRecyclerView?.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = fileListAdapter
@@ -351,7 +345,6 @@ class ZFileListFragment : Fragment() {
             ZFileLog.e("no permission")
             return
         }
-        // zfile_list_refreshLayout
         vb?.zfileListRefreshLayout?.isRefreshing = true
         val key = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
         if (rootPath.isEmpty()) {
@@ -360,20 +353,16 @@ class ZFileListFragment : Fragment() {
         getZFileConfig().filePath = filePath
         if (pageLoadIndex != 0) {
             filePathAdapter.addItem(filePathAdapter.itemCount, File(key).toPathBean())
-            // zfile_list_pathRecyclerView
             vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
         }
         ZFileUtil.getList(mActivity) {
             if (isNullOrEmpty()) {
                 fileListAdapter?.clear()
-                // zfile_list_emptyLayout
-                vb?.zfileListEmptyLayout?.visibility = View.VISIBLE
+                setEmptyState(View.VISIBLE)
             } else {
                 fileListAdapter?.setDatas(this)
-                // zfile_list_emptyLayout
-                vb?.zfileListEmptyLayout?.visibility = View.GONE
+                setEmptyState(View.GONE)
             }
-            // zfile_list_refreshLayout
             vb?.zfileListRefreshLayout?.isRefreshing = false
         }
     }
@@ -428,7 +417,7 @@ class ZFileListFragment : Fragment() {
             ) {
                 if (this) {
                     fileListAdapter?.remove(index, nullBlock = {
-                        vb?.zfileListEmptyLayout?.visibility = if (it) View.VISIBLE else View.GONE
+                        setEmptyState(if (it) View.VISIBLE else View.GONE)
                     })
                     ZFileLog.i("文件删除成功")
                 } else {
@@ -454,7 +443,7 @@ class ZFileListFragment : Fragment() {
             getZFileHelp().getFileOperateListener().moveFile(item.filePath, targetPath, mActivity) {
                 if (this) {
                     fileListAdapter?.remove(position, nullBlock = {
-                        vb?.zfileListEmptyLayout?.visibility = if (it) View.VISIBLE else View.GONE
+                        setEmptyState(if (it) View.VISIBLE else View.GONE)
                     })
                     ZFileLog.i("文件移动成功")
                 } else {
@@ -522,7 +511,6 @@ class ZFileListFragment : Fragment() {
             getData(lastPath)
             nowPath = lastPath
             filePathAdapter.remove(filePathAdapter.itemCount - 1)
-            // zfile_list_pathRecyclerView
             vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
         }
     }
@@ -531,16 +519,14 @@ class ZFileListFragment : Fragment() {
         if (ZFilePermissionUtil.isRorESM()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initRV()
         } else {
-            // zfile_list_errorLayout
-            vb?.zfileListErrorLayout?.visibility = View.VISIBLE
+            setPermissionState(View.VISIBLE)
             val builder = AlertDialog.Builder(mActivity)
                 .setTitle(R.string.zfile_11_title)
                 .setMessage(R.string.zfile_11_content)
                 .setCancelable(false)
                 .setPositiveButton(R.string.zfile_down) { d, _ ->
                     toManagerPermissionPage = true
-                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                    startActivity(intent)
+                    requireContext().toFileManagerPage()
                     d.dismiss()
                 }
                 .setNegativeButton(R.string.zfile_cancel) { d, _ ->
@@ -558,14 +544,16 @@ class ZFileListFragment : Fragment() {
 
     private fun checkHasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val hasPermission = ZFilePermissionUtil.hasPermission(
+            val hasSDPermission = ZFilePermissionUtil.hasPermission(
                 mActivity,
+                ZFilePermissionUtil.READ_EXTERNAL_STORAGE,
                 ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
             )
-            if (hasPermission) {
+            if (hasSDPermission) {
                 ZFilePermissionUtil.requestPermission(
                     this,
                     ZFilePermissionUtil.WRITE_EXTERNAL_CODE,
+                    ZFilePermissionUtil.READ_EXTERNAL_STORAGE,
                     ZFilePermissionUtil.WRITE_EXTERNAL_STORAGE
                 )
             } else {
@@ -585,8 +573,7 @@ class ZFileListFragment : Fragment() {
         if (requestCode == ZFilePermissionUtil.WRITE_EXTERNAL_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initRV()
             else {
-                // zfile_list_errorLayout
-                vb?.zfileListErrorLayout?.visibility = View.VISIBLE
+                setPermissionState(View.VISIBLE)
                 if (zFragmentListener == null) {
                     mActivity.toast(mActivity getStringById R.string.zfile_permission_bad)
                     mActivity.finish()
@@ -631,7 +618,6 @@ class ZFileListFragment : Fragment() {
         when (getZFileConfig().titleGravity) {
             ZFileConfiguration.TITLE_LEFT -> {
                 vb?.zfileListToolBar?.title = title
-                // zfile_list_centerTitle
                 vb?.zfileListCenterTitle?.visibility = View.GONE
             }
             else -> {
@@ -648,6 +634,46 @@ class ZFileListFragment : Fragment() {
         fileListAdapter?.reset()
         backList.clear()
         zFragmentListener = null
+    }
+
+    private var emptyView: View? = null
+    private var noPermissionView: View? = null
+
+    private fun initViewStub() {
+        val otherListener = getZFileHelp().getOtherListener()
+        var emptyLayoutResId = otherListener?.getFileListEmptyLayoutId() ?: ZFILE_DEFAULT
+        if (emptyLayoutResId == ZFILE_DEFAULT) {
+            emptyLayoutResId = R.layout.layout_zfile_list_empty
+        }
+        vb?.zfileListEmptyStub?.layoutResource = emptyLayoutResId
+
+        var permissionLayoutResId = otherListener?.getPermissionFailedLayoutId() ?: ZFILE_DEFAULT
+        if (permissionLayoutResId == ZFILE_DEFAULT) {
+            permissionLayoutResId = R.layout.layout_zfile_list_permission
+        }
+        vb?.zfileListNoPermissionStub?.layoutResource = permissionLayoutResId
+    }
+
+    private fun setEmptyState(viewState: Int) {
+        if (emptyView == null) {
+            emptyView = vb?.zfileListEmptyStub?.inflate()
+            emptyView?.findViewById<ImageView>(R.id.zfile_list_emptyPic)?.setImageResource(emptyRes)
+        }
+        emptyView?.visibility = viewState
+    }
+
+    private fun setPermissionState(viewState: Int) {
+        if (noPermissionView == null) {
+            noPermissionView = vb?.zfileListNoPermissionStub?.inflate()
+            val btn = noPermissionView?.findViewById<View>(R.id.zfile_permission_againBtn)
+            if (btn == null) {
+                ZFileLog.e("自定义权限视图展示：布局文件中某个控件必须要设置ID：zfile_permission_againBtn")
+                throw ZFileException("ZFileOtherListener.getPermissionFailedLayoutId() Not find id [R.id.zfile_permission_againBtn]!" +
+                        " You must be set view id(zfile_permission_againBtn) in layout")
+            }
+            btn.setOnClickListener { callPermission() }
+        }
+        noPermissionView?.visibility = viewState
     }
 
 }

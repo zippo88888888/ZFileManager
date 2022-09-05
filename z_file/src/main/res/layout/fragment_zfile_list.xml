@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/zfile_list_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/zfile_base_color"
-        tools:navigationIcon="@drawable/zfile_back"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
-        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle">
+        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
+        tools:layout_height="55dp"
+        tools:navigationIcon="@drawable/zfile_back">
 
         <TextView
             android:id="@+id/zfile_list_centerTitle"
@@ -25,7 +26,8 @@
             android:textColor="@color/zfile_white"
             android:textSize="18sp"
             android:visibility="gone"
-            tools:text="@string/zfile_title" />
+            tools:text="@string/zfile_title"
+            tools:visibility="visible" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -33,8 +35,10 @@
         android:id="@+id/zfile_list_pathRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/zfile_default_divider_padding"
-        android:layout_marginEnd="@dimen/zfile_default_divider_padding" />
+        android:paddingStart="@dimen/zfile_default_divider_padding"
+        android:paddingEnd="@dimen/zfile_default_divider_padding"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_zfile_path" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -49,57 +53,22 @@
                 android:id="@+id/zfile_list_listRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                tools:itemCount="15"
                 tools:listitem="@layout/item_zfile_list_folder" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <FrameLayout
-            android:id="@+id/zfile_list_emptyLayout"
+        <ViewStub
+            android:id="@+id/zfile_list_emptyStub"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@color/zfile_white">
+            tools:layout="@layout/layout_zfile_list_empty"/>
 
-            <ImageView
-                android:id="@+id/zfile_list_emptyPic"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_gravity="center"
-                tools:src="@drawable/ic_zfile_empty" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:id="@+id/zfile_list_errorLayout"
+        <ViewStub
+            android:id="@+id/zfile_list_noPermissionStub"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:background="@color/zfile_white">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="35dp"
-                android:layout_marginEnd="35dp"
-                android:textColor="@color/zfile_no_permissions_color1"
-                android:text="@string/zfile_permission_bad2"/>
-
-            <Button
-                android:id="@+id/zfile_list_againBtn"
-                style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/zfile_permission_bad3"
-                android:layout_gravity="end"
-                android:layout_marginEnd="35dp"
-                android:layout_marginTop="15dp"
-                android:textColor="@color/zfile_no_permissions_color2" />
-
-        </LinearLayout>
+            tools:layout="@layout/layout_zfile_list_permission"/>
 
     </FrameLayout>
 

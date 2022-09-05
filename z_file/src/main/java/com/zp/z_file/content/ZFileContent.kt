@@ -2,9 +2,12 @@ package com.zp.z_file.content
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
+import android.net.Uri
 import android.os.Environment
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -178,6 +181,19 @@ private fun View.clickEnable(): Boolean {
     return flag
 }
 
+internal fun Context.toFileManagerPage() {
+    try {
+        val action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+        val uri = Uri.parse("package:${packageName}")
+        startActivity(Intent(action, uri))
+    } catch (e: Exception) {
+        if (getZFileConfig().showLog) {
+            ZFileLog.e("无法跳转到指定App的【所有文件权限访问】页面，现跳转到列表页，需要用户手动寻找！")
+            e.printStackTrace()
+        }
+        startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+    }
+}
 internal infix fun Context.dip2pxF(dpValue: Float) = dpValue * resources.displayMetrics.density + 0.5f
 internal infix fun Context.dip2px(dpValue: Float) = dip2pxF(dpValue).toInt()
 internal infix fun Context.getColorById(colorID: Int) = ContextCompat.getColor(this, colorID)
