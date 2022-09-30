@@ -4,7 +4,6 @@ import android.content.Context
 import com.zp.z_file.content.*
 import com.zp.z_file.util.ZFileOtherUtil
 import java.util.*
-import kotlin.collections.ArrayList
 
 internal class ZFileDefaultLoadListener : ZFileLoadListener {
 

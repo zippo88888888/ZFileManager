@@ -3,12 +3,9 @@ package com.zp.z_file.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Parcelable
-import android.provider.Settings
 import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
@@ -346,13 +343,14 @@ class ZFileListFragment : Fragment() {
             return
         }
         vb?.zfileListRefreshLayout?.isRefreshing = true
-        val key = if (filePath.isNullOrEmpty()) SD_ROOT else filePath
+        val key = if (filePath.isNull()) SD_ROOT else filePath!!
         if (rootPath.isEmpty()) {
             rootPath = key
         }
         getZFileConfig().filePath = filePath
-        if (pageLoadIndex != 0) {
-            filePathAdapter.addItem(filePathAdapter.itemCount, File(key).toPathBean())
+        if (pageLoadIndex != 0 && SD_ROOT != key) {
+            val pathBean = File(key).toPathBean()
+            filePathAdapter.addItem(filePathAdapter.itemCount, pathBean)
             vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
         }
         ZFileUtil.getList(mActivity) {
@@ -640,18 +638,8 @@ class ZFileListFragment : Fragment() {
     private var noPermissionView: View? = null
 
     private fun initViewStub() {
-        val otherListener = getZFileHelp().getOtherListener()
-        var emptyLayoutResId = otherListener?.getFileListEmptyLayoutId() ?: ZFILE_DEFAULT
-        if (emptyLayoutResId == ZFILE_DEFAULT) {
-            emptyLayoutResId = R.layout.layout_zfile_list_empty
-        }
-        vb?.zfileListEmptyStub?.layoutResource = emptyLayoutResId
-
-        var permissionLayoutResId = otherListener?.getPermissionFailedLayoutId() ?: ZFILE_DEFAULT
-        if (permissionLayoutResId == ZFILE_DEFAULT) {
-            permissionLayoutResId = R.layout.layout_zfile_list_permission
-        }
-        vb?.zfileListNoPermissionStub?.layoutResource = permissionLayoutResId
+        vb?.zfileListEmptyStub?.layoutResource = getFileEmptyLayoutId()
+        vb?.zfileListNoPermissionStub?.layoutResource = getFilePermissionFailedLayoutId()
     }
 
     private fun setEmptyState(viewState: Int) {
@@ -667,9 +655,8 @@ class ZFileListFragment : Fragment() {
             noPermissionView = vb?.zfileListNoPermissionStub?.inflate()
             val btn = noPermissionView?.findViewById<View>(R.id.zfile_permission_againBtn)
             if (btn == null) {
-                ZFileLog.e("自定义权限视图展示：布局文件中某个控件必须要设置ID：zfile_permission_againBtn")
-                throw ZFileException("ZFileOtherListener.getPermissionFailedLayoutId() Not find id [R.id.zfile_permission_againBtn]!" +
-                        " You must be set view id(zfile_permission_againBtn) in layout")
+                ZFileLog.e(PERMISSION_FAILED_TITLE)
+                throw ZFileException(PERMISSION_FAILED_TITLE2)
             }
             btn.setOnClickListener { callPermission() }
         }

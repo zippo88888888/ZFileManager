@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.view.View
 import androidx.core.content.FileProvider
+import com.zp.z_file.R
+import com.zp.z_file.content.getStringById
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.toast
 import java.io.File
@@ -71,7 +73,7 @@ internal object ZFileOpenUtil {
             } catch (e: Exception) {
                 e.printStackTrace()
                 ZFileLog.e("ZFileConfiguration.authority 未设置？？？")
-                it.toast("文件类型可能不匹配或找不到打开该文件类型的程序，打开失败")
+                it.toast(it getStringById R.string.zfile_no_app_open_file)
             }
         }
     }

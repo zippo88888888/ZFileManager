@@ -4,8 +4,10 @@ import com.zp.z_file.content.*
 import java.io.File
 import java.io.FileFilter
 
-internal class ZFileQWFilter(private var filterArray: Array<String>, private var isOther: Boolean) :
-    FileFilter {
+internal class ZFileQWFilter(
+    private var filterArray: Array<String>,
+    private var isOther: Boolean
+) : FileFilter {
 
     override fun accept(file: File): Boolean {
         /*if (isOther) {
@@ -19,6 +21,9 @@ internal class ZFileQWFilter(private var filterArray: Array<String>, private var
                 }
             }
         }*/
+        if (file.isDirectory) {
+            return false
+        }
         filterArray.forEach {
             if (it.isNull()) {
                 if (acceptOther(file.name)) {

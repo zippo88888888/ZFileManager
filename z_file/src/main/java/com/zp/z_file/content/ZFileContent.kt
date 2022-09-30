@@ -11,7 +11,6 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
@@ -31,22 +30,30 @@ const val PNG = "png"
 const val JPG = "jpg"
 const val JPEG = "jpeg"
 const val GIF = "gif"
+
 const val MP3 = "mp3"
 const val AAC = "aac"
 const val WAV = "wav"
 const val M4A = "m4a"
+
 const val MP4 = "mp4"
 const val _3GP = "3gp"
+
 const val TXT = "txt"
 const val XML = "xml"
 const val JSON = "json"
+
 const val DOC = "doc"
 const val DOCX = "docx"
+
 const val XLS = "xls"
 const val XLSX = "xlsx"
+
 const val PPT = "ppt"
 const val PPTX = "pptx"
+
 const val PDF = "pdf"
+
 const val ZIP = "zip"
 
 /** 默认资源 */
@@ -74,7 +81,7 @@ const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
 
-// 下面属性、方法暂不对外开放 =======================================================================
+// inner ===========================================================================================
 
 internal const val I_NAME = "inflate"
 internal const val ZFILE_FRAGMENT_TAG = "ZFileListFragment"
@@ -91,6 +98,10 @@ internal const val ZIP_TYPE = 0x2004
 internal const val FILE = 0
 internal const val FOLDER = 1
 
+internal const val PERMISSION_FAILED_TITLE = "自定义权限视图展示：布局文件中某个控件必须要设置ID：zfile_permission_againBtn"
+internal const val PERMISSION_FAILED_TITLE2 = "【ZFileOtherListener.getPermissionFailedLayoutId()】Can't find id [R.id.zfile_permission_againBtn]! " +
+        "You must be set view id(zfile_permission_againBtn) in layout"
+
 internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
 internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
 // 保存的文档（未保存到手机的图片和视频也在这个位置）
@@ -102,7 +113,7 @@ internal const val WECHAT_PHOTO_VIDEO = "WeiXin/" // 图片、视频保存位置
 internal const val WECHAT_DOWLOAD = "Download/" // 其他文件保存位置
 
 internal const val LOG_TAG = "ZFileManager"
-internal const val ERROR_MSG = "fragmentOrActivity is not Activity or Fragment"
+internal const val ERROR_MSG = "fragmentOrActivity is not FragmentActivity or Fragment"
 internal const val QW_FILE_TYPE_KEY = "QW_fileType"
 internal const val FILE_START_PATH_KEY = "fileStartPath"
 
@@ -112,12 +123,13 @@ internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
         resources.getIdentifier(name, defType, "android")
     )
 
-internal fun Context.getZDisplay() = IntArray(2).apply {
-    val manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+internal fun Context.getZDisplay(): IntArray {
     val point = Point()
-    manager.defaultDisplay.getSize(point)
-    this[0] = point.x
-    this[1] = point.y
+    display?.getRealSize(point)
+    val array = IntArray(2)
+    array[0] = point.x
+    array[1] = point.y
+    return array
 }
 internal fun FragmentActivity.checkFragmentByTag(tag: String) {
     val fragment = supportFragmentManager.findFragmentByTag(tag)
@@ -153,34 +165,20 @@ internal fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
 internal fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(applicationContext, msg, duration).show()
 }
-internal fun View.click(time: Long = 600L, block: View.() -> Unit) {
-    triggerDelay = time
-    setOnClickListener {
-        if (clickEnable()) block(it) else ZFileLog.e("点击间隔少于${time}ms，本次点击不做任何处理")
+internal fun getFilePermissionFailedLayoutId(): Int {
+    var permissionLayoutResId = getZFileHelp().getOtherListener()?.getPermissionFailedLayoutId() ?: ZFILE_DEFAULT
+    if (permissionLayoutResId == ZFILE_DEFAULT) {
+        permissionLayoutResId = R.layout.layout_zfile_list_permission
     }
+    return permissionLayoutResId
 }
-private var View.triggerLastTime: Long
-    get() = getTag(1123460103) as? Long ?: -601L
-    set(value) {
-        setTag(1123460103, value)
+internal fun getFileEmptyLayoutId(): Int {
+    var emptyLayoutResId = getZFileHelp().getOtherListener()?.getFileListEmptyLayoutId() ?: ZFILE_DEFAULT
+    if (emptyLayoutResId == ZFILE_DEFAULT) {
+        emptyLayoutResId = R.layout.layout_zfile_list_empty
     }
-
-private var View.triggerDelay: Long
-    get() = getTag(1123461123) as? Long ?: 600L
-    set(value) {
-        setTag(1123461123, value)
-    }
-
-private fun View.clickEnable(): Boolean {
-    var flag = false
-    val currentClickTime = System.currentTimeMillis()
-    if (currentClickTime - triggerLastTime >= triggerDelay) {
-        flag = true
-    }
-    triggerLastTime = currentClickTime
-    return flag
+    return emptyLayoutResId
 }
-
 internal fun Context.toFileManagerPage() {
     try {
         val action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
@@ -242,7 +240,8 @@ internal fun throwError(title: String) {
 }
 internal val SD_ROOT: String
     get() {
-        return Environment.getExternalStorageDirectory().path
+//        return Environment.getExternalStorageDirectory().path
+        return "/storage/emulated/0/"
     }
 internal val emptyRes: Int
     get() {

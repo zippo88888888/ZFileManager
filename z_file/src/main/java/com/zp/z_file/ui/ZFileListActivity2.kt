@@ -38,6 +38,11 @@ internal class ZFileListActivity2 : ZFileActivity() {
         (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.showPermissionDialog()
     }
 
+    override fun onDestroy() {
+        mListener = null
+        super.onDestroy()
+    }
+
     private var mListener: ZFragmentListener? = object : ZFragmentListener() {
 
         override fun selectResult(selectList: MutableList<ZFileBean>?) {

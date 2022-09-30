@@ -33,11 +33,15 @@ class MainActivity : AppCompatActivity() {
 
     private var rbId = R.id.main_rb_af
 
+    private var index = 0
+    private var configId = R.id.main_defaultRadio
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb.root)
         vb.mainGroup.setOnCheckedChangeListener { _, checkedId ->
+            configId = checkedId
             when (checkedId) {
                 R.id.main_defaultRadio -> {
                     getZFileHelp().resetAll()
@@ -83,9 +87,6 @@ class MainActivity : AppCompatActivity() {
         vb.mainRg.setOnCheckedChangeListener { _, checkedId ->
             rbId = checkedId
         }
-        vb.mainJavaBtn.setOnClickListener {
-            startActivity(Intent(this, JavaSampleActivity::class.java))
-        }
     }
 
     private fun setFileListData(fileList: MutableList<ZFileBean>?) {
@@ -104,6 +105,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (index != 0) { // 为了配置数据不受其他页面影响
+            getZFileHelp().resetAll()
+            if (configId == R.id.main_diyRadio) {
+                getZFileHelp()
+                    .setFileTypeListener(MyFileTypeListener())
+                    .setOtherFileListener(MyFileOtherListener())
+            }
+        }
+        index ++
         if (toManagerPermissionPage) {
             toManagerPermissionPage = false
             callPermission()

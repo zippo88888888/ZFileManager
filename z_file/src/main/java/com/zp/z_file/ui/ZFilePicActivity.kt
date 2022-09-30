@@ -1,5 +1,7 @@
 package com.zp.z_file.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
@@ -21,5 +23,15 @@ internal class ZFilePicActivity : ZFileActivity() {
         val filePath = intent.getStringExtra("picFilePath") ?: ""
         ZFileTypeManage.getTypeManager().loadingFile(filePath, vb.zfilePicShow)
         vb.zfilePicShow.setOnClickListener { onBackPressed() }
+    }
+
+    companion object {
+
+        fun show(context: Context, picFilePath: String) {
+            context.startActivity(Intent(context, ZFilePicActivity::class.java).apply {
+                putExtra("picFilePath", picFilePath)
+            })
+        }
+
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.zp.z_file.content.ZFileException
 
 internal abstract class ZFileManageDialog : DialogFragment() {
 
@@ -31,7 +32,7 @@ internal abstract class ZFileManageDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val layoutID = getContentView()
-        if (layoutID <= 0) throw NullPointerException("DialogFragment ContentView is not null")
+        if (layoutID <= 0) throw ZFileException("DialogFragment ContentView is not null")
         return inflater.inflate(getContentView(), container, false)
     }
 

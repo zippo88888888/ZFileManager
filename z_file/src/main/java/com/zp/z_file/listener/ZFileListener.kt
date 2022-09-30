@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Environment
 import android.view.View
 import android.widget.ImageView
@@ -18,11 +17,7 @@ import com.zp.z_file.type.*
 import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
-import com.zp.z_file.ui.dialog.ZFileAudioPlayDialog
-import com.zp.z_file.ui.dialog.ZFileInfoDialog
-import com.zp.z_file.ui.dialog.ZFileLoadingDialog
-import com.zp.z_file.ui.dialog.ZFileRenameDialog
-import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
+import com.zp.z_file.ui.dialog.*
 import com.zp.z_file.util.ZFileHelp
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFileOpenUtil
@@ -190,9 +185,7 @@ open class ZFileOpenListener {
      */
     open fun openImage(filePath: String, view: View) {
         view.context?.let {
-            it.startActivity(Intent(it, ZFilePicActivity::class.java).apply {
-                putExtra("picFilePath", filePath)
-            })
+            ZFilePicActivity.show(it, filePath)
         }
     }
 
@@ -203,9 +196,7 @@ open class ZFileOpenListener {
      */
     open fun openVideo(filePath: String, view: View) {
         view.context?.let {
-            it.startActivity(Intent(it, ZFileVideoPlayActivity::class.java).apply {
-                putExtra("videoFilePath", filePath)
-            })
+            ZFileVideoPlayActivity.show(it, filePath)
         }
     }
 

@@ -71,9 +71,8 @@ class SuperDialog : DialogFragment() {
     }
 
     private fun Context.getTDisplay() = IntArray(2).apply {
-        val manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val point = Point()
-        manager.defaultDisplay.getSize(point)
+        display?.getRealSize(point)
         this[0] = point.x
         this[1] = point.y
     }

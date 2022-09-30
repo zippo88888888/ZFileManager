@@ -5,9 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Parcelable
-import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +19,7 @@ import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
 import com.zp.z_file.databinding.ActivityZfileQwBinding
+import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFilePermissionUtil
 import com.zp.z_file.util.ZFileQWUtil
 import com.zp.z_file.util.ZFileUtil
@@ -30,6 +29,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     private val vb by inflate<ActivityZfileQwBinding>()
 
     private var toManagerPermissionPage = false
+
+    private var hasPermission = false
 
     private val selectArray by lazy {
         ArrayMap<String, ZFileBean>()
@@ -47,16 +48,19 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     override fun init(savedInstanceState: Bundle?) {
         type = getZFileConfig().filePath!!
         setBarTitle(if (type == ZFileConfiguration.QQ) "QQ文件" else "微信文件")
-        callPermission()
-    }
-
-    private fun initAll() {
         vb.zfileQwToolBar.apply {
             if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
             inflateMenu(R.menu.zfile_qw_menu)
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { onBackPressed() }
         }
+        initViewStub()
+        callPermission()
+    }
+
+    private fun initAll() {
+        setPermissionState(View.GONE)
+        hasPermission = true
         vb.zfileQwViewPager.addOnPageChangeListener(this)
         vb.zfileQwTabLayout.setupWithViewPager( vb.zfileQwViewPager)
         vpAdapter = ZFileQWAdapter(type, isManage, this, supportFragmentManager)
@@ -87,6 +91,11 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     private fun getMenu() =  vb.zfileQwToolBar.menu.findItem(R.id.menu_zfile_qw_down)
 
     private fun menuItemClick(menu: MenuItem?): Boolean {
+        if (!hasPermission) {
+            ZFileLog.e("no permission")
+            callPermission()
+            return true
+        }
         when (menu?.itemId) {
             R.id.menu_zfile_qw_down -> {
                 if (selectArray.isNullOrEmpty()) {
@@ -130,24 +139,22 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     }
 
     private fun callPermission() {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
         if (ZFilePermissionUtil.isRorESM()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else initAll()
         } else {
+            setPermissionState(View.VISIBLE)
             val builder = AlertDialog.Builder(this)
                 .setTitle(R.string.zfile_11_title)
                 .setMessage(R.string.zfile_11_content)
                 .setCancelable(false)
                 .setPositiveButton(R.string.zfile_down) { d, _ ->
                     toManagerPermissionPage = true
-                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                    startActivity(intent)
+                    toFileManagerPage()
                     d.dismiss()
                 }
                 .setNegativeButton(R.string.zfile_cancel) { d, _ ->
                     toast(getStringById(R.string.zfile_11_bad))
                     d.dismiss()
-                    finish()
                 }
             builder.show()
         }
@@ -176,7 +183,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) initAll()
             else {
                 toast(getStringById(R.string.zfile_permission_bad))
-                finish()
+                setPermissionState(View.VISIBLE)
             }
         }
     }
@@ -200,6 +207,25 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         isManage = false
         selectArray.clear()
         ZFileUtil.resetAll()
+    }
+
+    private var noPermissionView: View? = null
+
+    private fun initViewStub() {
+        vb.zfileQwPermissionStub.layoutResource = getFilePermissionFailedLayoutId()
+    }
+
+    private fun setPermissionState(viewState: Int) {
+        if (noPermissionView == null) {
+            noPermissionView = vb.zfileQwPermissionStub.inflate()
+            val btn = noPermissionView?.findViewById<View>(R.id.zfile_permission_againBtn)
+            if (btn == null) {
+                ZFileLog.e(PERMISSION_FAILED_TITLE)
+                throw ZFileException(PERMISSION_FAILED_TITLE2)
+            }
+            btn.setOnClickListener { callPermission() }
+        }
+        noPermissionView?.visibility = viewState
     }
 
     private class ZFileQWAdapter(

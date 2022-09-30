@@ -32,8 +32,6 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
         }
     }
 
-
-
     private var filePath = ""
 
     private var playerState = UNIT

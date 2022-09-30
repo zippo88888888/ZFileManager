@@ -11,6 +11,7 @@ import com.zp.z_file.content.*
 import com.zp.z_file.dsl.config
 import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
+import com.zp.zfile_manager.JavaSampleActivity
 import com.zp.zfile_manager.R
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.content.Content.FILTER
@@ -95,6 +96,9 @@ class SuperActivity : AppCompatActivity() {
                 }
                 result { setResultData(this) }
             }
+        }
+        vb.superJavaTxt.setOnClickListener {
+            startActivity(Intent(this, JavaSampleActivity::class.java))
         }
     }
 

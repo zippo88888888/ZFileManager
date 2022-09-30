@@ -1,5 +1,7 @@
 package com.zp.z_file.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.zp.z_file.R
@@ -44,5 +46,16 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
     override fun onBackPressed() {
         vb.videoImg.visibility = View.VISIBLE
         super.onBackPressed()
+    }
+
+
+    companion object {
+
+        fun show(context: Context, videoFilePath: String) {
+            context.startActivity(Intent(context, ZFileVideoPlayActivity::class.java).apply {
+                putExtra("videoFilePath", videoFilePath)
+            })
+        }
+
     }
 }

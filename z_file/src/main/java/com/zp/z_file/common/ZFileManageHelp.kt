@@ -11,6 +11,7 @@ import com.zp.z_file.listener.*
 import com.zp.z_file.ui.ZFileListActivity2
 import com.zp.z_file.ui.ZFileProxyFragment
 import com.zp.z_file.ui.ZFileQWActivity
+import com.zp.z_file.util.ZFileLog
 
 class ZFileManageHelp {
 
@@ -29,6 +30,7 @@ class ZFileManageHelp {
     private var imageLoadeListener: ZFileImageListener? = null
     internal fun getImageLoadListener(): ZFileImageListener {
         if (imageLoadeListener == null) {
+            ZFileLog.e("必须手动实现ZFileImageListener，并在调用前使用【ZFileManageHelp.init()】初始化！")
             throw ZFileException("ZFileImageListener is Null, You need call method \"ZFileManageHelp.init()\"")
         }
         return imageLoadeListener!!
@@ -137,7 +139,9 @@ class ZFileManageHelp {
     }
 
     /**
-     * 跳转至文件管理页面  推荐使用 [result] 扩展函数
+     * 跳转至文件管理页面  推荐使用 [ZFileManageHelp.result] 扩展函数
+     * @param fragmentOrActivity  [FragmentActivity] or [Fragment]
+     * @param resultListener [ZFileSelectResultListener] 文件选择回调
      */
     fun start(fragmentOrActivity: Any, resultListener: ZFileSelectResultListener) {
         when (getConfiguration().filePath) {
@@ -202,16 +206,22 @@ class ZFileManageHelp {
         }
         when (fragmentOrActivity) {
             is FragmentActivity -> {
-                if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) return
+                if (fragmentOrActivity.isDestroyed || fragmentOrActivity.isFinishing) {
+                    ZFileLog.e("FragmentActivity 已被销毁或回收，请确保调用前你的FragmentActivity状态正常！")
+                    throw ZFileException("FragmentActivity isDestroyed or isFinishing！")
+                }
                 addFragment(
                     fragmentOrActivity.supportFragmentManager, fragmentOrActivity,
                     ZFileListActivity2::class.java, path, resultListener
                 )
             }
             is Fragment -> {
-                if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) return
+                if (fragmentOrActivity.isRemoving || fragmentOrActivity.isDetached) {
+                    ZFileLog.e("Fragment 已被销毁或回收，请确保调用前你的Fragment状态正常！")
+                    throw ZFileException("Fragment isRemoving or isDetached！")
+                }
                 addFragment(
-                    fragmentOrActivity.childFragmentManager, fragmentOrActivity.context!!,
+                    fragmentOrActivity.childFragmentManager, fragmentOrActivity.requireContext(),
                     ZFileListActivity2::class.java, path, resultListener
                 )
             }

@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.zp.z_file.R
 import com.zp.z_file.async.ZFileQWAsync
 import com.zp.z_file.content.*
 import com.zp.z_file.databinding.FragmentZfileQwBinding
@@ -49,12 +51,12 @@ internal class ZFileQWFragment : Fragment() {
     private fun initAll() {
         qwFileType = arguments?.getString(QW_FILE_TYPE_KEY) ?: ZFileConfiguration.QQ
         type = arguments?.getInt("type") ?: ZFILE_QW_PIC
+        initViewStub()
         initRecyclerView()
     }
 
     private fun initRecyclerView() {
         initAdapter()
-        vb?.zfileQwEmptyPic?.setImageResource(emptyRes)
         vb?.zfileQwRecyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = qwAdapter
@@ -67,10 +69,10 @@ internal class ZFileQWFragment : Fragment() {
             vb?.zfileQwBar?.visibility = View.GONE
             if (isNullOrEmpty()) {
                 qwAdapter?.clear()
-                vb?.zfileQwEmptyLayout?.visibility = View.VISIBLE
+                setEmptyState(View.VISIBLE)
             } else {
                 qwAdapter?.setDatas(this)
-                vb?.zfileQwEmptyLayout?.visibility = View.GONE
+                setEmptyState(View.GONE)
             }
         }.start(filterArray)
     }
@@ -125,4 +127,17 @@ internal class ZFileQWFragment : Fragment() {
         super.onDestroyView()
     }
 
+    private var emptyView: View? = null
+
+    private fun initViewStub() {
+        vb?.zfileQwEmptyStub?.layoutResource = getFileEmptyLayoutId()
+    }
+
+    private fun setEmptyState(viewState: Int) {
+        if (emptyView == null) {
+            emptyView = vb?.zfileQwEmptyStub?.inflate()
+            emptyView?.findViewById<ImageView>(R.id.zfile_list_emptyPic)?.setImageResource(emptyRes)
+        }
+        emptyView?.visibility = viewState
+    }
 }

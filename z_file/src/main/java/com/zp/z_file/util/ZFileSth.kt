@@ -182,7 +182,7 @@ internal object ZFileSth {
             try {
                 zis?.close()
                 fis?.close()
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             return success

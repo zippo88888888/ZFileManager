@@ -8,10 +8,20 @@ import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileHelp
 import com.zp.z_file.listener.*
 
+/**
+ * 在 [FragmentActivity] 使用 ZFileManager DSL
+ * @receiver FragmentActivity
+ * @param block [@kotlin.ExtensionFunctionType] Function1<ZFileDsl, Unit>
+ */
 fun FragmentActivity.zfile(block: ZFileDsl.() -> Unit) {
     zfile(this, block)
 }
 
+/**
+ * 在 [Fragment] 使用 ZFileManager DSL
+ * @receiver Fragment
+ * @param block [@kotlin.ExtensionFunctionType] Function1<ZFileDsl, Unit>
+ */
 fun Fragment.zfile(block: ZFileDsl.() -> Unit) {
     zfile(this, block)
 }
@@ -88,7 +98,7 @@ fun ZFileDsl.result(block: MutableList<ZFileBean>?.() -> Unit) {
 }
 
 /**
- * 获取返回的数据  [ZFileManageHelp.start] 的扩展函数
+ * 跳转至文件管理页面并获取文件选择后返回的数据，是 [ZFileManageHelp.start] 的扩展函数
  */
 fun ZFileManageHelp.result(fragmentOrActivity: Any, block: MutableList<ZFileBean>?.() -> Unit) {
     start(fragmentOrActivity, object : ZFileSelectResultListener {
@@ -97,6 +107,8 @@ fun ZFileManageHelp.result(fragmentOrActivity: Any, block: MutableList<ZFileBean
         }
     })
 }
+
+// inner ===========================================================================================
 
 internal fun zfile(fragmentOrActivity: Any, block: ZFileDsl.() -> Unit) {
     val zFileDsl = ZFileDsl(fragmentOrActivity)

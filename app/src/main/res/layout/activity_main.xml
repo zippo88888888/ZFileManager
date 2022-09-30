@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -32,10 +33,20 @@
 
     </RadioGroup>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#808080"
+        android:textSize="10sp"
+        android:text="配置数据，单列保存，一处设置，全局通用"
+        tools:ignore="SmallSp" />
+
     <Button
         android:id="@+id/main_fragmentBtn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="FRAGMENT" />
 
     <RadioGroup
@@ -73,12 +84,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="SUPER" />
-
-    <Button
-        android:id="@+id/main_javaBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="JAVA" />
 
     <include
         android:id="@+id/main_include"

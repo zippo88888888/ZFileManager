@@ -32,21 +32,10 @@
 
     </LinearLayout>
 
-
-    <FrameLayout
-        android:id="@+id/zfile_qw_emptyLayout"
+    <ViewStub
+        android:id="@+id/zfile_qw_emptyStub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/zfile_white">
-
-        <ImageView
-            android:id="@+id/zfile_qw_emptyPic"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_gravity="center"
-            tools:src="@drawable/ic_zfile_empty"/>
-
-    </FrameLayout>
+        tools:layout="@layout/layout_zfile_list_empty"/>
 
 </FrameLayout>
