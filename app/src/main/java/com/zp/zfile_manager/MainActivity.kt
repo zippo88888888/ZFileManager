@@ -72,6 +72,9 @@ class MainActivity : AppCompatActivity() {
             callPermission()
         }
         vb.mainFragmentBtn2.setOnClickListener {
+            if (getZFileConfig().authority.isEmpty()) { // 防止重置数据后 无法打开文件
+                getZFileConfig().authority = Content.AUTHORITY
+            }
             when (rbId) {
                 R.id.main_rb_af -> {
                     FragmentSampleActivity2.jump(this, 1)
