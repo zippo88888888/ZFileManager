@@ -3,6 +3,7 @@ package com.zp.zfile_manager.diy
 import com.zp.z_file.content.*
 import com.zp.z_file.listener.ZQWFileLoadListener
 import com.zp.z_file.util.ZFileHelp
+import com.zp.zfile_manager.content.Content
 import java.io.File
 import java.io.FileFilter
 import java.util.*
@@ -44,37 +45,37 @@ class MyQWFileListener : ZQWFileLoadListener() {
         if (qwType == ZFileConfiguration.QQ) { // QQ
             when (fileType) {
                 ZFILE_QW_PIC -> {
-                    listArray.add("/storage/emulated/0/tencent/QQ_Images/")
-                    listArray.add("/storage/emulated/0/Pictures/") // QQ文件保存路径1，仅做演示
-                    listArray.add("/storage/emulated/0/DCIM/") // QQ文件保存路径2，仅做演示
-                    listArray.add("/storage/emulated/0/Pictures/QQ/")
+                    listArray.add("${Content.SD_PATH}tencent/QQ_Images/")
+                    listArray.add("${Content.SD_PATH}Pictures/") // QQ文件保存路径1，仅做演示
+                    listArray.add("${Content.SD_PATH}DCIM/") // QQ文件保存路径2，仅做演示
+                    listArray.add("${Content.SD_PATH}Pictures/QQ/")
                 }
                 ZFILE_QW_MEDIA -> {
-                    listArray.add("/storage/emulated/0/Pictures/QQ/")
+                    listArray.add("${Content.SD_PATH}Pictures/QQ/")
                 }
                 ZFILE_QW_DOCUMENT -> {
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
+                    listArray.add("${Content.SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
+                    listArray.add("${Content.SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
                 }
                 else -> {
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
-                    listArray.add("/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
+                    listArray.add("${Content.SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/")
+                    listArray.add("${Content.SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQ_business/")
                 }
             }
         } else { // WeChat
             when (fileType) {
                 ZFILE_QW_PIC -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/")
+                    listArray.add("${Content.SD_PATH}tencent/MicroMsg/WeiXin/")
                 }
                 ZFILE_QW_MEDIA -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/")
+                    listArray.add("${Content.SD_PATH}tencent/MicroMsg/WeiXin/")
                 }
                 ZFILE_QW_DOCUMENT -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")
-                    listArray.add("/storage/emulated/0/Pictures/WeiXin/") // 微信文件保存路径
+                    listArray.add("${Content.SD_PATH}tencent/MicroMsg/Download/")
+                    listArray.add("${Content.SD_PATH}Pictures/WeiXin/") // 微信文件保存路径
                 }
                 else -> {
-                    listArray.add("/storage/emulated/0/tencent/MicroMsg/Download/")
+                    listArray.add("${Content.SD_PATH}tencent/MicroMsg/Download/")
                 }
             }
         }

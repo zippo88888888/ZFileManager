@@ -8,17 +8,15 @@ import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
 /**
- * 音频文件
+ * 表格文件
  */
-open class AudioType : ZFileType() {
+open class ZFileXlsType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openAudio(filePath, view)
+        getZFileHelp().getFileOpenListener().openXLS(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        val resId = getZFileConfig().resources.audioRes
-        pic.setImageResource(getRes(resId, R.drawable.ic_zfile_audio))
+        pic.setImageResource(getRes(getZFileConfig().resources.excelRes, R.drawable.ic_zfile_excel))
     }
-
 }

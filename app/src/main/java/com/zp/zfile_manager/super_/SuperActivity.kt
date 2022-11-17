@@ -69,7 +69,7 @@ class SuperActivity : AppCompatActivity() {
         }
 
         vb.superOtherTxt.setOnClickListener {
-            startActivity(Intent(this, SunActivity::class.java))
+            SunActivity.jump(this)
         }
 
         vb.superGroup.setOnCheckedChangeListener { _, checkedId ->

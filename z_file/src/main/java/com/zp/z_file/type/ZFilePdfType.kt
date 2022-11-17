@@ -8,15 +8,15 @@ import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
 /**
- * 表格文件
+ * PDF文件
  */
-open class XlsType : ZFileType() {
+open class ZFilePdfType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openXLS(filePath, view)
+        getZFileHelp().getFileOpenListener().openPDF(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.excelRes, R.drawable.ic_zfile_excel))
+        pic.setImageResource(getRes(getZFileConfig().resources.pdfRes, R.drawable.ic_zfile_pdf))
     }
 }

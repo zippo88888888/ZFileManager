@@ -22,6 +22,7 @@ import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.databinding.ActivityMainBinding
+import com.zp.zfile_manager.diy.MyFileOpenListener
 import com.zp.zfile_manager.diy.MyFileOtherListener
 import com.zp.zfile_manager.diy.MyFileTypeListener
 import com.zp.zfile_manager.fm.FragmentSampleActivity2
@@ -47,9 +48,7 @@ class MainActivity : AppCompatActivity() {
                     getZFileHelp().resetAll()
                 }
                 R.id.main_diyRadio -> {
-                    getZFileHelp()
-                        .setFileTypeListener(MyFileTypeListener())
-                        .setOtherFileListener(MyFileOtherListener())
+                    diy()
                 }
             }
         }
@@ -111,9 +110,7 @@ class MainActivity : AppCompatActivity() {
         if (index != 0) { // 为了配置数据不受其他页面影响
             getZFileHelp().resetAll()
             if (configId == R.id.main_diyRadio) {
-                getZFileHelp()
-                    .setFileTypeListener(MyFileTypeListener())
-                    .setOtherFileListener(MyFileOtherListener())
+                diy()
             }
         }
         index ++
@@ -121,6 +118,13 @@ class MainActivity : AppCompatActivity() {
             toManagerPermissionPage = false
             callPermission()
         }
+    }
+
+    private fun diy() {
+        getZFileHelp()
+            .setFileTypeListener(MyFileTypeListener())
+            .setFileOpenListener(MyFileOpenListener())
+            .setOtherFileListener(MyFileOtherListener())
     }
 
     private fun callPermission() {

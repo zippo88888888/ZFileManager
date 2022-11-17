@@ -22,6 +22,10 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+    <style name="ZFile_Img_Dialog">
+        <item name="android:windowBackground">@color/zfile_black</item>
+    </style>
+
     <style name="Zfile_Select_Folder_Dialog" parent="ZFile_Common_Dialog">
         <item name="android:windowBackground">@color/zfile_white</item>
         <item name="android:windowAnimationStyle">@style/Zfile_Dialog_Anim</item>

@@ -8,15 +8,17 @@ import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
 /**
- * zip压缩包文件
+ * 音频文件
  */
-open class ZipType : ZFileType() {
+open class ZFileAudioType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openZIP(filePath, view)
+        getZFileHelp().getFileOpenListener().openAudio(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.zipRes, R.drawable.ic_zfile_zip))
+        val resId = getZFileConfig().resources.audioRes
+        pic.setImageResource(getRes(resId, R.drawable.ic_zfile_audio))
     }
+
 }

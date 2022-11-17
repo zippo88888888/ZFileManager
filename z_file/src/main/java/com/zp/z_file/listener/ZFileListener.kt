@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Environment
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -146,16 +147,16 @@ open class ZFileTypeListener {
 
     open fun getFileType(filePath: String): ZFileType {
         return when (ZFileHelp.getFileTypeBySuffix(filePath)) {
-            PNG, JPG, JPEG, GIF -> ImageType()
-            MP3, AAC, WAV, M4A -> AudioType()
-            MP4, _3GP -> VideoType()
-            TXT, XML, JSON -> TxtType()
-            ZIP -> ZipType()
-            DOC, DOCX -> WordType()
-            XLS, XLSX -> XlsType()
-            PPT, PPTX -> PptType()
-            PDF -> PdfType()
-            else -> OtherType()
+            PNG, JPG, JPEG, GIF -> ZFileImageType()
+            MP3, AAC, WAV, M4A -> ZFileAudioType()
+            MP4, _3GP -> ZFileVideoType()
+            TXT, XML, JSON -> ZFileTxtType()
+            ZIP -> ZFileZipType()
+            DOC, DOCX -> ZFileWordType()
+            XLS, XLSX -> ZFileXlsType()
+            PPT, PPTX -> ZFilePptType()
+            PDF -> ZFilePdfType()
+            else -> ZFileOtherType()
         }
     }
 }
@@ -179,12 +180,12 @@ open class ZFileOpenListener {
     }
 
     /**
-     * 打开图片
+     * 打开图片，如果只需要自定义视图，请实现 [ZFileOtherListener.getImgInfoView] 即可
      * @param filePath String   文件路径
      * @param view View         RecyclerView itemView
      */
     open fun openImage(filePath: String, view: View) {
-        view.context?.let {
+        (view.context as? Activity)?.let {
             ZFilePicActivity.show(it, filePath)
         }
     }
@@ -195,7 +196,7 @@ open class ZFileOpenListener {
      * @param view View         RecyclerView itemView
      */
     open fun openVideo(filePath: String, view: View) {
-        view.context?.let {
+        (view.context as? Activity)?.let {
             ZFileVideoPlayActivity.show(it, filePath)
         }
     }
@@ -297,7 +298,7 @@ open class ZFileOpenListener {
      */
     open fun openOther(filePath: String, view: View) {
         ZFileLog.e("【${filePath.getFileType()}】不支持预览该文件 ---> $filePath")
-        view.toast("暂不支持预览该文件")
+        view.toast(view.context getStringById R.string.zfile_can_not_open)
     }
 }
 
@@ -424,6 +425,9 @@ open class ZFileOperateListener {
  */
 open class ZFileOtherListener {
 
+    protected val MATCH_PARENT = FrameLayout.LayoutParams.MATCH_PARENT
+    protected val WRAP_CONTENT = FrameLayout.LayoutParams.WRAP_CONTENT
+
     /**
      * 耗时的文件操作（如复制、移动文件等） 展示的 Dialog
      * @param context Context   Context
@@ -450,6 +454,16 @@ open class ZFileOtherListener {
      */
     open fun getFileListEmptyLayoutId(): Int {
         return ZFILE_DEFAULT
+    }
+
+    /**
+     * 获取 查看图片 展示 View（LayoutParams 为 FrameLayout.LayoutParams）
+     * @param context Context   Context
+     * @param imgPath String    图片路径
+     * @return View?     空表示使用默认值
+     */
+    open fun getImgInfoView(context: Context, imgPath: String): View? {
+        return null
     }
 
 }

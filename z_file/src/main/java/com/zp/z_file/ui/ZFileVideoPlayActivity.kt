@@ -1,15 +1,14 @@
 package com.zp.z_file.ui
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
-import com.zp.z_file.content.getZFileHelp
+import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.inflate
 import com.zp.z_file.content.setStatusBarTransparent
-import com.zp.z_file.content.toFile
 import com.zp.z_file.databinding.ActivityZfileVideoPlayBinding
 
 internal class ZFileVideoPlayActivity : ZFileActivity() {
@@ -23,7 +22,7 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
     override fun init(savedInstanceState: Bundle?) {
         setStatusBarTransparent()
         val videoPath = intent.getStringExtra("videoFilePath") ?: ""
-        getZFileHelp().getImageLoadListener().loadImage(vb.videoImg, videoPath.toFile())
+        ZFileTypeManage.getTypeManager().loadingFile(videoPath, vb.videoImg)
         vb.videoPlayerButton.setOnClickListener { v ->
             vb.videoPlayer.videoPath = videoPath
             vb.videoPlayer.play()
@@ -48,13 +47,18 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
         super.onBackPressed()
     }
 
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, R.anim.zfile_out_bottom)
+    }
 
     companion object {
 
-        fun show(context: Context, videoFilePath: String) {
-            context.startActivity(Intent(context, ZFileVideoPlayActivity::class.java).apply {
+        fun show(activity: Activity, videoFilePath: String) {
+            activity.startActivity(Intent(activity, ZFileVideoPlayActivity::class.java).apply {
                 putExtra("videoFilePath", videoFilePath)
             })
+            activity.overridePendingTransition(R.anim.zfile_in_bottom, 0)
         }
 
     }

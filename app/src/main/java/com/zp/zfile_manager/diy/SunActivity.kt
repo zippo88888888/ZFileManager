@@ -1,5 +1,7 @@
 package com.zp.zfile_manager.diy
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +38,20 @@ class SunActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (vb.sunVideoPlayer.isPlaying()) vb.sunVideoPlayer.pause()
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, com.zp.z_file.R.anim.zfile_out_bottom)
+    }
+
+    companion object {
+
+        fun jump(activity: Activity) {
+            activity.startActivity(Intent(activity, SunActivity::class.java))
+            activity.overridePendingTransition(com.zp.z_file.R.anim.zfile_in_bottom, 0)
+        }
+
     }
 
 }

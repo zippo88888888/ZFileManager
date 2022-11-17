@@ -8,15 +8,15 @@ import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
 /**
- * PPT文件
+ * word文件
  */
-open class PptType : ZFileType() {
+open class ZFileWordType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openPPT(filePath, view)
+        getZFileHelp().getFileOpenListener().openDOC(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.pptRes, R.drawable.ic_zfile_ppt))
+        pic.setImageResource(getRes(getZFileConfig().resources.wordRes, R.drawable.ic_zfile_word))
     }
 }

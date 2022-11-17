@@ -6,14 +6,12 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zp.z_file.R
-import com.zp.z_file.common.ZFileAdapter
 import com.zp.z_file.common.ZFileManageDialog
-import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
 import com.zp.z_file.databinding.DialogZfileSelectFolderBinding
+import com.zp.z_file.ui.adapter.ZFileFolderAdapter
 import com.zp.z_file.util.ZFileUtil
 
 internal class ZFileSelectFolderDialog : ZFileManageDialog() {
@@ -33,7 +31,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     private var filePath: String? = ""
     private var isOnlyFolder = false
     private var isOnlyFile = false
-    private var folderAdapter: ZFileAdapter<ZFileBean>? = null
+    private var folderAdapter: ZFileFolderAdapter? = null
 
     var selectFolder: (String.() -> Unit)? = null
 
@@ -78,20 +76,13 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     private fun initRecyclerView() {
-        folderAdapter = object : ZFileAdapter<ZFileBean>(context!!, R.layout.item_zfile_list_folder) {
-            override fun bindView(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
-                holder.apply {
-                    setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
-                    setImageRes(R.id.item_zfile_list_folderPic, folderRes)
-                    setBgColor(R.id.item_zfile_list_folder_line, lineColor)
-                    setVisibility(R.id.item_zfile_list_folder_line, position < itemCount - 1)
-                }
-            }
-        }
+        folderAdapter = ZFileFolderAdapter(requireContext())
         folderAdapter?.itemClick = { _, _, item ->
-            getZFileConfig().filePath = item.filePath
-            backList.add(item.filePath)
-            getData()
+            if (!item.isFile) {
+                getZFileConfig().filePath = item.filePath
+                backList.add(item.filePath)
+                getData()
+            }
         }
         vb?.zfileSelectFolderRecyclerView?.apply {
             layoutManager = LinearLayoutManager(context)
@@ -139,11 +130,11 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     override fun dismiss() {
-        recoverData()
+        resetData()
         super.dismiss()
     }
 
-    private fun recoverData() {
+    private fun resetData() {
         // 恢复之前用户配置的数据
         getZFileConfig().filePath = filePath
         getZFileConfig().isOnlyFile = isOnlyFile

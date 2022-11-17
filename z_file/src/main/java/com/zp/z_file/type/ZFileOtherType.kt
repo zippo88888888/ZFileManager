@@ -2,20 +2,21 @@ package com.zp.z_file.type
 
 import android.view.View
 import android.widget.ImageView
+import com.zp.z_file.R
 import com.zp.z_file.common.ZFileType
+import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
-import com.zp.z_file.content.toFile
 
 /**
- * 视频文件
+ * 其他类型的文件
  */
-open class VideoType : ZFileType() {
+open class ZFileOtherType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openVideo(filePath, view)
+        getZFileHelp().getFileOpenListener().openOther(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        getZFileHelp().getImageLoadListener().loadVideo(pic, filePath.toFile())
+        pic.setImageResource(getRes(getZFileConfig().resources.otherRes, R.drawable.ic_zfile_other))
     }
 }

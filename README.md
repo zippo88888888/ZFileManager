@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.4.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.4-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -33,7 +33,7 @@
 
 ```groovy
 
-    // Android 10 及以上版本  暂只提供 aar
+    // Android 10 及以上版本  请查看最新版本
 
     // Android 10 及以下版本使用（不推荐使用）
     implementation 'com.github.zp:z_file:1.2.6' 
@@ -98,15 +98,15 @@ class MainActivity : AppCompatActivity() {
 
 ```
 
-### 更多使用方式详见[wiki](https://github.com/zippo88888888/ZFileManager/wiki)
+### 更多使用方式[点击查看](https://github.com/zippo88888888/ZFileManager/wiki)
 
 
  
-##### 更多操作请查看demo， ^_^ 如果觉得可以 star 一下哦！
+##### 目前本库趋于稳定，后续功能的更新大部分源自本人项目中的需求！ ^_^ 如果觉得可以 star 一下哦！
 ###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [点这里页面加载速度应该会快一点](https://blog.csdn.net/qq_28322987/article/details/81384886)
 
 
-[![Travis](https://img.shields.io/badge/ZFile-1.4.3-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.4-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

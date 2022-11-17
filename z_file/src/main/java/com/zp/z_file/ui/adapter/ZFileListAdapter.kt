@@ -1,18 +1,12 @@
 package com.zp.z_file.ui.adapter
 
 import android.content.Context
-import android.view.View
-import android.widget.CheckBox
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.collection.ArrayMap
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileAdapter
-import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.common.ZFileViewHolder
 import com.zp.z_file.content.*
-import com.zp.z_file.util.ZFileUtil
 
 internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(context) {
 
@@ -141,23 +135,35 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
 
     fun boxLayoutClick(position: Int, item: ZFileBean) {
         if (isManage) { // 管理状态
+            if (item canNotSelect config.canNotSelecteFileTypeArray) {
+                context.toast(config.canNotSelecteFileTypeStr)
+                return
+            }
             boxClick(position, item)
             notifyItemChanged(position)
         } else { // 非管理状态
             isManage = !isManage
-            if (config.needTwiceClick) {
+            if (config.needTwiceClick) { // 两次点击开启
                 qwChangeListener?.invoke(isManage, item, false)
-            } else {
+            } else { // 直接选择
+                if (item canNotSelect config.canNotSelecteFileTypeArray) {
+                    context.toast(config.canNotSelecteFileTypeStr)
+                    return
+                }
                 boxClick(position, item)
                 qwChangeListener?.invoke(isManage, item, true)
             }
             notifyDataSetChanged()
-//            qwListener?.invoke(isManage, item, false)
         }
         changeListener?.invoke(isManage, selectData.size)
     }
 
     private fun boxClick(position: Int, item: ZFileBean) {
+        if (item canNotSelect config.canNotSelecteFileTypeArray) {
+            context.toast(config.canNotSelecteFileTypeStr)
+            notifyItemChanged(position)
+            return
+        }
         val isSelect = boxMap[position] ?: false
         if (isSelect) {
             selectData.remove(item)

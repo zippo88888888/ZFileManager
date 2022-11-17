@@ -1,8 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- 禁止重写 -->
-    <string name="zfile_sharedElement_pic">zfile_jump_pic</string>
-    <!-- 禁止重写 -->
-    <string name="zfile_sharedElement_video">zfile_jump_Video</string>
 
     <!--   下面重写即可自定义   -->
     <string name="zfile_title">文件管理</string>
@@ -51,5 +47,6 @@
     <string name="zfile_permission_bad2">您已拒绝权限的申请，该功能暂时无法使用，请您同意权限后继续！</string>
     <string name="zfile_permission_bad3">重新获取</string>
     <string name="zfile_no_app_open_file">文件类型可能不匹配或找不到打开该文件类型的程序，打开失败</string>
+    <string name="zfile_can_not_open">不支持预览该文件</string>
 
 </resources>

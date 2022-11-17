@@ -16,7 +16,7 @@ object Content {
         }
 
 
-
+    const val SD_PATH = "/storage/emulated/0/"
 
 
     val TITLES: Array<String>
@@ -40,23 +40,23 @@ object Content {
         get() {
             val map = ArrayMap<Int, MutableList<String>>()
             map[ZFILE_QW_PIC] = arrayListOf(
-                "/storage/emulated/0/tencent/QQ_Images/",
-                "/storage/emulated/0/Pictures/",
-                "/storage/emulated/0/DCIM/",
-                "/storage/emulated/0/Pictures/QQ/"
+                "${SD_PATH}tencent/QQ_Images/",
+                "${SD_PATH}Pictures/",
+                "${SD_PATH}DCIM/",
+                "${SD_PATH}Pictures/QQ/"
             )
             map[ZFILE_QW_MEDIA] = arrayListOf(
-                "/storage/emulated/0/Pictures/QQ/",
-                "/storage/emulated/0/tencent/MicroMsg/WeiXin/"
+                "${SD_PATH}Pictures/QQ/",
+                "${SD_PATH}tencent/MicroMsg/WeiXin/"
             )
             map[ZFILE_QW_DOCUMENT] = arrayListOf(
-                "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
-                "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
+                "${SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
+                "${SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQ_business/"
             )
             map[ZFILE_QW_OTHER] = arrayListOf(
-                "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
-                "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQ_business/",
-                "/storage/emulated/0/tencent/MicroMsg/Download/"
+                "${SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/",
+                "${SD_PATH}Android/data/com.tencent.mobileqq/Tencent/QQ_business/",
+                "${SD_PATH}tencent/MicroMsg/Download/"
             )
             return map
         }

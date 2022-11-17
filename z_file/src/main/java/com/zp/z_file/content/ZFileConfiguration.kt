@@ -14,6 +14,10 @@ import java.io.Serializable
 /**
  * 配置信息（单列保存，一处设置，全局通用）
  *
+ * 1.4.4 主要更新信息：
+ * 1) 新增 [canNotSelecteFileTypeArray]、[canNotSelecteFileTypeStr] 属性
+ * 2) 优化图片、自定义图片查看
+ *
  * 1.4.3 主要更新信息：
  * 1) 修复点击隐藏 / 显示 隐藏文件后，路径错误的bug
  * 2) 自定义 QQ、Wechat 数据获取错误的bug修复
@@ -138,6 +142,18 @@ class ZFileConfiguration : Serializable {
      * 如 arrayOf(PNG, JPG, JPEG, GIF) 只显示图片类型
      */
     var fileFilterArray: Array<String>? = null
+
+    /**
+     * 不能选择的文件类型，默认都可以选择
+     * 如 arrayOf(JPEG, GIF) 无法选择 jpeg 和 gif 图
+     * （小吐槽一下：指定了图片展示，然后又不能选择jpeg和gif，我不展示jpeg和gif不就好了吗！结果说不可以，要展示这几个类型的图，就是不让用户选！MMP）
+     */
+    var canNotSelecteFileTypeArray: Array<String>? = null
+
+    /**
+     * 不能选择的文件类型 文字提醒
+     */
+    var canNotSelecteFileTypeStr = "您不能选择当前类型的文件"
 
     /**
      * 文件选取大小的限制，单位：M
@@ -307,7 +323,7 @@ class ZFileConfiguration : Serializable {
 
         /**
          * 根据什么排序
-         * @param sortordBy Int     [BY_DEFAULT]、[BY_NAME]、[BY_DATE]、[BY_SIZE]
+         * @param sortordBy Int    see [BY_DEFAULT]、[BY_NAME]、[BY_DATE]、[BY_SIZE]
          */
         fun sortordBy(sortordBy: Int): Build {
             configuration.sortordBy = sortordBy
@@ -316,7 +332,7 @@ class ZFileConfiguration : Serializable {
 
         /**
          * 排序方式
-         * @param sortord Int   [ASC] or [DESC]
+         * @param sortord Int   see [ASC] or [DESC]
          */
         fun sortord(sortord: Int): Build {
             configuration.sortord = sortord
@@ -329,6 +345,23 @@ class ZFileConfiguration : Serializable {
          */
         fun fileFilterArray(fileFilterArray: Array<String>?): Build {
             configuration.fileFilterArray = fileFilterArray
+            return this
+        }
+
+        /**
+         * 不能选择的文件类型，默认都可以选择
+         * 如 arrayOf(JPEG, GIF) 无法选择 jpeg 和 gif 图
+         */
+        fun canNotSelecteFileTypeArray(canNotSelecteFileTypeArray: Array<String>?): Build {
+            configuration.canNotSelecteFileTypeArray = canNotSelecteFileTypeArray
+            return this
+        }
+
+        /**
+         * 不能选择的文件类型 文字提醒
+         */
+        fun canNotSelecteFileTypeStr(canNotSelecteFileTypeStr: String): Build {
+            configuration.canNotSelecteFileTypeStr = canNotSelecteFileTypeStr
             return this
         }
 

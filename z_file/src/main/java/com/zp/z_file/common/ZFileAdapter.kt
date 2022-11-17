@@ -21,7 +21,7 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
     var itemChildClick: ((View, Int, T) -> Unit)? = null
 
     private var layoutID = -1
-    private var datas: MutableList<T> = ArrayList()
+    private var datas: MutableList<T> = arrayListOf()
 
     open fun getDatas() = datas
 
@@ -32,7 +32,6 @@ internal abstract class ZFileAdapter<T>(protected var context: Context) : Recycl
                 notifyDataSetChanged()
             }
         }
-
     }
 
     open fun addAll(list: MutableList<T>) {

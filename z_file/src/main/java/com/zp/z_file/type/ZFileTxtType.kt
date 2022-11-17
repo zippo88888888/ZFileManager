@@ -8,15 +8,16 @@ import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
 
 /**
- * PDF文件
+ * Txt文件
  */
-open class PdfType : ZFileType() {
+open class ZFileTxtType : ZFileType() {
 
     override fun openFile(filePath: String, view: View) {
-        getZFileHelp().getFileOpenListener().openPDF(filePath, view)
+        getZFileHelp().getFileOpenListener().openTXT(filePath, view)
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.pdfRes, R.drawable.ic_zfile_pdf))
+        pic.setImageResource(getRes(getZFileConfig().resources.txtRes, R.drawable.ic_zfile_txt))
     }
+
 }

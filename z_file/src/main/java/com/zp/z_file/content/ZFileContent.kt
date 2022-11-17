@@ -21,6 +21,8 @@ import androidx.viewbinding.ViewBinding
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.type.*
+import com.zp.z_file.util.ZFileHelp
 import com.zp.z_file.util.ZFileLog
 import java.io.File
 import java.util.*
@@ -80,6 +82,27 @@ const val ZFILE_SELECT_DATA_KEY = "ZFILE_SELECT_RESULT_DATA"
 
 fun getZFileHelp() = ZFileManageHelp.getInstance()
 fun getZFileConfig() = getZFileHelp().getConfiguration()
+
+@Deprecated("请使用 ZFileAudioType")
+typealias AudioType = ZFileAudioType
+@Deprecated("请使用 ZFileImageType")
+typealias ImageType = ZFileImageType
+@Deprecated("请使用 ZFileOtherType")
+typealias OtherType = ZFileOtherType
+@Deprecated("请使用 ZFilePdfType")
+typealias PdfType = ZFilePdfType
+@Deprecated("请使用 ZFilePptType")
+typealias PptType = ZFilePptType
+@Deprecated("请使用 ZFileTxtType")
+typealias TxtType = ZFileTxtType
+@Deprecated("请使用 ZFileVideoType")
+typealias VideoType = ZFileVideoType
+@Deprecated("请使用 ZFileWordType")
+typealias WordType = ZFileWordType
+@Deprecated("请使用 ZFileXlsType")
+typealias XlsType = ZFileXlsType
+@Deprecated("请使用 ZFileZipType")
+typealias ZipType = ZFileZipType
 
 // inner ===========================================================================================
 
@@ -224,6 +247,10 @@ internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     filePath = this@toPathBean.filePath
 }
 internal infix fun ZFileBean.toQWBean(isSelected: Boolean) = ZFileQWBean(this, isSelected)
+internal infix fun ZFileBean.canNotSelect(array: Array<String>?): Boolean {
+    return if (array.isNullOrEmpty()) false
+    else array.any { it == ZFileHelp.getFileTypeBySuffix(filePath) }
+}
 internal fun File.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.name
     filePath = this@toPathBean.path

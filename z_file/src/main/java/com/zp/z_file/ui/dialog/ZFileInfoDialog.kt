@@ -16,9 +16,9 @@ import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileInfoBean
 import com.zp.z_file.content.setNeedWH
 import com.zp.z_file.databinding.DialogZfileInfoBinding
-import com.zp.z_file.type.AudioType
-import com.zp.z_file.type.ImageType
-import com.zp.z_file.type.VideoType
+import com.zp.z_file.type.ZFileAudioType
+import com.zp.z_file.type.ZFileImageType
+import com.zp.z_file.type.ZFileVideoType
 import com.zp.z_file.util.ZFileOtherUtil
 import java.lang.ref.WeakReference
 
@@ -73,19 +73,19 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
             else View.GONE
         }
         when (fileType) {
-            is ImageType -> {
+            is ZFileImageType -> {
                 vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
                 vb?.zfileDialogInfoFileDurationLayout?.visibility = View.GONE
                 vb?.zfileDialogInfoFileOther?.text = "无"
                 val wh = ZFileOtherUtil.getImageWH(filePath)
                 vb?.zfileDialogInfoFileFBL?.text = String.format("%d * %d", wh[0], wh[1])
             }
-            is AudioType -> {
+            is ZFileAudioType -> {
                 vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
                 vb?.zfileDialogInfoFileFBLLayout?.visibility = View.GONE
                 vb?.zfileDialogInfoFileOther?.text = "无"
             }
-            is VideoType -> {
+            is ZFileVideoType -> {
                 vb?.zfileDialogInfoMoreBox?.visibility = View.VISIBLE
                 vb?.zfileDialogInfoFileOther?.text = "无"
             }
@@ -112,10 +112,10 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
     }
 
     override fun run() {
-        if (fileType !is AudioType && fileType !is VideoType) return
+        if (fileType !is ZFileAudioType && fileType !is ZFileVideoType) return
         handler?.sendMessage(Message().apply {
             what = 0
-            obj = ZFileOtherUtil.getMultimediaInfo(filePath, fileType is VideoType)
+            obj = ZFileOtherUtil.getMultimediaInfo(filePath, fileType is ZFileVideoType)
         })
     }
 
@@ -129,10 +129,10 @@ internal class ZFileInfoDialog : ZFileManageDialog(), Runnable {
                 val bean = msg.obj as ZFileInfoBean
                 week.get()?.apply {
                     when (fileType) {
-                        is AudioType -> {
+                        is ZFileAudioType -> {
                             vb?.zfileDialogInfoFileDuration?.text = bean.duration
                         }
-                        is VideoType -> {
+                        is ZFileVideoType -> {
                             vb?.zfileDialogInfoFileDuration?.text = bean.duration
                             vb?.zfileDialogInfoFileFBL?.text =
                                 String.format("%s * %s", bean.width, bean.height)
