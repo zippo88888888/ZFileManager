@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
 
  
-##### 目前本库趋于稳定，后续功能的更新大部分源自本人项目中的需求！ ^_^ 如果觉得可以 star 一下哦！
+##### 目前本库趋于稳定， ^_^ 如果觉得可以 star 一下哦！
 ###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [点这里页面加载速度应该会快一点](https://blog.csdn.net/qq_28322987/article/details/81384886)
 
 
