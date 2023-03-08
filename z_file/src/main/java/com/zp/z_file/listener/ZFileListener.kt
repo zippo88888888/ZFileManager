@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.collection.ArrayMap
 import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileType
@@ -19,10 +20,7 @@ import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.*
-import com.zp.z_file.util.ZFileHelp
-import com.zp.z_file.util.ZFileLog
-import com.zp.z_file.util.ZFileOpenUtil
-import com.zp.z_file.util.ZFileUtil
+import com.zp.z_file.util.*
 import java.io.File
 
 /*
@@ -303,6 +301,38 @@ open class ZFileOpenListener {
 }
 
 /**
+ * 点击事件
+ */
+open class ZFileClickListener {
+
+    /**
+     * 文件 点击
+     * @param fileBean ZFileBean    文件实体
+     * @param view View             RecyclerView itemView
+     */
+    open fun itemFileClick(fileBean: ZFileBean, view: View) = Unit
+
+    /**
+     * 文件夹 点击
+     * @param fileBean ZFileBean    文件实体
+     * @param view View             RecyclerView itemView
+     */
+    open fun itemFoldClick(fileBean: ZFileBean, view: View) = Unit
+
+    /**
+     * 未选中数据时Toolbar完成 点击
+     */
+    open fun emptyDataDownClick() = Unit
+
+    /**
+     * 重新申请 权限 按钮 点击
+     * @param view View             Button
+     */
+    open fun permissionBtnApplyClick(view: View) = Unit
+
+}
+
+/**
  * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请重写该类的所有方法）！
  * 耗时的文件操作建议放在 非 UI线程中
  */
@@ -417,6 +447,42 @@ open class ZFileOperateListener {
             ZFileInfoDialog.newInstance(bean).show(it.supportFragmentManager, tag)
         }
 
+    }
+}
+
+/**
+ * 文件夹 标签/角标、说明文字 相关
+ */
+open class ZFileFolderBadgeHintListener {
+
+    /**
+     * 说明文字大小
+     */
+    open fun hintTextSize(): Float {
+        return 12f
+    }
+
+    /**
+     * 说明文字颜色
+     */
+    open fun hintTextColor(): Int {
+        return R.color.zfile_bbbbb9
+    }
+
+    /**
+     * 匹配方式
+     * true：等价于 equals，在[doingWork] 中 ArrayMap key 值必须为文件夹全路径：如 /storage/emulated/0/DICM
+     * false：等价于 indexOf，在[doingWork] 中 ArrayMap key 值 只需要是文件夹名称：如 DCIM/Camera
+     */
+    open fun isEquals(): Boolean {
+        return true
+    }
+
+    /**
+     * 具体的配置 信息
+     */
+    open fun doingWork(context: Context): ArrayMap<String, ZFileFolderBadgeHintBean>? {
+        return ZFileFBHUtil.doingWork(context)
     }
 }
 

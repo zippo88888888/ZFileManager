@@ -6,7 +6,9 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.zp.z_file.content.*
 import com.zp.z_file.content.getColorById
+import com.zp.z_file.content.isNull
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
@@ -23,9 +25,23 @@ internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         return view as V
     }
 
-    fun setText(id: Int, msg: String) {
+    fun setText(id: Int, msg: String?) {
         val txtView = getView<TextView>(id)
         txtView.text = msg
+    }
+
+    fun setHint(id: Int, hintBean: ZFileFolderBadgeHintBean?) {
+        val textView = getView<TextView>(id)
+        if (hintBean == null || hintBean.folderHint.isNull() || !getZFileConfig().showFolderBadgeHint) {
+            textView.visibility = View.GONE
+        } else {
+            textView.apply {
+                visibility = View.VISIBLE
+                text = hintBean.folderHint
+                setTextColor(textView.context.getColorById(getZFileHelp().getFileBadgeHintListener().hintTextColor()))
+                textSize = getZFileHelp().getFileBadgeHintListener().hintTextSize()
+            }
+        }
     }
 
     fun setImageRes(id: Int, res: Int) {
@@ -36,6 +52,16 @@ internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
     fun setImage(id: Int, path: String) {
         val pic = getView<ImageView>(id)
         ZFileTypeManage.getTypeManager().loadingFile(path, pic)
+    }
+
+    fun setBadge(id: Int, hintBean: ZFileFolderBadgeHintBean?) {
+        val pic = getView<ImageView>(id)
+        if (hintBean == null || hintBean.folderBadgeIcon <= 0 || !getZFileConfig().showFolderBadgeHint) {
+            pic.visibility = View.GONE
+        } else {
+            pic.visibility = View.VISIBLE
+            pic.setImageResource(hintBean.folderBadgeIcon)
+        }
     }
 
     fun setBgColor(id: Int, color: Int) {

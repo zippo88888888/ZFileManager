@@ -26,12 +26,12 @@
         <item name="android:windowBackground">@color/zfile_black</item>
     </style>
 
-    <style name="Zfile_Select_Folder_Dialog" parent="ZFile_Common_Dialog">
+    <style name="ZFile_Select_Folder_Dialog" parent="ZFile_Common_Dialog">
         <item name="android:windowBackground">@color/zfile_white</item>
-        <item name="android:windowAnimationStyle">@style/Zfile_Dialog_Anim</item>
+        <item name="android:windowAnimationStyle">@style/ZFile_Dialog_Anim</item>
     </style>
 
-    <style name="Zfile_Dialog_Anim" mce_bogus="1" parent="android:Animation">
+    <style name="ZFile_Dialog_Anim" mce_bogus="1" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/zfile_in_bottom</item>
         <item name="android:windowExitAnimation">@anim/zfile_out_bottom</item>
     </style>

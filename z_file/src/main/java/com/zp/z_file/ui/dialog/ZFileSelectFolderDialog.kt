@@ -54,7 +54,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     override fun createDialog(savedInstanceState: Bundle?) =
-        Dialog(context!!, R.style.Zfile_Select_Folder_Dialog).apply {
+        Dialog(context!!, R.style.ZFile_Select_Folder_Dialog).apply {
             window?.setGravity(Gravity.BOTTOM)
         }
 

@@ -63,6 +63,49 @@ data class ZFileBean(
     }
 }
 
+/**
+ * 文件夹 标签/角标、说明文字 实体类
+ * @property folderPath String          文件夹路径
+ * @property folderHint String          说明，空不展示
+ * @property folderBadgeIcon Int        标签/角标 资源文件路径
+ * @property folderBadgeType Int        类型 0：不展示；1：展示
+ * @constructor
+ */
+data class ZFileFolderBadgeHintBean(
+    var folderPath: String = "",
+    var folderHint: String = "",
+    var folderBadgeIcon: Int = -1,
+    var folderBadgeType: Int = 0
+): Serializable, Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        folderPath = parcel.readString() ?: "",
+        folderHint = parcel.readString() ?: "",
+        folderBadgeIcon = parcel.readInt(),
+        folderBadgeType = parcel.readInt()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(folderPath)
+        parcel.writeString(folderHint)
+        parcel.writeInt(folderBadgeIcon)
+        parcel.writeInt(folderBadgeType)
+    }
+
+    override fun describeContents() = 0
+
+    companion object CREATOR : Parcelable.Creator<ZFileFolderBadgeHintBean> {
+        override fun createFromParcel(parcel: Parcel): ZFileFolderBadgeHintBean {
+            return ZFileFolderBadgeHintBean(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ZFileFolderBadgeHintBean?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+}
+
 // inner ===========================================================================================
 
 /**

@@ -1,7 +1,7 @@
 package com.zp.z_file.ui.adapter
 
 import android.content.Context
-import android.widget.*
+import android.widget.TextView
 import androidx.collection.ArrayMap
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileAdapter
@@ -199,8 +199,11 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
     }
 
     private fun setFolderData(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
+        val hintBean = item getBadgeHintBean context
         holder.apply {
             setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
+            setHint(R.id.item_zfile_list_folderHintTxt, hintBean)
+            setBadge(R.id.item_zfile_list_folderHintPic, hintBean)
             setImageRes(R.id.item_zfile_list_folderPic, folderRes)
             setBgColor(R.id.item_zfile_list_folder_line, lineColor)
             setVisibility(R.id.item_zfile_list_folder_line, position < itemCount - 1)

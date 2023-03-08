@@ -39,7 +39,7 @@ class SuperDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) =
-        Dialog(context!!, com.zp.z_file.R.style.Zfile_Select_Folder_Dialog).apply {
+        Dialog(context!!, com.zp.z_file.R.style.ZFile_Select_Folder_Dialog).apply {
             window?.setGravity(Gravity.BOTTOM)
         }
 

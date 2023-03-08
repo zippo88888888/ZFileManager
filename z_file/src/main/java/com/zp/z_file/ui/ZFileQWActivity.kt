@@ -107,6 +107,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                     isManage = false
                     getMenu().isVisible = false
                     setBarTitle(if (getZFileConfig().filePath!! == ZFileConfiguration.QQ) "QQ文件" else "微信文件")
+                    getZFileHelp().getFileClickListener().emptyDataDownClick()
                 } else {
                     setResult(ZFILE_RESULT_CODE, Intent().apply {
                         putParcelableArrayListExtra(ZFILE_SELECT_DATA_KEY, selectArray.toFileList() as java.util.ArrayList<out Parcelable>)

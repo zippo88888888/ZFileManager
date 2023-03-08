@@ -159,6 +159,7 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
         audioHandler?.removeMessages(0)
         audioHandler?.removeCallbacks(this)
         audioHandler?.removeCallbacksAndMessages(null)
+        audioHandler?.clear()
         audioHandler = null
     }
 
@@ -189,6 +190,10 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
 
         override fun handleMessage(msg: Message) {
             week.get()?.vb?.dialogZfileAudioBar?.progress = week.get()?.mediaPlayer?.currentPosition ?: 0
+        }
+
+        fun clear() {
+            week.clear()
         }
     }
 

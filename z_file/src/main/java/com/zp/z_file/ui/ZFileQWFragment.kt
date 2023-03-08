@@ -86,6 +86,7 @@ internal class ZFileQWFragment : Fragment() {
                     } else {
                         ZFileUtil.openFile(item.filePath, v)
                     }
+                    getZFileHelp().getFileClickListener().itemFileClick(item, v)
                 }
                 qwChangeListener = { isManage, item, isSelect ->
                     if (isManage) {

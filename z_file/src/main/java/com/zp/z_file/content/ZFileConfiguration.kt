@@ -14,6 +14,11 @@ import java.io.Serializable
 /**
  * 配置信息（单列保存，一处设置，全局通用）
  *
+ * 1.4.5 主要更新信息：
+ * 1) 新增 [showFolderBadgeHint]、[ZFileFolderBadgeHintListener] 文件夹角标展示
+ * 2) 新增 [ZFileClickListener] 用于捕获点击事件
+ * 3) 修复泄露
+ *
  * 1.4.4 主要更新信息：
  * 1) 新增 [canNotSelecteFileTypeArray]、[canNotSelecteFileTypeStr] 属性
  * 2) 优化图片、自定义图片查看
@@ -107,8 +112,7 @@ class ZFileConfiguration : Serializable {
     }
 
     /**
-     * 起始访问位置，空为SD卡根目录
-     * 还可指定 [QQ] 或 [WECHAT] 目录
+     * 起始访问位置，空为SD卡根目录，还可指定 [QQ] 或 [WECHAT] 目录
      */
     var filePath: String? = null
 
@@ -146,7 +150,6 @@ class ZFileConfiguration : Serializable {
     /**
      * 不能选择的文件类型，默认都可以选择
      * 如 arrayOf(JPEG, GIF) 无法选择 jpeg 和 gif 图
-     * （小吐槽一下：指定了图片展示，然后又不能选择jpeg和gif，我不展示jpeg和gif不就好了吗！结果说不可以，要展示这几个类型的图，就是不让用户选！MMP）
      */
     var canNotSelecteFileTypeArray: Array<String>? = null
 
@@ -275,6 +278,11 @@ class ZFileConfiguration : Serializable {
      * 是否需要两次点击后才能选择文件(参考百度网盘)  false：点击后立刻自动选中文件；true：默认
      */
     var needTwiceClick = true
+
+    /**
+     * 是否展示 文件夹 标签/角标、说明文字 相关，see [ZFileFolderBadgeHintListener]
+     */
+    var showFolderBadgeHint = true
 
     /**
      * 是否显示日志
@@ -519,6 +527,14 @@ class ZFileConfiguration : Serializable {
          */
         fun needTwiceClick(needTwiceClick: Boolean): Build {
             configuration.needTwiceClick = needTwiceClick
+            return this
+        }
+
+        /**
+         * 是否展示 文件夹 标签/角标、说明文字 相关，see [ZFileFolderBadgeHintListener]
+         */
+        fun showFolderBadgeHint(showFolderBadgeHint: Boolean): Build {
+            configuration.showFolderBadgeHint = showFolderBadgeHint
             return this
         }
 

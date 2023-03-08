@@ -147,11 +147,10 @@ internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
     )
 
 internal fun Context.getZDisplay(): IntArray {
-    val point = Point()
-    display?.getRealSize(point)
     val array = IntArray(2)
-    array[0] = point.x
-    array[1] = point.y
+    val dm = resources.displayMetrics
+    array[0] = dm.widthPixels
+    array[1] = dm.heightPixels
     return array
 }
 internal fun FragmentActivity.checkFragmentByTag(tag: String) {
@@ -242,6 +241,10 @@ internal fun String.getFileNameOnly() = getFileName().run {
 internal fun String.toFile() = File(this)
 internal fun String?.isNull() =
     if (this == null || this.isNullOrEmpty()) true else this.replace(" ".toRegex(), "").isEmpty()
+internal infix fun String?.has(value: String?) : Boolean {
+    if (this.isNullOrEmpty() || value.isNullOrEmpty()) return false
+    return this.indexOf(value) != -1 || value.indexOf(this) != -1
+}
 internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.fileName
     filePath = this@toPathBean.filePath
@@ -250,6 +253,22 @@ internal infix fun ZFileBean.toQWBean(isSelected: Boolean) = ZFileQWBean(this, i
 internal infix fun ZFileBean.canNotSelect(array: Array<String>?): Boolean {
     return if (array.isNullOrEmpty()) false
     else array.any { it == ZFileHelp.getFileTypeBySuffix(filePath) }
+}
+internal infix fun ZFileBean.getBadgeHintBean(context: Context): ZFileFolderBadgeHintBean? {
+    val listener = getZFileHelp().getFileBadgeHintListener()
+    val map = listener.doingWork(context)
+    if (listener.isEquals()) {
+        return map?.get(filePath)
+    } else {
+        var key = ""
+        map?.keys?.forEach forEarch@{
+            if (filePath has it) {
+                key = it
+                return@forEarch
+            }
+        }
+        return map?.get(key)
+    }
 }
 internal fun File.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.name

@@ -26,7 +26,7 @@
             android:gravity="center"
             android:textSize="12sp"
             android:textColor="#B6B6C4"
-            android:text="* 基于本库的一个小扩展"/>
+            android:text="* 基于本库的扩展，请选择使用，无法确保功能完全正常"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -173,7 +173,7 @@
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:gravity="center"
-                    android:text="占位格 *" />
+                    android:text="占位格" />
 
             </LinearLayout>
 

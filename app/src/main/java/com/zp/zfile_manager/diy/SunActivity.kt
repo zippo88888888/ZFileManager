@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.zp.z_file.ui.ZFileVideoPlayer
+import com.zp.zfile_manager.R
 import com.zp.zfile_manager.databinding.ActivitySunBinding
 
 class SunActivity : AppCompatActivity() {
@@ -42,14 +43,14 @@ class SunActivity : AppCompatActivity() {
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(0, com.zp.z_file.R.anim.zfile_out_bottom)
+        overridePendingTransition(0, R.anim.zfile_out_bottom)
     }
 
     companion object {
 
         fun jump(activity: Activity) {
             activity.startActivity(Intent(activity, SunActivity::class.java))
-            activity.overridePendingTransition(com.zp.z_file.R.anim.zfile_in_bottom, 0)
+            activity.overridePendingTransition(R.anim.zfile_in_bottom, 0)
         }
 
     }

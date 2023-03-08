@@ -15,7 +15,7 @@ abstract class ZFileType {
     /**
      * 打开文件
      * @param filePath  文件路径
-     * @param view      RecyclerView中itemView  (view.context as? xxxActivity)?.let {  具体逻辑实现  }
+     * @param view      RecyclerView中itemView  (view.context as? FragmentActivity)?.let {  具体逻辑实现  }
      */
     abstract fun openFile(filePath: String, view: View)
 

@@ -77,6 +77,20 @@ fun ZFileDsl.fileOpen(block: () -> ZFileOpenListener) {
 }
 
 /**
+ * 设置 [ZFileClickListener] 配置 自定义 文件点击事件
+ */
+fun ZFileDsl.fileClick(block: () -> ZFileClickListener) {
+    setFileClick(block)
+}
+
+/**
+ * 设置 [ZFileFolderBadgeHintListener] 配置 文件夹 标签/角标、说明文字 相关
+ */
+fun ZFileDsl.fileBadgeHint(block: () -> ZFileFolderBadgeHintListener) {
+    setBadgeHint(block)
+}
+
+/**
  * 设置 [ZFileOtherListener] 配置 其他
  */
 fun ZFileDsl.fileOther(block: () -> ZFileOtherListener) {
@@ -143,6 +157,14 @@ class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
 
     internal fun setFileOpen(fileOpenBlock: () -> ZFileOpenListener) {
         getZFileHelp().setFileOpenListener(fileOpenBlock())
+    }
+
+    internal fun setFileClick(fileClickBlock: () -> ZFileClickListener) {
+        getZFileHelp().setFileClickListener(fileClickBlock())
+    }
+
+    internal fun setBadgeHint(hintBlock: () -> ZFileFolderBadgeHintListener) {
+        getZFileHelp().setFileBadgeHintListener(hintBlock())
     }
 
     internal fun setOther(otherBlock: () -> ZFileOtherListener) {

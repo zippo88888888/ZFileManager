@@ -22,9 +22,7 @@ import com.zp.z_file.dsl.result
 import com.zp.z_file.dsl.zfile
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.databinding.ActivityMainBinding
-import com.zp.zfile_manager.diy.MyFileOpenListener
-import com.zp.zfile_manager.diy.MyFileOtherListener
-import com.zp.zfile_manager.diy.MyFileTypeListener
+import com.zp.zfile_manager.diy.*
 import com.zp.zfile_manager.fm.FragmentSampleActivity2
 import com.zp.zfile_manager.super_.SuperActivity
 
@@ -55,11 +53,10 @@ class MainActivity : AppCompatActivity() {
         vb.mainDefaultMangerBtn.setOnClickListener {
             zfile {
                 config {
-                    // getZFileConfig() 单列保存，一处设置，全局通用
-                    getZFileConfig().apply {
+                    getZFileConfig().apply { // getZFileConfig() 单列保存，一处设置，全局通用
                         boxStyle = ZFileConfiguration.STYLE2
                         maxLength = 6
-                        titleGravity = ZFileConfiguration.TITLE_CENTER
+                        titleGravity = ZFileConfiguration.TITLE_LEFT
                         maxLengthStr = "老铁最多6个文件"
                         authority = Content.AUTHORITY
                     }
@@ -124,6 +121,8 @@ class MainActivity : AppCompatActivity() {
         getZFileHelp()
             .setFileTypeListener(MyFileTypeListener())
             .setFileOpenListener(MyFileOpenListener())
+            .setFileClickListener(MyFileClickListener())
+            .setFileBadgeHintListener(MyFolderBadgeHintListener())
             .setOtherFileListener(MyFileOtherListener())
     }
 

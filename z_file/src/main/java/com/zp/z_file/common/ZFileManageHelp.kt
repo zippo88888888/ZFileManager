@@ -2,6 +2,7 @@ package com.zp.z_file.common
 
 import android.content.Context
 import android.content.Intent
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -72,6 +73,16 @@ class ZFileManageHelp {
     }
 
     /**
+     * 文件点击
+     */
+    private var fileClickListener = ZFileClickListener()
+    internal fun getFileClickListener() = fileClickListener
+    fun setFileClickListener(fileClickListener: ZFileClickListener): ZFileManageHelp {
+        this.fileClickListener = fileClickListener
+        return this
+    }
+
+    /**
      * 文件操作
      */
     private var fileOperateListener = ZFileOperateListener()
@@ -88,6 +99,16 @@ class ZFileManageHelp {
     internal fun getFileOpenListener() = fileOpenListener
     fun setFileOpenListener(fileOpenListener: ZFileOpenListener): ZFileManageHelp {
         this.fileOpenListener = fileOpenListener
+        return this
+    }
+
+    /**
+     * 文件夹 标签/角标、说明文字 相关
+     */
+    private var fileBadgeHintListener = ZFileFolderBadgeHintListener()
+    internal fun getFileBadgeHintListener() = fileBadgeHintListener
+    fun setFileBadgeHintListener(fileBadgeHintListener: ZFileFolderBadgeHintListener): ZFileManageHelp {
+        this.fileBadgeHintListener = fileBadgeHintListener
         return this
     }
 
@@ -123,6 +144,29 @@ class ZFileManageHelp {
     }
 
     /**
+     * 将选中的数据 传递给调用页面 -> 前提是通过 [start] 或 [ZFileManageHelp.result] 扩展函数 调用
+     * @param activity FragmentActivity
+     * @param selectList MutableList<ZFileBean>?    选中的数据
+     * @param finish Boolean    是否销毁页面 -> true：销毁页面；false：不销毁页面
+     */
+    @JvmOverloads
+    fun setResult(
+        activity: FragmentActivity,
+        selectList: MutableList<ZFileBean>?,
+        finish: Boolean = true
+    ) {
+        activity.setResult(ZFILE_RESULT_CODE, Intent().apply {
+            putParcelableArrayListExtra(
+                ZFILE_SELECT_DATA_KEY,
+                selectList as java.util.ArrayList<out Parcelable>
+            )
+        })
+        if (finish) {
+            activity.finish()
+        }
+    }
+
+    /**
      * 重置所有配置信息
      * @param imageLoadReset Boolean  是否重置 [ZFileImageListener]
      */
@@ -134,6 +178,8 @@ class ZFileManageHelp {
         fileTypeListener = ZFileTypeListener()
         fileOperateListener = ZFileOperateListener()
         fileOpenListener = ZFileOpenListener()
+        fileClickListener = ZFileClickListener()
+        fileBadgeHintListener = ZFileFolderBadgeHintListener()
         otherFileListener = null
         config = ZFileConfiguration()
     }

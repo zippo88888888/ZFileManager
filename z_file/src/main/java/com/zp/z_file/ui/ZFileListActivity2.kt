@@ -1,8 +1,6 @@
 package com.zp.z_file.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
 import com.zp.z_file.content.*
@@ -46,13 +44,7 @@ internal class ZFileListActivity2 : ZFileActivity() {
     private var mListener: ZFragmentListener? = object : ZFragmentListener() {
 
         override fun selectResult(selectList: MutableList<ZFileBean>?) {
-            setResult(ZFILE_RESULT_CODE, Intent().apply {
-                putParcelableArrayListExtra(
-                    ZFILE_SELECT_DATA_KEY,
-                    selectList as java.util.ArrayList<out Parcelable>
-                )
-            })
-            finish()
+            getZFileHelp().setResult(this@ZFileListActivity2, selectList)
         }
 
     }
