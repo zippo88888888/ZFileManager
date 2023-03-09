@@ -12,7 +12,7 @@
 ### 6. 不含任何三方框架，极高的定制化，支持Android 10/11/12/++、AndroidX、DSL
 
 
-### 部分截图
+### 部分截图（[下载demo直接体验](https://www.pgyer.com/Q13x)）
 <div align="center">
 <img src = "app/src/main/assets/s3.jpg" width=150 >
 <img src = "app/src/main/assets/s0.jpg" width=150 >
