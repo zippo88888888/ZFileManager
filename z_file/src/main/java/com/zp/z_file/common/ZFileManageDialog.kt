@@ -2,11 +2,9 @@ package com.zp.z_file.common
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.DialogFragment
+import com.zp.z_file.R
 import com.zp.z_file.content.ZFileException
 
 internal abstract class ZFileManageDialog : DialogFragment() {
@@ -38,7 +36,12 @@ internal abstract class ZFileManageDialog : DialogFragment() {
 
     open fun getContentView(): Int = 0
 
-    abstract fun createDialog(savedInstanceState: Bundle?): Dialog
+    open fun createDialog(savedInstanceState: Bundle?): Dialog {
+        return Dialog(requireContext(), R.style.ZFile_Common_Dialog).apply {
+            setCanceledOnTouchOutside(true)
+            window?.setGravity(Gravity.CENTER)
+        }
+    }
     abstract fun init(savedInstanceState: Bundle?)
 
     /**

@@ -16,23 +16,28 @@ internal object ZFileFBHUtil {
      */
     fun doingWork(context: Context): ArrayMap<String, ZFileFolderBadgeHintBean> {
         val map = ArrayMap<String, ZFileFolderBadgeHintBean>()
-        val dataPath = "${SD_ROOT}Android/data"
-        val obbPath = "${SD_ROOT}Android/obb"
+        val androidPath = "${SD_ROOT}Android"
         val cameraPath = "${SD_ROOT}DCIM"
-        val cameraPath2 = "${SD_ROOT}DCIM/Camera"
+        val cameraPath2 = "${cameraPath}/Camera"
         val downloadPath = "${SD_ROOT}Download"
         val musicPath = "${SD_ROOT}Music"
         val picturesPath = "${SD_ROOT}Pictures"
         val moviePath = "${SD_ROOT}Movies"
         val tencentPath = "${SD_ROOT}tencent"
-        map[dataPath] = ZFileFolderBadgeHintBean(
-            folderPath = "${SD_ROOT}Android/data",
-            folderHint = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "访问限制" else "Application Package",
+        map[androidPath] = ZFileFolderBadgeHintBean(
+            folderPath = androidPath,
+            folderHint = "Android 系统文件",
+            folderBadgeIcon = R.drawable.zfile_android,
+            folderBadgeType = 1
+        )
+        map[SAF_DATA_PATH] = ZFileFolderBadgeHintBean(
+            folderPath = SAF_DATA_PATH,
+            folderHint = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "访问限制" else "Application Package Data",
             folderBadgeIcon = R.drawable.zfile_sys,
             folderBadgeType = 1
         )
-        map[obbPath] = ZFileFolderBadgeHintBean(
-            folderPath = obbPath,
+        map[SAF_OBB_PATH] = ZFileFolderBadgeHintBean(
+            folderPath = SAF_OBB_PATH,
             folderHint = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "访问限制" else "数据包",
             folderBadgeIcon = R.drawable.zfile_obb,
             folderBadgeType = 1
@@ -100,14 +105,16 @@ internal object ZFileFBHUtil {
             folderBadgeIcon = R.drawable.zfile_wechat,
             folderBadgeType = 1
         )
-        val wechatPath2 = (WECHAT_FILE_PATH + WECHAT_PHOTO_VIDEO).substring(0, (WECHAT_FILE_PATH + WECHAT_PHOTO_VIDEO).length - 1)
+        val wPath2 = WECHAT_FILE_PATH + WECHAT_PHOTO_VIDEO
+        val wechatPath2 = wPath2.substring(0, wPath2.length - 1)
         map[wechatPath2] = ZFileFolderBadgeHintBean(
             folderPath = wechatPath2,
             folderHint = "微信图片视频",
             folderBadgeIcon = R.drawable.zfile_wechat,
             folderBadgeType = 1
         )
-        val wechatPath3 = (WECHAT_FILE_PATH + WECHAT_DOWLOAD).substring(0, (WECHAT_FILE_PATH + WECHAT_DOWLOAD).length - 1)
+        val wPath3 = WECHAT_FILE_PATH + WECHAT_DOWLOAD
+        val wechatPath3 = wPath3.substring(0, wPath3.length - 1)
         map[wechatPath3] = ZFileFolderBadgeHintBean(
             folderPath = wechatPath3,
             folderHint = "微信下载",

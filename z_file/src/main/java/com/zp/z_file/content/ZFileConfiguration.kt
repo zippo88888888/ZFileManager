@@ -14,6 +14,10 @@ import java.io.Serializable
 /**
  * 配置信息（单列保存，一处设置，全局通用）
  *
+ * 1.4.6 主要更新：
+ * 1) 新增 [ZFileSAFListener]、通过 SAF 访问Android/data 和 Android/obb 目录
+ * 2) 新增 复制文件详情文字，新增 [showMenu] 属性
+ *
  * 1.4.5 主要更新信息：
  * 1) 新增 [showFolderBadgeHint]、[ZFileFolderBadgeHintListener] 文件夹角标展示
  * 2) 新增 [ZFileClickListener] 用于捕获点击事件
@@ -275,6 +279,11 @@ class ZFileConfiguration : Serializable {
     var showBackIcon = true
 
     /**
+     * 是否显示 Menu菜单
+     */
+    var showMenu = true
+
+    /**
      * 是否需要两次点击后才能选择文件(参考百度网盘)  false：点击后立刻自动选中文件；true：默认
      */
     var needTwiceClick = true
@@ -519,6 +528,14 @@ class ZFileConfiguration : Serializable {
          */
         fun showBackIcon(showBackIcon: Boolean): Build {
             configuration.showBackIcon = showBackIcon
+            return this
+        }
+
+        /**
+         * 是否显示 Menu菜单
+         */
+        fun showMenu(showMenu: Boolean): Build {
+            configuration.showMenu = showMenu
             return this
         }
 

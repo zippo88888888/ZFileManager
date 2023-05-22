@@ -1,14 +1,15 @@
 package com.zp.z_file.util
 
 import android.Manifest
-import android.os.Build
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Environment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.zp.z_file.content.toUriNormalForSAF
 
 internal object ZFilePermissionUtil {
 
@@ -17,6 +18,22 @@ internal object ZFilePermissionUtil {
     const val READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
 
     const val WRITE_EXTERNAL_CODE = 0x1001
+
+    /**
+     * 检验 受保护的文件夹是否有访问权限
+     * @param context Context
+     * @param path String
+     * @return Boolean
+     */
+    fun hasProtectedPermission(context: Context, path: String): Boolean {
+        val newPath = path.toUriNormalForSAF()
+        for (permission in context.contentResolver.persistedUriPermissions) {
+            if (permission.isReadPermission && permission.uri.toString() == newPath) {
+                return true
+            }
+        }
+        return false
+    }
 
     /**
      * 判断 小于 Android 11 或 有完全的文件管理权限

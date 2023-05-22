@@ -91,6 +91,13 @@ fun ZFileDsl.fileBadgeHint(block: () -> ZFileFolderBadgeHintListener) {
 }
 
 /**
+ * 设置 [ZFileSAFListener] 配置 SAF 相关
+ */
+fun ZFileDsl.fileSAF(block: () -> ZFileSAFListener) {
+    setSAF(block)
+}
+
+/**
  * 设置 [ZFileOtherListener] 配置 其他
  */
 fun ZFileDsl.fileOther(block: () -> ZFileOtherListener) {
@@ -165,6 +172,10 @@ class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
 
     internal fun setBadgeHint(hintBlock: () -> ZFileFolderBadgeHintListener) {
         getZFileHelp().setFileBadgeHintListener(hintBlock())
+    }
+
+    internal fun setSAF(safBlock: () -> ZFileSAFListener) {
+        getZFileHelp().setFileSAFListener(safBlock())
     }
 
     internal fun setOther(otherBlock: () -> ZFileOtherListener) {

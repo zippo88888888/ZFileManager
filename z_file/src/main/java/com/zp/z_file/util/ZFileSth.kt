@@ -10,7 +10,6 @@ import com.zp.z_file.content.CUT_TYPE
 import com.zp.z_file.content.DELTE_TYPE
 import com.zp.z_file.content.ZFileException
 import com.zp.z_file.content.ZIP_BUFFER_SIZE
-import com.zp.z_file.content.getStringById
 import com.zp.z_file.content.toast
 import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import java.io.*
@@ -51,7 +50,7 @@ internal object ZFileSth {
                 }
                 it.runOnUiThread {
                     dialog.dismiss()
-                    it.toast(if (isSuccess) "${msg}成功" else "${msg}失败或已存在相同文件")
+                    it.toast(if (isSuccess) "${msg}成功" else "${msg}失败或权限不足")
                     block.invoke(isSuccess)
                 }
             }

@@ -1,8 +1,6 @@
 package com.zp.z_file.ui.dialog
 
-import android.app.Dialog
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,10 +39,6 @@ internal class ZFileSortDialog : ZFileManageDialog(), RadioGroup.OnCheckedChange
     }
 
     override fun getContentView() = R.layout.dialog_zfile_sort
-
-    override fun createDialog(savedInstanceState: Bundle?) = Dialog(context!!, R.style.ZFile_Common_Dialog).apply {
-        window?.setGravity(Gravity.CENTER)
-    }
 
     override fun init(savedInstanceState: Bundle?) {
         sortSelectId = arguments?.getInt("sortSelectId", 0) ?: 0

@@ -1,10 +1,8 @@
 package com.zp.z_file.ui.dialog
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.media.MediaPlayer
 import android.os.*
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +10,6 @@ import android.widget.SeekBar
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.content.setNeedWH
-import com.zp.z_file.content.toast
 import com.zp.z_file.databinding.DialogZfileAudioPlayBinding
 import com.zp.z_file.util.ZFileOtherUtil
 import java.lang.ref.WeakReference
@@ -52,10 +49,6 @@ internal class ZFileAudioPlayDialog : ZFileManageDialog(), SeekBar.OnSeekBarChan
     ): View? {
         vb = DialogZfileAudioPlayBinding.inflate(inflater, container, false)
         return vb?.root
-    }
-
-    override fun createDialog(savedInstanceState: Bundle?) = Dialog(context!!, R.style.ZFile_Common_Dialog).apply {
-        window?.setGravity(Gravity.CENTER)
     }
 
     override fun init(savedInstanceState: Bundle?) {

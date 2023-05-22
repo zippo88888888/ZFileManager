@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Environment
 import android.view.View
 import android.widget.FrameLayout
@@ -11,8 +12,10 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.R
+import com.zp.z_file.async.ZFileSafAsync
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
@@ -333,7 +336,7 @@ open class ZFileClickListener {
 }
 
 /**
- * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请重写该类的所有方法）！
+ * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请重写该类的相关方法）
  * 耗时的文件操作建议放在 非 UI线程中
  */
 open class ZFileOperateListener {
@@ -470,19 +473,99 @@ open class ZFileFolderBadgeHintListener {
     }
 
     /**
-     * 匹配方式
-     * true：等价于 equals，在[doingWork] 中 ArrayMap key 值必须为文件夹全路径：如 /storage/emulated/0/DICM
-     * false：等价于 indexOf，在[doingWork] 中 ArrayMap key 值 只需要是文件夹名称：如 DCIM/Camera
+     * 匹配方式，如果该方式依旧无法满足需求，重写 [getDetailRule] 方法 即可实现自己的匹配规则
+     * true：等价于 equals，在 [doingWork] 中 ArrayMap key 值必须为文件夹全路径：如 /storage/emulated/0/DICM
+     * false：等价于 indexOf，在 [doingWork] 中 ArrayMap key 值 只需要是文件夹名称：如 DCIM/Camera
      */
+    @Deprecated(
+        "自1.4.6起，开发者可以选择重写ZFileFolderBadgeHintListener.getDetailRule() 达到完全自定义",
+        ReplaceWith("true")
+    )
     open fun isEquals(): Boolean {
         return true
     }
 
     /**
-     * 具体的配置 信息
+     * 具体的配置信息，即需要展示 标签/角标 的文件夹
      */
     open fun doingWork(context: Context): ArrayMap<String, ZFileFolderBadgeHintBean>? {
         return ZFileFBHUtil.doingWork(context)
+    }
+
+    /**
+     * 获取具体的匹配规则
+     * @param item ZFileBean    文件夹数据
+     */
+    open fun getDetailRule(item: ZFileBean, context: Context): ZFileFolderBadgeHintBean? {
+        val map = doingWork(context)
+        return map?.get(item.filePath)
+    }
+}
+
+/**
+ * 自定义 SAF操作 访问 Android/data Android/obb 目录
+ */
+open class ZFileSAFListener {
+
+    /**
+     * 检验 是否有 访问 受保护文件夹 的权限
+     * @param context Context       Context
+     * @param path String           Android/data or Android/obb
+     */
+    open fun hasProtectedPermission(context: Context, path: String): Boolean {
+        return ZFileSAF.hasProtectedPermission(context, path)
+    }
+
+    /**
+     * 跳转到 SAF 授权页面
+     * @param fragment Fragment     Fragment
+     * @param path String           Android/data or Android/obb
+     * @param code Int              请求code
+     */
+    open fun openSAF(fragment: Fragment, path: String, code: Int = SAF_DATA_OBB_CODE) {
+        if (hasProtectedPermission(fragment.requireContext(), path)) {
+            onSAFDataFormatData(fragment, path)
+        } else {
+            ZFileSAF.toSAF(fragment, path, code)
+        }
+    }
+
+    /**
+     * SAF 授权 回调
+     */
+    open fun onSAFResult(
+        fragment: Fragment,
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        path: String
+    ) {
+        val isSuccess = ZFileSAF.onActivityResult(fragment, requestCode, resultCode, data, path)
+        if (isSuccess) {
+            onSAFDataFormatData(fragment, path)
+        }
+    }
+
+    /**
+     * SAF 数据 转换（为避免UI卡顿，强烈建议在非UI线程中操作）
+     * @param fragment Fragment   Fragment
+     * @param path String         Android/data or Android/obb
+     */
+    open fun onSAFDataFormatData(fragment: Fragment, path: String) {
+        val documentFile = ZFileSAF.getDocumentFilePath(fragment.requireContext(), path)
+        if (documentFile == null) {
+            ZFileLog.e("当前路径无法被识别！")
+            fragment.requireContext().toast("当前路径无法被识别！")
+            if (fragment is ZFileListFragment) {
+                fragment.onSAFResult(null)
+            }
+        } else {
+            ZFileSafAsync(fragment.requireContext()) {
+                if (fragment is ZFileListFragment) {
+                    fragment.onSAFResult(this)
+                }
+            }.startSAF(documentFile.listFiles())
+        }
     }
 }
 
@@ -530,6 +613,15 @@ open class ZFileOtherListener {
      */
     open fun getImgInfoView(context: Context, imgPath: String): View? {
         return null
+    }
+
+    /**
+     * 获取 /storage/emulated/0/Android/data及obb目录展示的展位图布局（Android 11及以上版本无法查看，但可通过SAF访问）
+     * 请注意：布局中必须包含控件 id：zfile_do_btn
+     * 该id对应视图功能：用户点击后跳转SAF
+     */
+    open fun getDataAndObbFoldLayoutId(): Int {
+        return ZFILE_DEFAULT
     }
 
 }

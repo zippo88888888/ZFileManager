@@ -11,12 +11,7 @@ class MyFolderBadgeHintListener : ZFileFolderBadgeHintListener() {
     override fun doingWork(context: Context): ArrayMap<String, ZFileFolderBadgeHintBean> {
         val map = super.doingWork(context)
         val androidPath = "/storage/emulated/0/Android"
-        map!![androidPath] = ZFileFolderBadgeHintBean(
-            folderPath = androidPath,
-            folderHint = "Android NB 666",
-            folderBadgeIcon = R.drawable.zfile_sys,
-            folderBadgeType = 1
-        )
+        map!![androidPath]?.folderHint = "Android NB 666"
         val otherPath = "/storage/emulated/0/Documents"
         map[otherPath] = ZFileFolderBadgeHintBean(
             folderPath = otherPath,

@@ -5,8 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -56,6 +58,10 @@ class ZFileListFragment : Fragment() {
     private var rootPath = "" // 根目录
     private var specifyPath: String? = "" // 指定目录
     private var nowPath: String? = "" // 当前目录
+        set(value) {
+            field = value
+            getZFileHelp().setCurrentPath(value)
+        }
 
     private var hasPermission = false
 
@@ -156,13 +162,18 @@ class ZFileListFragment : Fragment() {
         }
     }
 
-    private fun setMenuState() {
-        vb?.zfileListToolBar?.menu?.apply {
-            findItem(R.id.menu_zfile_down).isVisible = barShow
-            findItem(R.id.menu_zfile_px).isVisible = !barShow
-            findItem(R.id.menu_zfile_show).isVisible = !barShow
-            findItem(R.id.menu_zfile_hidden).isVisible = !barShow
+    private fun setMenuVis() {
+        val isVisible = if (getZFileConfig().showMenu) !barShow else false
+        vb?.zfileListToolBar?.menu?.let {
+            it.findItem(R.id.menu_zfile_px).isVisible = isVisible
+            it.findItem(R.id.menu_zfile_show).isVisible = isVisible
+            it.findItem(R.id.menu_zfile_hidden).isVisible = isVisible
         }
+    }
+
+    private fun setMenuState() {
+        vb?.zfileListToolBar?.menu?.findItem(R.id.menu_zfile_down)?.isVisible = barShow
+        setMenuVis()
     }
 
     private fun menuItemClick(menu: MenuItem?): Boolean {
@@ -220,6 +231,7 @@ class ZFileListFragment : Fragment() {
         vb?.zfileListToolBar?.apply {
             if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
             inflateMenu(R.menu.zfile_list_menu)
+            setMenuVis()
             setOnMenuItemClickListener { menu -> menuItemClick(menu) }
             setNavigationOnClickListener { back() }
         }
@@ -233,7 +245,7 @@ class ZFileListFragment : Fragment() {
         hasPermission = true
         setPermissionState(View.GONE)
 
-        vb?.zfileListRefreshLayout?.property() {
+        vb?.zfileListRefreshLayout?.property {
             getData(nowPath)
         }
         initPathRecyclerView()
@@ -300,8 +312,8 @@ class ZFileListFragment : Fragment() {
                     backList.add(item.filePath)
                     filePathAdapter.addItem(filePathAdapter.itemCount, item.toPathBean())
                     vb?.zfileListPathRecyclerView?.scrollToPosition(filePathAdapter.itemCount - 1)
-                    getData(item.filePath)
                     nowPath = item.filePath
+                    getData(item.filePath)
                     fileClickListener.itemFoldClick(item, v)
                 }
             }
@@ -361,23 +373,49 @@ class ZFileListFragment : Fragment() {
         ZFileUtil.getList(requireContext()) {
             if (isNullOrEmpty()) {
                 fileListAdapter?.clear()
-                setEmptyState(View.VISIBLE)
+                if (nowPath.isDataOrObbPath()) {
+                    if (getZFileHelp().getFileSAFListener().hasProtectedPermission(requireContext(), nowPath!!)) {
+                        // 有SAF 权限
+                        ZFileLog.i("$nowPath SAF 权限已获取")
+                        getZFileHelp().getFileSAFListener().onSAFDataFormatData(this@ZFileListFragment, nowPath!!)
+                    } else {
+                        vb?.zfileListRefreshLayout?.isRefreshing = false
+                        ZFileLog.e("$nowPath SAF 权限 未获取 或 权限获取失败")
+                        setEmptyState(View.GONE)
+                        setDoState(View.VISIBLE)
+                    }
+                } else {
+                    vb?.zfileListRefreshLayout?.isRefreshing = false
+                    setEmptyState(View.VISIBLE)
+                    setDoState(View.GONE)
+                }
             } else {
+                vb?.zfileListRefreshLayout?.isRefreshing = false
                 fileListAdapter?.setDatas(this)
                 setEmptyState(View.GONE)
+                setDoState(View.GONE)
             }
-            vb?.zfileListRefreshLayout?.isRefreshing = false
         }
     }
 
     private fun showSelectDialog(index: Int, item: ZFileBean): Boolean {
+        if (item.filePath.isDataOrObbPath()) {
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle(R.string.zfile_saf_error)
+                setMessage(R.string.zfile_saf_error_content)
+                setCancelable(false)
+                setPositiveButton(R.string.zfile_saf_error_down) { dialog, _ -> dialog.dismiss() }
+                show()
+            }
+            return true
+        }
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("请选择")
+            setTitle(R.string.zfile_select)
             setItems(titleArray) { dialog, which ->
                 jumpByWhich(item, which, index)
                 dialog.dismiss()
             }
-            setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
+            setPositiveButton(R.string.zfile_cancel) { dialog, _ -> dialog.dismiss() }
             show()
         }
         return true
@@ -485,7 +523,7 @@ class ZFileListFragment : Fragment() {
     }
 
     /**
-     * 监听返回按钮
+     * 监听返回操作
      * 请在 Activity 中的 onBackPressed 中调用该方法
      */
     fun onBackPressed() {
@@ -493,6 +531,12 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun back() {
+        if (vb?.zfileListRefreshLayout?.isRefreshing == true) {
+            val str = getString(R.string.zfile_data_loading)
+            ZFileLog.i(str)
+            requireContext().toast(str)
+            return
+        }
         val path = getThisFilePath()
         if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
@@ -637,14 +681,40 @@ class ZFileListFragment : Fragment() {
         fileListAdapter?.reset()
         backList.clear()
         zFragmentListener = null
+        getZFileHelp().setCurrentPath(null)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        getZFileHelp().getFileSAFListener().onSAFResult(this, requestCode, resultCode, data, nowPath!!)
+    }
+
+    fun onSAFResult(list: MutableList<ZFileBean>?, error: Boolean = false) {
+        if (error) {
+            setEmptyState(View.GONE)
+            setDoState(View.VISIBLE)
+        } else {
+            if (list.isNullOrEmpty()) {
+                fileListAdapter?.clear()
+                setEmptyState(View.VISIBLE)
+                setDoState(View.GONE)
+            } else {
+                fileListAdapter?.setDatas(list)
+                setEmptyState(View.GONE)
+                setDoState(View.GONE)
+            }
+        }
+        vb?.zfileListRefreshLayout?.isRefreshing = false
     }
 
     private var emptyView: View? = null
     private var noPermissionView: View? = null
+    private var doView: View? = null
 
     private fun initViewStub() {
         vb?.zfileListEmptyStub?.layoutResource = getFileEmptyLayoutId()
         vb?.zfileListNoPermissionStub?.layoutResource = getFilePermissionFailedLayoutId()
+        vb?.zfileListDoStub?.layoutResource = getFileDoLayoutId()
     }
 
     private fun setEmptyState(viewState: Int) {
@@ -660,8 +730,8 @@ class ZFileListFragment : Fragment() {
             noPermissionView = vb?.zfileListNoPermissionStub?.inflate()
             val btn = noPermissionView?.findViewById<View>(R.id.zfile_permission_againBtn)
             if (btn == null) {
-                ZFileLog.e(PERMISSION_FAILED_TITLE)
-                throw ZFileException(PERMISSION_FAILED_TITLE2)
+                ZFileLog.e(PERMISSION_FAILED_TITLE1)
+                throw ZFileException(PERMISSION_FAILED_TITLE1_2)
             }
             btn.setOnClickListener {
                 callPermission()
@@ -669,6 +739,24 @@ class ZFileListFragment : Fragment() {
             }
         }
         noPermissionView?.visibility = viewState
+    }
+
+    private fun setDoState(viewState: Int) {
+        if (doView == null) {
+            doView = vb?.zfileListDoStub?.inflate()
+            val btn = doView?. findViewById<View>(R.id.zfile_do_btn)
+            if (btn == null) {
+                ZFileLog.e(PERMISSION_FAILED_TITLE2)
+                throw ZFileException(PERMISSION_FAILED_TITLE2_2)
+            }
+            btn.setOnClickListener {
+                vb?.zfileListRefreshLayout?.isRefreshing = true
+                setEmptyState(View.GONE)
+                setDoState(View.GONE)
+                getZFileHelp().getFileSAFListener().openSAF(this, nowPath!!, SAF_DATA_OBB_CODE)
+            }
+        }
+        doView?.visibility = viewState
     }
 
 }

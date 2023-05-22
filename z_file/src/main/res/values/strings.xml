@@ -18,6 +18,8 @@
     <string name="zfile_sort_jx">&#160;降序</string>
     <string name="zfile_down">确定</string>
     <string name="zfile_cancel">取消</string>
+    <string name="zfile_copy">复制</string>
+    <string name="zfile_select">请选择</string>
     <string name="zfile_info_title">文件详情</string>
     <string name="zfile_info_name">文件名称：</string>
     <string name="zfile_info_type">文件类型：</string>
@@ -46,7 +48,13 @@
     <string name="zfile_11_bad">同意“允许访问所有文件权限”才能正常使用！</string>
     <string name="zfile_permission_bad2">您已拒绝权限的申请，该功能暂时无法使用，请您同意权限后继续！</string>
     <string name="zfile_permission_bad3">重新获取</string>
-    <string name="zfile_no_app_open_file">文件类型可能不匹配或找不到打开该文件类型的程序，打开失败</string>
+    <string name="zfile_no_app_open_file">文件类型可能不匹配或找不到打开该文件类型的程序，打开失败！</string>
     <string name="zfile_can_not_open">不支持预览该文件</string>
+    <string name="zfile_do_title">由于系统限制，无法直接访问文件，请先前往Android存储访问框架授权该目录，方可继续访问文件！</string>
+    <string name="zfile_do_btn_name">前往授权</string>
+    <string name="zfile_saf_error">警告</string>
+    <string name="zfile_saf_error_content">您目前访问的目录已受到Android系统保护！为了保证系统中其他App的稳定运行，当前目录禁止任何文件操作！</string>
+    <string name="zfile_saf_error_down">我知道了</string>
+    <string name="zfile_data_loading">数据加载中，请稍后…</string>
 
 </resources>

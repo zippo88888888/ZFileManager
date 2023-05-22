@@ -89,6 +89,7 @@ class SuperActivity : AppCompatActivity() {
                     getZFileConfig().apply {
                         needLongClick = false
                         clickAndAutoSelected = true
+                        showMenu = false
                         titleGravity = ZFileConfiguration.TITLE_CENTER
                         sortordBy = ZFileConfiguration.BY_NAME
                         sortord = ZFileConfiguration.ASC

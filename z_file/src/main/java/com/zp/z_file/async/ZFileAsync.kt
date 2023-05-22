@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import androidx.documentfile.provider.DocumentFile
 import com.zp.z_file.content.ZFileBean
 import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
@@ -22,6 +23,9 @@ open class ZFileAsync(
 
     private val OTHER: Int
         get() = 20
+
+    private val SAF: Int
+        get() = 22
 
     private var handler: ZFileAsyncHandler? = null
 
@@ -98,6 +102,17 @@ open class ZFileAsync(
         })
     }
 
+    /** 开始 SAF 操作 */
+    fun startSAF(documentFiles: Array<DocumentFile>?) {
+        doStart()
+        thread { sendMessage(SAF, doingWorkForSAF(documentFiles)) }
+    }
+
+    /** 执行 SAF 具体数据操作 */
+    open fun doingWorkForSAF(documentFiles:Array<DocumentFile>?): MutableList<ZFileBean>? {
+        return null
+    }
+
     // =============================================================================================
 
     internal fun start(filePath: String?) {
@@ -108,5 +123,7 @@ open class ZFileAsync(
     internal open fun doingWork(filePath: String?): MutableList<ZFileBean>? {
         return null
     }
+
+
 
 }

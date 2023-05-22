@@ -4,14 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Point
 import android.net.Uri
-import android.os.Environment
+import android.os.Build
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
@@ -26,7 +26,6 @@ import com.zp.z_file.util.ZFileHelp
 import com.zp.z_file.util.ZFileLog
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 const val PNG = "png"
 const val JPG = "jpg"
@@ -121,9 +120,13 @@ internal const val ZIP_TYPE = 0x2004
 internal const val FILE = 0
 internal const val FOLDER = 1
 
-internal const val PERMISSION_FAILED_TITLE = "自定义权限视图展示：布局文件中某个控件必须要设置ID：zfile_permission_againBtn"
-internal const val PERMISSION_FAILED_TITLE2 = "【ZFileOtherListener.getPermissionFailedLayoutId()】Can't find id [R.id.zfile_permission_againBtn]! " +
+internal const val PERMISSION_FAILED_TITLE1 = "自定义权限视图展示：布局文件中某个控件必须要设置ID：zfile_permission_againBtn"
+internal const val PERMISSION_FAILED_TITLE1_2 = "【ZFileOtherListener.getPermissionFailedLayoutId()】Can't find id [R.id.zfile_permission_againBtn]! " +
         "You must be set view id(zfile_permission_againBtn) in layout"
+
+internal const val PERMISSION_FAILED_TITLE2 = "自定义data及obb目录展示的展位图展示：布局文件中某个控件必须要设置ID：zfile_do_btn"
+internal const val PERMISSION_FAILED_TITLE2_2 = "【ZFileOtherListener.getDataAndObbFoldLayoutId()】Can't find id [R.id.zfile_do_btn]! " +
+        "You must be set view id(zfile_do_btn) in layout"
 
 internal const val QQ_PIC = "/storage/emulated/0/tencent/QQ_Images/" // 保存的图片
 internal const val QQ_PIC_MOVIE = "/storage/emulated/0/Pictures/QQ/" // 保存的图片和视频
@@ -139,6 +142,12 @@ internal const val LOG_TAG = "ZFileManager"
 internal const val ERROR_MSG = "fragmentOrActivity is not FragmentActivity or Fragment"
 internal const val QW_FILE_TYPE_KEY = "QW_fileType"
 internal const val FILE_START_PATH_KEY = "fileStartPath"
+
+internal const val SAF_DATA_PATH = "/storage/emulated/0/Android/data"
+internal const val SAF_OBB_PATH = "/storage/emulated/0/Android/obb"
+internal const val SAF_TREE_ROOT = "content://com.android.externalstorage.documents/tree/"
+/** SAF Android/data or Android/obb RequestCode */
+internal const val SAF_DATA_OBB_CODE = 0x3001
 
 internal fun Context.getStatusBarHeight() = getSystemHeight("status_bar_height")
 internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
@@ -201,6 +210,14 @@ internal fun getFileEmptyLayoutId(): Int {
     }
     return emptyLayoutResId
 }
+internal fun getFileDoLayoutId(): Int {
+    var doLayoutResId = getZFileHelp().getOtherListener()?.getDataAndObbFoldLayoutId() ?: ZFILE_DEFAULT
+    if (doLayoutResId == ZFILE_DEFAULT) {
+        doLayoutResId = R.layout.layout_zfile_list_do
+    }
+    return doLayoutResId
+}
+@RequiresApi(Build.VERSION_CODES.R)
 internal fun Context.toFileManagerPage() {
     try {
         val action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
@@ -228,6 +245,7 @@ internal infix fun <E> Set<E>.indexOf(value: String): Boolean {
     }
     return flag
 }
+
 internal fun File.getFileType() = this.path.getFileType()
 internal fun String.getFileType() = this.run {
     substring(lastIndexOf(".") + 1, length)
@@ -245,6 +263,19 @@ internal infix fun String?.has(value: String?) : Boolean {
     if (this.isNullOrEmpty() || value.isNullOrEmpty()) return false
     return this.indexOf(value) != -1 || value.indexOf(this) != -1
 }
+internal fun String?.isDataOrObbPath(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return this has SAF_DATA_PATH || this has SAF_OBB_PATH
+    } else {
+        return false
+    }
+}
+internal fun String.toUriNormalForSAF(): String {
+    var path = this
+    path = path.replace(SD_ROOT, "")
+    path = Uri.encode(path).replace("/", "%2F")
+    return "${SAF_TREE_ROOT}primary%3A$path"
+}
 internal fun ZFileBean.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.fileName
     filePath = this@toPathBean.filePath
@@ -253,22 +284,6 @@ internal infix fun ZFileBean.toQWBean(isSelected: Boolean) = ZFileQWBean(this, i
 internal infix fun ZFileBean.canNotSelect(array: Array<String>?): Boolean {
     return if (array.isNullOrEmpty()) false
     else array.any { it == ZFileHelp.getFileTypeBySuffix(filePath) }
-}
-internal infix fun ZFileBean.getBadgeHintBean(context: Context): ZFileFolderBadgeHintBean? {
-    val listener = getZFileHelp().getFileBadgeHintListener()
-    val map = listener.doingWork(context)
-    if (listener.isEquals()) {
-        return map?.get(filePath)
-    } else {
-        var key = ""
-        map?.keys?.forEach forEarch@{
-            if (filePath has it) {
-                key = it
-                return@forEarch
-            }
-        }
-        return map?.get(key)
-    }
 }
 internal fun File.toPathBean() = ZFilePathBean().apply {
     fileName = this@toPathBean.name

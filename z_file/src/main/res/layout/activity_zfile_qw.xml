@@ -12,14 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/zfile_base_color"
-        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
         app:popupTheme="@style/ZFile_ToolbarPopupTheme"
         app:theme="@style/ZFile_ToolbarTheme"
+        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
         tools:navigationIcon="@drawable/zfile_back">
 
         <TextView
-            style="@style/Base.DialogWindowTitle.AppCompat"
             android:id="@+id/zfile_qw_centerTitle"
+            style="@style/Base.DialogWindowTitle.AppCompat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -39,13 +39,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.google.android.material.tabs.TabLayout
+            <!--<com.google.android.material.tabs.TabLayout
                 android:id="@+id/zfile_qw_tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                app:tabTextColor="@color/zfile_gray"
+                android:background="@color/zfile_bgcolor"
                 app:tabSelectedTextColor="@color/zfile_base_color"
-                android:background="@color/zfile_bgcolor">
+                app:tabTextColor="@color/zfile_gray" >
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -67,7 +67,12 @@
                     android:layout_height="match_parent"
                     android:text="@string/zfile_other" />
 
-            </com.google.android.material.tabs.TabLayout>
+            </com.google.android.material.tabs.TabLayout>-->
+
+            <com.zp.z_file.ui.ZFileItemView
+                android:id="@+id/zfile_qw_itemView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/zfile_qw_viewPager"
@@ -80,7 +85,7 @@
             android:id="@+id/zfile_qw_permissionStub"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/layout_zfile_list_permission"/>
+            tools:layout="@layout/layout_zfile_list_permission" />
 
     </FrameLayout>
 

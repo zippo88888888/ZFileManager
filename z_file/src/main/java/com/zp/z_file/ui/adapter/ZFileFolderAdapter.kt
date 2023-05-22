@@ -18,7 +18,7 @@ internal class ZFileFolderAdapter(context: Context) : ZFileAdapter<ZFileBean>(co
 
     override fun bindView(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
         if (holder.itemViewType == FOLDER) {
-            val hintBean = item getBadgeHintBean context
+            val hintBean = getZFileHelp().getFileBadgeHintListener().getDetailRule(item, context)
             holder.apply {
                 setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
                 setHint(R.id.item_zfile_list_folderHintTxt, hintBean)

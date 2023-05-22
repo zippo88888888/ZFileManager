@@ -1,11 +1,10 @@
 package com.zp.z_file.ui.dialog
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.view.Gravity
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,14 +48,9 @@ internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
 
     override fun getContentView() = R.layout.dialog_zfile_rename
 
-    override fun createDialog(savedInstanceState: Bundle?) =
-        Dialog(context!!, R.style.ZFile_Common_Dialog).apply {
-            window?.setGravity(Gravity.CENTER)
-        }
-
     override fun init(savedInstanceState: Bundle?) {
         oldName = arguments?.getString("oldName") ?: "请输入文件名称"
-        handler = Handler()
+        handler = Handler(Looper.myLooper()!!)
         vb?.zfileDialogRenameEdit?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
                 rename()

@@ -113,6 +113,16 @@ class ZFileManageHelp {
     }
 
     /**
+     * SAF 相关
+     */
+    private var fileSAFListener = ZFileSAFListener()
+    internal fun getFileSAFListener() = fileSAFListener
+    fun setFileSAFListener(fileSAFListener: ZFileSAFListener): ZFileManageHelp {
+        this.fileSAFListener = fileSAFListener
+        return this
+    }
+
+    /**
      * 其他操作
      */
     private var otherFileListener: ZFileOtherListener? = null
@@ -131,6 +141,21 @@ class ZFileManageHelp {
         this.config = config
         return this
     }
+
+    /**
+     * 当前正在查看文件列表的路径
+     */
+    private var path: String? = ""
+    internal fun setCurrentPath(path: String?): ZFileManageHelp {
+        if (path == SD_ROOT) {
+            this.path = SD_ROOT.substring(0, SD_ROOT.length - 1)
+        } else {
+            this.path = path
+        }
+        ZFileLog.i("当前正在查看文件列表的路径 ---> ${this.path}")
+        return this
+    }
+    fun getCurrentPath() = path
 
     /**
      * 获取返回的数据

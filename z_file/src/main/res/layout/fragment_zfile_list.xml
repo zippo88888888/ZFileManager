@@ -70,6 +70,12 @@
             android:layout_height="match_parent"
             tools:layout="@layout/layout_zfile_list_permission"/>
 
+        <ViewStub
+            android:id="@+id/zfile_list_doStub"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/layout_zfile_list_do"/>
+
     </FrameLayout>
 
 </LinearLayout>

@@ -141,6 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        tools:visibility="visible"
         android:visibility="gone">
 
 
@@ -232,15 +233,14 @@
             android:text="@string/zfile_down"
             android:textColor="@color/zfile_base_color" />
 
-        <!--<Button
+        <Button
             android:id="@+id/zfile_dialog_info_copy"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/dialog_info_down"
-            android:text="复制所有信息"
-            android:textColor="@color/zfile_base_color"
-            android:visibility="gone" />-->
+            android:layout_toStartOf="@+id/zfile_dialog_info_down"
+            android:text="@string/zfile_copy"
+            android:textColor="@color/zfile_base_color" />
 
     </RelativeLayout>
 

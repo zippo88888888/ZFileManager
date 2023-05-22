@@ -62,7 +62,9 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         setPermissionState(View.GONE)
         hasPermission = true
         vb.zfileQwViewPager.addOnPageChangeListener(this)
-        vb.zfileQwTabLayout.setupWithViewPager( vb.zfileQwViewPager)
+//        vb.zfileQwTabLayout.setupWithViewPager( vb.zfileQwViewPager)
+        vb.zfileQwItemView.setupWithViewPager(vb.zfileQwViewPager)
+
         vpAdapter = ZFileQWAdapter(type, isManage, this, supportFragmentManager)
         vb.zfileQwViewPager.adapter = vpAdapter
         vb.zfileQwViewPager.offscreenPageLimit = 4
@@ -221,8 +223,8 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
             noPermissionView = vb.zfileQwPermissionStub.inflate()
             val btn = noPermissionView?.findViewById<View>(R.id.zfile_permission_againBtn)
             if (btn == null) {
-                ZFileLog.e(PERMISSION_FAILED_TITLE)
-                throw ZFileException(PERMISSION_FAILED_TITLE2)
+                ZFileLog.e(PERMISSION_FAILED_TITLE1)
+                throw ZFileException(PERMISSION_FAILED_TITLE1_2)
             }
             btn.setOnClickListener { callPermission() }
         }
@@ -237,9 +239,9 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
     ) : FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         var list = ArrayList<Fragment>()
-        private val titles by lazy {
+        /*private val titles by lazy {
             ZFileQWUtil.getQWTitle(context)
-        }
+        }*/
 
         init {
             list.add(ZFileQWFragment.newInstance(type, ZFILE_QW_PIC, isManger))
@@ -254,14 +256,14 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
 
         override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
 
-        override fun getPageTitle(position: Int): String? {
+        /*override fun getPageTitle(position: Int): String {
             val list = getZFileHelp().getQWFileLoadListener()?.getTitles() ?: titles
             if (list.size != QW_SIZE) {
                 throw ZFileException("ZQWFileLoadListener.getTitles() size must be $QW_SIZE")
             } else {
                return list[position]
             }
-        }
+        }*/
     }
 
 }

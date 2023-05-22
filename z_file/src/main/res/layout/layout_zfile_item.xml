@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/zfile_bgcolor"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/zfile_item_layout1"
+        style="@style/ZFile_Item_Layout">
+
+        <TextView
+            android:id="@+id/zfile_item_titleTxt1"
+            style="@style/ZFile_Item_Txt"
+            tools:text="微信" />
+
+        <View
+            android:id="@+id/zfile_item_line1"
+            style="@style/ZFile_Item_Line"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/zfile_item_layout2"
+        style="@style/ZFile_Item_Layout">
+
+        <TextView
+            android:id="@+id/zfile_item_titleTxt2"
+            style="@style/ZFile_Item_Txt"
+            tools:text="微信" />
+
+        <View
+            android:id="@+id/zfile_item_line2"
+            style="@style/ZFile_Item_Line"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/zfile_item_layout3"
+        style="@style/ZFile_Item_Layout">
+
+        <TextView
+            android:id="@+id/zfile_item_titleTxt3"
+            style="@style/ZFile_Item_Txt"
+            tools:text="微信" />
+
+        <View
+            android:id="@+id/zfile_item_line3"
+            style="@style/ZFile_Item_Line"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/zfile_item_layout4"
+        style="@style/ZFile_Item_Layout">
+
+        <TextView
+            android:id="@+id/zfile_item_titleTxt4"
+            style="@style/ZFile_Item_Txt"
+            tools:text="微信" />
+
+        <View
+            android:id="@+id/zfile_item_line4"
+            style="@style/ZFile_Item_Line"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>
+

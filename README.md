@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.4.5-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -9,7 +9,8 @@
 ### 3. 支持查看指定文件类型，支持文件类型拓展，支持嵌套在Fragment中使用
 ### 4. 支持多选，数量、文件大小限制、实时排序、指定文件路径访问、文件夹角标
 ### 5. 支持QQ、微信文件选择 && 支持自定义获取QQ、微信文件
-### 6. 不含任何三方框架，极高的定制化，支持Android 10/11/12/++、AndroidX、DSL
+### 6. 支持 Android/data、Android/obb 数据获取，同时支持自定义获取
+### 7. 不含任何三方框架，极高的定制化，支持Android 10/11/12/+++、DSL
 
 
 ### 部分截图（[下载demo直接体验](https://www.pgyer.com/Q13x)）
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
 ###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [点这里页面加载速度应该会快一点](https://blog.csdn.net/qq_28322987/article/details/81384886)
 
 
-[![Travis](https://img.shields.io/badge/ZFile-1.4.5-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

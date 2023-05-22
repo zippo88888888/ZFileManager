@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,9 +18,7 @@ import com.zp.z_file.content.ZFileBean
 import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.getZFileHelp
-import com.zp.z_file.dsl.config
-import com.zp.z_file.dsl.result
-import com.zp.z_file.dsl.zfile
+import com.zp.z_file.dsl.*
 import com.zp.zfile_manager.content.Content
 import com.zp.zfile_manager.databinding.ActivityMainBinding
 import com.zp.zfile_manager.diy.*
@@ -118,12 +117,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun diy() {
-        getZFileHelp()
+        /*getZFileHelp()
             .setFileTypeListener(MyFileTypeListener())
             .setFileOpenListener(MyFileOpenListener())
             .setFileClickListener(MyFileClickListener())
             .setFileBadgeHintListener(MyFolderBadgeHintListener())
-            .setOtherFileListener(MyFileOtherListener())
+            .setOtherFileListener(MyFileOtherListener())*/
+        zfile {
+            fileType { MyFileTypeListener() }
+            fileOpen { MyFileOpenListener() }
+            fileClick { MyFileClickListener() }
+            fileBadgeHint { MyFolderBadgeHintListener() }
+            fileSAF { MyFileSAFListener() }
+            fileOther { MyFileOtherListener() }
+        }
     }
 
     private fun callPermission() {
@@ -176,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun toFileManagerPage() {
         try {
             startActivity(

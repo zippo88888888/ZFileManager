@@ -199,7 +199,7 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
     }
 
     private fun setFolderData(holder: ZFileViewHolder, item: ZFileBean, position: Int) {
-        val hintBean = item getBadgeHintBean context
+        val hintBean = getZFileHelp().getFileBadgeHintListener().getDetailRule(item, context)
         holder.apply {
             setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
             setHint(R.id.item_zfile_list_folderHintTxt, hintBean)

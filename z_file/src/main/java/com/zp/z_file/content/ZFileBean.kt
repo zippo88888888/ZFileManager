@@ -68,7 +68,7 @@ data class ZFileBean(
  * @property folderPath String          文件夹路径
  * @property folderHint String          说明，空不展示
  * @property folderBadgeIcon Int        标签/角标 资源文件路径
- * @property folderBadgeType Int        类型 0：不展示；1：展示
+ * @property folderBadgeType Int        类型 0：标签/角标 不展示；1：标签/角标 展示
  * @constructor
  */
 data class ZFileFolderBadgeHintBean(
