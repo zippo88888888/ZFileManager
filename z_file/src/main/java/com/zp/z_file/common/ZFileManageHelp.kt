@@ -205,6 +205,7 @@ class ZFileManageHelp {
         fileOpenListener = ZFileOpenListener()
         fileClickListener = ZFileClickListener()
         fileBadgeHintListener = ZFileFolderBadgeHintListener()
+        fileSAFListener = ZFileSAFListener()
         otherFileListener = null
         config = ZFileConfiguration()
     }
