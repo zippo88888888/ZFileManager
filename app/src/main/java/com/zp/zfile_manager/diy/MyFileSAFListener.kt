@@ -7,8 +7,18 @@ import android.provider.DocumentsContract
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.zp.z_file.listener.ZFileSAFListener
+import com.zp.zfile_manager.R
 
 class MyFileSAFListener : ZFileSAFListener() {
+
+    /**
+    * 获取 /storage/emulated/0/Android/data及obb目录展示的展位图布局（Android 11及以上版本无法查看，但可通过SAF访问）
+    * 请注意：布局中必须包含控件 id：zfile_do_btn
+    * 该id对应视图功能：用户点击后跳转SAF
+    */
+    override fun getDataAndObbFoldLayoutId(): Int {
+        return R.layout.layout_diy_do
+    }
 
     /**
      * 跳转到 SAF 授权页面

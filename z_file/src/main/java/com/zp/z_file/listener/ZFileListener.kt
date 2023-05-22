@@ -508,6 +508,15 @@ open class ZFileFolderBadgeHintListener {
 open class ZFileSAFListener {
 
     /**
+     * 获取 /storage/emulated/0/Android/data及obb目录展示的展位图布局（Android 11及以上版本无法查看，但可通过SAF访问）
+     * 请注意：布局中必须包含控件 id：zfile_do_btn
+     * 该id对应视图功能：用户点击后跳转SAF
+     */
+    open fun getDataAndObbFoldLayoutId(): Int {
+        return ZFILE_DEFAULT
+    }
+
+    /**
      * 检验 是否有 访问 受保护文件夹 的权限
      * @param context Context       Context
      * @param path String           Android/data or Android/obb
@@ -614,14 +623,4 @@ open class ZFileOtherListener {
     open fun getImgInfoView(context: Context, imgPath: String): View? {
         return null
     }
-
-    /**
-     * 获取 /storage/emulated/0/Android/data及obb目录展示的展位图布局（Android 11及以上版本无法查看，但可通过SAF访问）
-     * 请注意：布局中必须包含控件 id：zfile_do_btn
-     * 该id对应视图功能：用户点击后跳转SAF
-     */
-    open fun getDataAndObbFoldLayoutId(): Int {
-        return ZFILE_DEFAULT
-    }
-
 }

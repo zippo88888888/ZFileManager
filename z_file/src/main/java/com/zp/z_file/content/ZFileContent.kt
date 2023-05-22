@@ -211,7 +211,7 @@ internal fun getFileEmptyLayoutId(): Int {
     return emptyLayoutResId
 }
 internal fun getFileDoLayoutId(): Int {
-    var doLayoutResId = getZFileHelp().getOtherListener()?.getDataAndObbFoldLayoutId() ?: ZFILE_DEFAULT
+    var doLayoutResId = getZFileHelp().getFileSAFListener().getDataAndObbFoldLayoutId()
     if (doLayoutResId == ZFILE_DEFAULT) {
         doLayoutResId = R.layout.layout_zfile_list_do
     }
