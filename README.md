@@ -97,7 +97,9 @@ class MainActivity : AppCompatActivity() {
 
  
 ##### 目前本库趋于稳定， ^_^ 如果觉得可以 star 一下哦！
-###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [CSDN](https://blog.csdn.net/qq_28322987/article/details/81384886)  [掘金](https://juejin.cn/post/6959006222456455182)
+###### 源自 [FileManager](https://github.com/zippo88888888/FileManager) 
+[![Static Badge](https://img.shields.io/badge/CSDN-red)](https://blog.csdn.net/qq_28322987/article/details/81384886)  [![Static Badge](https://img.shields.io/badge/%E6%8E%98%E9%87%91-%231e80ff)
+](https://juejin.cn/post/6959006222456455182)
 
 
 [![Travis](https://img.shields.io/badge/ZFile-1.4.7-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
