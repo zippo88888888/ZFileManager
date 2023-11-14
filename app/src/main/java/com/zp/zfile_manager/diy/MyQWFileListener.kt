@@ -1,7 +1,7 @@
 package com.zp.zfile_manager.diy
 
 import com.zp.z_file.content.*
-import com.zp.z_file.listener.ZQWFileLoadListener
+import com.zp.z_file.listener.ZFileQWLoadListener
 import com.zp.z_file.util.ZFileHelp
 import com.zp.zfile_manager.content.Content
 import java.io.File
@@ -11,13 +11,13 @@ import java.util.*
 /**
  * 完全自定义 获取 QQ、Wechat 文件
  */
-class MyQWFileListener : ZQWFileLoadListener() {
+class MyQWFileListener : ZFileQWLoadListener() {
 
     /**
      * 获取标题
      * @return Array<String>
      */
-    override fun getTitles(): Array<String>? {
+    override fun getTitles(): Array<String> {
         return arrayOf("图片", "媒体", "文档", "这是我自定义的title")
     }
 

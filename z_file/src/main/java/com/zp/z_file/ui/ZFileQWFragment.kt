@@ -65,6 +65,7 @@ internal class ZFileQWFragment : Fragment() {
 
         val qwFileLoadListener = getZFileHelp().getQWFileLoadListener()
         val filterArray = qwFileLoadListener?.getFilterArray(type) ?: ZFileQWUtil.getQWFilterMap()[type]!!
+
         ZFileQWAsync(qwFileType, type, context!!) {
             vb?.zfileQwBar?.visibility = View.GONE
             if (isNullOrEmpty()) {

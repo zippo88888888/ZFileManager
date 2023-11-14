@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/badge/ZFile-1.4.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.7-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -24,13 +24,10 @@
 ## 基本使用
 
 > **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**  
-> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**  
-> **温馨提示： targetSdkVersion >= 29 清单文件中加上 android:requestLegacyExternalStorage="true"**
-
 
 #### Step 0. 添加依赖
 
-#### [最新版本](https://github.com/zippo88888888/ZFileManager/wiki/%E7%89%88%E6%9C%AC)
+#### [最新版本](https://github.com/zippo88888888/ZFileManager/releases/tag/version-1.4.7)
 
 ```groovy
 
@@ -100,10 +97,10 @@ class MainActivity : AppCompatActivity() {
 
  
 ##### 目前本库趋于稳定， ^_^ 如果觉得可以 star 一下哦！
-###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [点这里页面加载速度应该会快一点](https://blog.csdn.net/qq_28322987/article/details/81384886)
+###### 源自 [FileManager](https://github.com/zippo88888888/FileManager)  [CSDN](https://blog.csdn.net/qq_28322987/article/details/81384886)  [掘金](https://juejin.cn/post/6959006222456455182)
 
 
-[![Travis](https://img.shields.io/badge/ZFile-1.4.6-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
+[![Travis](https://img.shields.io/badge/ZFile-1.4.7-yellowgreen)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/API-21%2B-green)](https://github.com/zippo88888888/ZFileManager)
 [![Travis](https://img.shields.io/badge/Apache-2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

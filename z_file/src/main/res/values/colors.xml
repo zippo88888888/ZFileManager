@@ -6,6 +6,7 @@
 
     <color name="zfile_black">#000000</color>
     <color name="zfile_gray">#666666</color>
+    <color name="zfile_ripple">#B9B9B9</color>
     <color name="zfile_white">#ffffff</color>
     <color name="zfile_green">#2c832e</color>
     <color name="zfile_red">#e01d07</color>

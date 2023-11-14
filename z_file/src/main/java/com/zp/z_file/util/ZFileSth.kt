@@ -5,21 +5,33 @@ import android.content.Context
 import android.os.Build
 import com.zp.z_file.R
 import com.zp.z_file.content.*
-import com.zp.z_file.content.COPY_TYPE
-import com.zp.z_file.content.CUT_TYPE
-import com.zp.z_file.content.DELTE_TYPE
-import com.zp.z_file.content.ZFileException
-import com.zp.z_file.content.ZIP_BUFFER_SIZE
-import com.zp.z_file.content.toast
 import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import java.io.*
 import java.nio.channels.FileChannel
 import java.nio.charset.Charset
+import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import kotlin.concurrent.thread
 
 internal object ZFileSth {
+
+    /* 排序 */
+    fun sortord(list: MutableList<ZFileBean>) {
+        val config = getZFileConfig()
+        if (config.sortord == ZFileConfiguration.ASC) {
+            when (config.sortordBy) {
+                ZFileConfiguration.BY_NAME -> list.sortBy { it.fileName.toLowerCase(Locale.CHINA) }
+                ZFileConfiguration.BY_DATE -> list.sortBy { it.originalDate }
+                ZFileConfiguration.BY_SIZE -> list.sortBy { it.originaSize }
+            }
+        } else {
+            when (config.sortordBy) {
+                ZFileConfiguration.BY_NAME -> list.sortByDescending { it.fileName.toLowerCase(Locale.CHINA) }
+                ZFileConfiguration.BY_DATE -> list.sortByDescending { it.originalDate }
+                ZFileConfiguration.BY_SIZE -> list.sortByDescending { it.originaSize }
+            }
+        }
+    }
 
     fun callFileByType(
         filePath: String,
@@ -41,7 +53,7 @@ internal object ZFileSth {
                     this
                 }
             dialog.show()
-            thread {
+            async {
                 val isSuccess = when (type) {
                     COPY_TYPE -> copyFile(filePath, outPath, context)
                     CUT_TYPE -> cutFile(filePath, outPath, context)
@@ -118,7 +130,7 @@ internal object ZFileSth {
         var fis: FileInputStream? = null
         try {
             fis = FileInputStream(zipFile)
-            zis = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 中文乱码
+            zis = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 ZipInputStream(BufferedInputStream(fis), Charset.forName("GBK"))
             } else {
                 ZipInputStream(BufferedInputStream(fis))

@@ -1,14 +1,14 @@
 package com.zp.z_file.content
 
 import androidx.collection.ArrayMap
-import com.zp.z_file.listener.ZQWFileLoadListener
+import com.zp.z_file.listener.ZFileQWLoadListener
 import java.io.Serializable
 
 /**
  * QQ、Wechat基本配置信息
  * 通过简单配置，即可 修改标题，文件类型，文件路径，获取相应的数据
  *
- * 若需要完全自定义获取 QQ、Wechat 文件，请实现 [ZQWFileLoadListener] 所有方法
+ * 若需要完全自定义获取 QQ、Wechat 文件，请实现 [ZFileQWLoadListener] 所有方法
  */
 class ZFileQWData : Serializable {
 

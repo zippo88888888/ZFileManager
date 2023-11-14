@@ -1,6 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
-    <!--   下面重写即可自定义   -->
     <string name="zfile_title">文件管理</string>
     <string name="zfile_menu_down">完成</string>
     <string name="zfile_root_path">根目录</string>
@@ -57,5 +56,4 @@
     <string name="zfile_saf_error_down">我知道了</string>
     <string name="zfile_data_loading">数据加载中，请稍后…</string>
     <string name="zfile_rename_hint">请输入新的文件名称</string>
-
 </resources>

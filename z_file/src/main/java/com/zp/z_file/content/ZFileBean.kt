@@ -13,6 +13,7 @@ import java.io.Serializable
  * @property originalDate String    原始时间（时间戳）
  * @property size String            格式化后的大小
  * @property originaSize Long       原始大小（byte）
+ * @property folderLength Int       文件夹包含的文件个数
  * @property parent String?         父级所包含的选择文件个数（自定义文件获取不需要给该字段赋值）
  */
 data class ZFileBean(
@@ -23,6 +24,7 @@ data class ZFileBean(
     var originalDate: String = "",
     var size: String = "",
     var originaSize: Long = 0L,
+    var folderLength: Int = 0,
     var parent: String? = ""
 ) : Serializable, Parcelable {
 
@@ -34,6 +36,7 @@ data class ZFileBean(
         originalDate = parcel.readString() ?: "",
         size = parcel.readString() ?: "",
         originaSize = parcel.readLong(),
+        folderLength = parcel.readInt(),
         parent = parcel.readString()
     )
 
@@ -47,6 +50,7 @@ data class ZFileBean(
         dest?.writeString(originalDate)
         dest?.writeString(size)
         dest?.writeLong(originaSize)
+        dest?.writeInt(folderLength)
         dest?.writeString(parent)
 
     }
@@ -67,7 +71,7 @@ data class ZFileBean(
  * 文件夹 标签/角标、说明文字 实体类
  * @property folderPath String          文件夹路径
  * @property folderHint String          说明，空不展示
- * @property folderBadgeIcon Int        标签/角标 资源文件路径
+ * @property folderBadgeIcon Int        标签/角标 资源文件路径，-1 不展示
  * @property folderBadgeType Int        类型 0：标签/角标 不展示；1：标签/角标 展示
  * @constructor
  */
@@ -75,7 +79,7 @@ data class ZFileFolderBadgeHintBean(
     var folderPath: String = "",
     var folderHint: String = "",
     var folderBadgeIcon: Int = -1,
-    var folderBadgeType: Int = 0
+    @Deprecated ("不再使用") var folderBadgeType: Int = 0
 ): Serializable, Parcelable {
 
     constructor(parcel: Parcel) : this(

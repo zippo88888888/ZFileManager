@@ -38,8 +38,8 @@ internal class ZFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
             textView.apply {
                 visibility = View.VISIBLE
                 text = hintBean.folderHint
-                setTextColor(textView.context.getColorById(getZFileHelp().getFileBadgeHintListener().hintTextColor()))
-                textSize = getZFileHelp().getFileBadgeHintListener().hintTextSize()
+                setTextColor(textView.context.getColorById(getZFileHelp().getFileBadgeHintListener().hintTextColor(hintBean.folderPath)))
+                textSize = getZFileHelp().getFileBadgeHintListener().hintTextSize(hintBean.folderPath)
             }
         }
     }

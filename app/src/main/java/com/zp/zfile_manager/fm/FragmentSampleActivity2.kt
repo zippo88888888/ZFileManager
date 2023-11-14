@@ -1,7 +1,6 @@
 package com.zp.zfile_manager.fm
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,9 +14,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.PagerAdapter
-import com.zp.z_file.content.ZFileBean
+import com.zp.z_file.content.*
 import com.zp.z_file.content.ZFileConfiguration.Companion.TITLE_CENTER
-import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.listener.ZFragmentListener
 import com.zp.z_file.ui.ZFileListFragment
 import com.zp.zfile_manager.R
@@ -55,10 +53,11 @@ class FragmentSampleActivity2 : AppCompatActivity() {
         vb.fs2Vp.visibility = View.GONE
         val TAG = "ZFileListFragmentTag"
         getZFileConfig().fragmentTag = TAG
-        supportFragmentManager
+        /*supportFragmentManager
             .beginTransaction()
             .add(R.id.fs2, getZFragment(), TAG)
-            .commit()
+            .commit()*/
+        zfileInitAndStart(R.id.fs2, mListener)
     }
 
     private fun init2() {
@@ -94,14 +93,16 @@ class FragmentSampleActivity2 : AppCompatActivity() {
     override fun onBackPressed() {
         when (type) {
             1 -> {
-                (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
+//                (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
+                zfileBackPressed()
             }
             3 -> {
                 (supportFragmentManager.findFragmentByTag("BlankFragment2") as? BlankFragment2)?.onBackPressed()
             }
             else -> {
                 if (vb.fs2Vp.currentItem == 1) {
-                    (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
+//                    (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.onBackPressed()
+                    zfileBackPressed()
                 } else {
                     finish()
                 }
@@ -114,7 +115,8 @@ class FragmentSampleActivity2 : AppCompatActivity() {
         if (type == 3) {
             (supportFragmentManager.findFragmentByTag("BlankFragment2") as? BlankFragment2)?.showPermissionDialog()
         } else {
-            (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.showPermissionDialog()
+//            (supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag) as? ZFileListFragment)?.showPermissionDialog()
+            zfileResume()
         }
     }
 

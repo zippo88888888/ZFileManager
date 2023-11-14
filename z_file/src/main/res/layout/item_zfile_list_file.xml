@@ -3,12 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/zfile_white">
+    android:background="@drawable/zfile_item_bg">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?selectableItemBackground"
         android:padding="@dimen/zfile_default_divider_padding">
 
         <!-- android:transitionName="jump_File" -->
@@ -16,6 +15,7 @@
             android:id="@+id/item_zfile_list_file_pic"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:contentDescription="@null"
             tools:src="@drawable/ic_zfile_other"
             android:transitionName="jump_File"/>
 
@@ -31,6 +31,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@drawable/ic_zfile_quan" />
 
             <CheckBox
@@ -76,21 +77,27 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/item_zfile_list_file_sizeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/zfile_bbbbb9"
+                    android:textSize="12sp"
+                    tools:text="10Kb" />
+
+                <View
+                    android:layout_width="0.8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginStart="7dp"
+                    android:layout_marginEnd="7dp"
+                    android:background="@color/zfile_bbbbb9" />
+
+                <TextView
                     android:id="@+id/item_zfile_list_file_dateTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/zfile_bbbbb9"
                     android:textSize="12sp"
                     tools:text="2018-07-03 16:12:30" />
-
-                <TextView
-                    android:id="@+id/item_zfile_list_file_sizeTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/zfile_bbbbb9"
-                    android:textSize="12sp"
-                    tools:text="10Kb" />
 
             </LinearLayout>
 
@@ -105,6 +112,5 @@
         android:layout_gravity="bottom"
         android:layout_marginStart="@dimen/zfile_default_divider_padding"
         android:layout_marginEnd="@dimen/zfile_default_divider_padding"/>
-
 
 </FrameLayout>

@@ -6,9 +6,9 @@ import android.os.Looper
 import android.os.Message
 import androidx.documentfile.provider.DocumentFile
 import com.zp.z_file.content.ZFileBean
+import com.zp.z_file.content.async
 import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
-import kotlin.concurrent.thread
 
 /**
  * 更方便的去获取符合要求的数据
@@ -39,7 +39,9 @@ open class ZFileAsync(
      */
     fun start(filterArray: Array<String>) {
         doStart()
-        thread { sendMessage(OTHER, doingWork(filterArray)) }
+        async {
+            sendMessage(OTHER, doingWork(filterArray))
+        }
     }
 
     protected fun getContext(): Context? = softReference.get()
@@ -58,10 +60,7 @@ open class ZFileAsync(
     }
 
     private fun onPostExecute(list: MutableList<ZFileBean>?) {
-        handler?.removeMessages(LIST)
-        handler?.removeMessages(OTHER)
-        handler?.removeCallbacksAndMessages(null)
-        handler = null
+        destory()
         block.invoke(list)
         onPostExecute()
     }
@@ -102,28 +101,38 @@ open class ZFileAsync(
         })
     }
 
-    /** 开始 SAF 操作 */
-    fun startSAF(documentFiles: Array<DocumentFile>?) {
-        doStart()
-        thread { sendMessage(SAF, doingWorkForSAF(documentFiles)) }
-    }
-
-    /** 执行 SAF 具体数据操作 */
-    open fun doingWorkForSAF(documentFiles:Array<DocumentFile>?): MutableList<ZFileBean>? {
-        return null
-    }
-
     // =============================================================================================
 
     internal fun start(filePath: String?) {
         doStart()
-        thread { sendMessage(LIST, doingWork(filePath)) }
+        async {
+            sendMessage(LIST, doingWork(filePath))
+        }
     }
 
     internal open fun doingWork(filePath: String?): MutableList<ZFileBean>? {
         return null
     }
 
+    /** 开始 SAF 操作 */
+    internal fun startSAF(documentFiles: Array<DocumentFile>?) {
+        doStart()
+        async {
+            sendMessage(SAF, doingWorkForSAF(documentFiles))
+        }
+    }
 
+    /** 执行 SAF 具体数据操作 */
+    internal open fun doingWorkForSAF(documentFiles: Array<DocumentFile>?): MutableList<ZFileBean>? {
+        return null
+    }
+
+    private fun destory() {
+        handler?.removeMessages(LIST)
+        handler?.removeMessages(OTHER)
+        handler?.removeMessages(SAF)
+        handler?.removeCallbacksAndMessages(null)
+        handler = null
+    }
 
 }

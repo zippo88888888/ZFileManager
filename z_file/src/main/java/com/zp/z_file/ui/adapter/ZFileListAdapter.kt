@@ -202,6 +202,8 @@ internal class ZFileListAdapter(context: Context) : ZFileAdapter<ZFileBean>(cont
         val hintBean = getZFileHelp().getFileBadgeHintListener().getDetailRule(item, context)
         holder.apply {
             setText(R.id.item_zfile_list_folderNameTxt, item.fileName)
+            setText(R.id.item_zfile_list_folderLengthTxt,"${item.folderLength}项")
+            setText(R.id.item_zfile_list_folderDateTxt, item.date)
             setHint(R.id.item_zfile_list_folderHintTxt, hintBean)
             setBadge(R.id.item_zfile_list_folderHintPic, hintBean)
             setImageRes(R.id.item_zfile_list_folderPic, folderRes)

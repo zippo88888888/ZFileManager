@@ -50,12 +50,19 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+//    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 
+// 生成源文件
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+
 // 这玩意 AndroidStudio需要配置代理才能上传、否则上传到JCenter会无限超时
-// 1) gradlew install     gradlew assembleRelease
+// 1) gradlew install
 // 2) gradlew bintrayUpload
 
 /** 以下开始是将Android Library上传到jcenter的相关配置**/

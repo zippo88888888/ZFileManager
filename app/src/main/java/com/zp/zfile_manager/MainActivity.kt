@@ -117,13 +117,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun diy() {
-        /*getZFileHelp()
-            .setFileTypeListener(MyFileTypeListener())
-            .setFileOpenListener(MyFileOpenListener())
-            .setFileClickListener(MyFileClickListener())
-            .setFileBadgeHintListener(MyFolderBadgeHintListener())
-            .setOtherFileListener(MyFileOtherListener())*/
         zfile {
+            config {
+                getZFileConfig().apply {
+                    title = "Android File Manager"
+                    titleSelectedStr = "勾了%d个"
+                }
+            }
             fileType { MyFileTypeListener() }
             fileOpen { MyFileOpenListener() }
             fileClick { MyFileClickListener() }
@@ -138,15 +138,15 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) checkHasPermission() else jump()
         } else {
             val builder = AlertDialog.Builder(this)
-                .setTitle(com.zp.z_file.R.string.zfile_11_title)
-                .setMessage(com.zp.z_file.R.string.zfile_11_content)
+                .setTitle(R.string.zfile_11_title)
+                .setMessage(R.string.zfile_11_content)
                 .setCancelable(false)
-                .setPositiveButton(com.zp.z_file.R.string.zfile_down) { d, _ ->
+                .setPositiveButton(R.string.zfile_down) { d, _ ->
                     toManagerPermissionPage = true
                     toFileManagerPage()
                     d.dismiss()
                 }
-                .setNegativeButton(com.zp.z_file.R.string.zfile_cancel) { d, _ ->
+                .setNegativeButton(R.string.zfile_cancel) { d, _ ->
                     d.dismiss()
                 }
             builder.show()

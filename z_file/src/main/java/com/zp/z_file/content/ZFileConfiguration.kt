@@ -8,13 +8,19 @@ import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFileVideoPlayer
 import com.zp.z_file.listener.*
 import com.zp.z_file.async.ZFileStipulateAsync
-import com.zp.z_file.listener.ZQWFileLoadListener
+import com.zp.z_file.listener.ZFileQWLoadListener
+import com.zp.z_file.type.ZFileVideoType
 import java.io.Serializable
 
 /**
  * 配置信息（单列保存，一处设置，全局通用）
  *
- * 1.4.6 主要更新：
+ * 1.4.7 主要更新信息：
+ * 1) 优化数据处理逻辑，优化文件夹数据展示
+ * 2) [ZFileFolderBadgeHintListener]、[ZFileVideoType] 优化
+ * 3) 新增 [title]、[titleSelectedStr]、[showDataAndObbFolder] 属性
+ *
+ * 1.4.6 主要更新信息：
  * 1) 新增 [ZFileSAFListener]、通过 SAF 访问Android/data 和 Android/obb 目录
  * 2) 新增 复制文件详情文字，新增 [showMenu] 属性
  *
@@ -54,7 +60,7 @@ import java.io.Serializable
  * 2) 文件复制优化
  *
  * 1.3.1 主要更新信息：
- * 1) 新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZQWFileLoadListener] 即可实现
+ * 1) 新增 [qwData] QQ、Wechat配置信息，不需要通过自定义 [ZFileQWLoadListener] 即可实现
  * 2) 修复 QQ、Wechat 部分路径下无法获取数据的bug
  *
  * 1.3.0 主要更新信息：
@@ -70,31 +76,25 @@ class ZFileConfiguration : Serializable {
 
         /** QQ目录 */
         const val QQ = "ZFILE_QQ_FILE_PATH"
-
         /** 微信目录 */
         const val WECHAT = "ZFILE_WECHAT_FILE_PATH"
 
         /** 默认 */
         const val BY_DEFAULT = 0x1000
-
         /** 根据名字 */
         const val BY_NAME = 0x1001
-
         /** 根据最后修改时间 */
         const val BY_DATE = 0x1003
-
         /** 根据大小 */
         const val BY_SIZE = 0x1004
 
         /** 升序 */
         const val ASC = 0x2001
-
         /** 降序 */
         const val DESC = 0x2002
 
         /** 样式一 */
         const val STYLE1 = 1
-
         /** 样式二 */
         const val STYLE2 = 2
 
@@ -106,13 +106,9 @@ class ZFileConfiguration : Serializable {
 
         /** 标题居左 */
         const val TITLE_LEFT = 0
-
         /** 标题居中 */
         const val TITLE_CENTER = 1
 
-        /** 标题居右 */
-        @Deprecated("肯定没人有这种BT需求，有的话我zhiboduodiao")
-        const val TITLE_RIGHT = 2
     }
 
     /**
@@ -192,6 +188,7 @@ class ZFileConfiguration : Serializable {
 
     /**
      * 选中的样式 see [STYLE1]、[STYLE2]
+     * 如需要完全自定义选中样式，使用 [STYLE2]，同时在drawable目录下新建 @drawable/zfile_checkbox_seletor
      */
     var boxStyle = STYLE2
 
@@ -249,17 +246,26 @@ class ZFileConfiguration : Serializable {
     var showSelectedCountHint = false
 
     /**
+     * 标题，默认展示 文件管理
+     */
+    var title = "文件管理"
+
+    /**
      * 标题位置 see [TITLE_LEFT] [TITLE_CENTER]
-     * 重写 [R.string.zfile_title] 即可自定义标题，默认展示 “文件管理”
      */
     var titleGravity = TITLE_LEFT
         set(value) {
-            if (value in TITLE_LEFT..TITLE_RIGHT) {
+            if (value in TITLE_LEFT..TITLE_CENTER) {
                 field = value
             } else {
                 throwError("titleGravity")
             }
         }
+
+    /**
+     * 设置已选中的标题
+     */
+    var titleSelectedStr = "已选中%d个文件"
 
     /**
      * 是否开启懒加载
@@ -294,6 +300,11 @@ class ZFileConfiguration : Serializable {
     var showFolderBadgeHint = true
 
     /**
+     * 是否展示 Android/data 和 Android/obb 文件夹目录
+     */
+    var showDataAndObbFolder = true
+
+    /**
      * 是否显示日志
      */
     var showLog = true
@@ -303,7 +314,9 @@ class ZFileConfiguration : Serializable {
      */
     class Build {
 
-        private var configuration = ZFileConfiguration()
+        private val configuration by lazy {
+            ZFileConfiguration()
+        }
 
         /**
          * 起始访问位置
@@ -416,6 +429,7 @@ class ZFileConfiguration : Serializable {
 
         /**
          * 选中的样式
+         * 如需要完全自定义选中样式，使用 [STYLE2]，同时在drawable目录下新建 @drawable/zfile_checkbox_seletor
          * @param boxStyle Int  [STYLE1] or [STYLE2]
          */
         fun boxStyle(boxStyle: Int): Build {
@@ -497,11 +511,27 @@ class ZFileConfiguration : Serializable {
         }
 
         /**
+         * 标题
+         */
+        fun title(title: String): Build {
+            configuration.title = title
+            return this
+        }
+
+        /**
          * 标题位置 《设置标题 重写 [R.string.zfile_title] 即可自定义》
          * @param titleGravity Int  [TITLE_LEFT] or [TITLE_CENTER]
          */
         fun titleGravity(titleGravity: Int): Build {
             configuration.titleGravity = titleGravity
+            return this
+        }
+
+        /**
+         * 设置已选中的标题
+         */
+        fun titleSelectedStr(titleSelectedStr: String): Build {
+            configuration.titleSelectedStr = titleSelectedStr
             return this
         }
 
@@ -556,6 +586,14 @@ class ZFileConfiguration : Serializable {
         }
 
         /**
+         * 是否展示 Android/data 和 Android/obb 文件夹目录
+         */
+        fun showDataAndObbFolder(showDataAndObbFolder: Boolean): Build {
+            configuration.showDataAndObbFolder = showDataAndObbFolder
+            return this
+        }
+
+        /**
          * 是否显示日志
          */
         fun showLog(showLog: Boolean): Build {
@@ -580,7 +618,7 @@ class ZFileConfiguration : Serializable {
      * @property excelRes Int        Excel
      * @property zipRes Int          ZIP
      * @property otherRes Int        其他类型
-     * @property emptyRes Int        空资源，还可以重写 [ZFileOtherListener.getFileListEmptyLayoutId] 达到完全自定义
+     * @property emptyRes Int        空资源展位图，还可以重写 [ZFileOtherListener.getFileListEmptyLayoutId] 达到完全自定义
      * @property folderRes Int       文件夹
      * @property lineColor Int       列表分割线颜色
      */

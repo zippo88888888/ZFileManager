@@ -2,13 +2,16 @@ package com.zp.z_file.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.os.Parcelable
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import com.zp.z_file.async.ZFileListAsync
+import com.zp.z_file.common.ZFileManageHelp
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.*
 import com.zp.z_file.ui.dialog.ZFileLoadingDialog
 import java.io.File
-import kotlin.concurrent.thread
 
 internal object ZFileUtil {
 
@@ -52,7 +55,7 @@ internal object ZFileUtil {
                 this
             }
         dialog.show()
-        thread {
+        async {
             val isSuccess = try {
                 val oldFile = filePath.toFile()
                 val oldFileType = oldFile.getFileType()
@@ -104,6 +107,41 @@ internal object ZFileUtil {
         ZFileLog.i("源文件目录：$filePath")
         ZFileLog.i("解压目录：$outZipPath")
         ZFileSth.callFileByType(filePath, outZipPath, context, ZIP_TYPE, block)
+    }
+
+    /**
+     * 获取文件夹包含的数量
+     * @param file File      文件
+     */
+    fun getFolderLength(file: File): Int {
+        var length = 0
+        if (file.isDirectory) {
+            val files = file.listFiles()
+            if (files != null) {
+                for (f in files) {
+                    if (f.name.indexOf(".") != 0) {
+                        length++
+                    }
+                }
+            }
+        }
+        return length
+    }
+
+    fun toResult(
+        activity: FragmentActivity,
+        selectList: MutableList<ZFileBean>?,
+        finish: Boolean = true
+    ) {
+        activity.setResult(ZFILE_RESULT_CODE, Intent().apply {
+            putParcelableArrayListExtra(
+                ZFILE_SELECT_DATA_KEY,
+                selectList as java.util.ArrayList<out Parcelable>
+            )
+        })
+        if (finish) {
+            activity.finish()
+        }
     }
 
     fun resetAll() {

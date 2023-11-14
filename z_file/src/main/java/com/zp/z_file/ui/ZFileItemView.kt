@@ -13,9 +13,9 @@ import com.zp.z_file.databinding.LayoutZfileItemBinding
 import com.zp.z_file.util.ZFileQWUtil
 
 /**
- * 为了解决 aar 包中 com.google.android.material:material 引用失败的问题
+ * 减少 对 com.google.android.material:material 依赖
  */
-class ZFileItemView : LinearLayout {
+internal class ZFileItemView : LinearLayout {
 
     private val titles by lazy {
         ZFileQWUtil.getQWTitle(context)
@@ -33,20 +33,16 @@ class ZFileItemView : LinearLayout {
 
     private fun initAll() {
         vb?.zfileItemLayout1?.setOnClickListener {
-            vp.setCurrentItem(0, false)
-            setPageItemState()
+            setCurrentItem(0)
         }
         vb?.zfileItemLayout2?.setOnClickListener {
-            vp.setCurrentItem(1, false)
-            setPageItemState()
+            setCurrentItem(1)
         }
         vb?.zfileItemLayout3?.setOnClickListener {
-            vp.setCurrentItem(2, false)
-            setPageItemState()
+            setCurrentItem(2)
         }
         vb?.zfileItemLayout4?.setOnClickListener {
-            vp.setCurrentItem(3, false)
-            setPageItemState()
+            setCurrentItem(3)
         }
     }
 
@@ -62,6 +58,11 @@ class ZFileItemView : LinearLayout {
         vb?.zfileItemTitleTxt2?.text = list[1]
         vb?.zfileItemTitleTxt3?.text = list[2]
         vb?.zfileItemTitleTxt4?.text = list[3]
+    }
+
+    private fun setCurrentItem(item: Int, smoothScroll: Boolean = false) {
+        vp.setCurrentItem(item, smoothScroll)
+        setPageItemState()
     }
 
     private fun setPageItemState() {

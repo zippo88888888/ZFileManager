@@ -2,7 +2,11 @@ package com.zp.z_file.listener
 
 import android.content.Context
 import com.zp.z_file.content.*
+import com.zp.z_file.content.SD_ROOT
+import com.zp.z_file.content.toFile
 import com.zp.z_file.util.ZFileOtherUtil
+import com.zp.z_file.util.ZFileSth
+import java.io.File
 import java.util.*
 
 internal class ZFileDefaultLoadListener : ZFileLoadListener {
@@ -26,50 +30,34 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                 config.isOnlyFile
             )
         )
-        listFiles?.forEach {
-            if (config.showHiddenFile) { // 是否显示隐藏文件
-                val bean = ZFileBean(
-                    it.name,
-                    it.isFile,
-                    it.path,
-                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                    it.lastModified().toString(),
-                    ZFileOtherUtil.getFileSize(it.length()),
-                    it.length(),
-                    it.parent
-                )
-                list.add(bean)
-            } else {
-                if (!it.isHidden) {
-                    val bean = ZFileBean(
-                        it.name,
-                        it.isFile,
-                        it.path,
-                        ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                        it.lastModified().toString(),
-                        ZFileOtherUtil.getFileSize(it.length()),
-                        it.length(),
-                        it.parent
-                    )
-                    list.add(bean)
+        if (listFiles.isNullOrEmpty()) return list
+        for (it in listFiles) {
+            if (it.path == SAF_DATA_PATH || it.path == SAF_OBB_PATH) {
+                if (config.showDataAndObbFolder) {
+                    addFileToList(config, list, it)
+                } else {
+                    continue
                 }
+            } else {
+                addFileToList(config, list, it)
             }
         }
-
-        // 排序相关
-        if (config.sortord == ZFileConfiguration.ASC) {
-            when (config.sortordBy) {
-                ZFileConfiguration.BY_NAME -> list.sortBy { it.fileName.toLowerCase(Locale.CHINA) }
-                ZFileConfiguration.BY_DATE -> list.sortBy { it.originalDate }
-                ZFileConfiguration.BY_SIZE -> list.sortBy { it.originaSize }
-            }
-        } else {
-            when (config.sortordBy) {
-                ZFileConfiguration.BY_NAME -> list.sortByDescending { it.fileName.toLowerCase(Locale.CHINA) }
-                ZFileConfiguration.BY_DATE -> list.sortByDescending { it.originalDate }
-                ZFileConfiguration.BY_SIZE -> list.sortByDescending { it.originaSize }
-            }
-        }
+        ZFileSth.sortord(list)
         return list
     }
+
+    private fun addFileToList(
+        config: ZFileConfiguration,
+        list: MutableList<ZFileBean>,
+        file: File
+    ) {
+        if (config.showHiddenFile) {
+            list.add(file.toZFileBean())
+        } else {
+            if (!file.isHidden) {
+                list.add(file.toZFileBean())
+            }
+        }
+    }
+
 }

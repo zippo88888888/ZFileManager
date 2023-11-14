@@ -10,6 +10,7 @@ import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.inflate
 import com.zp.z_file.content.setStatusBarTransparent
 import com.zp.z_file.databinding.ActivityZfileVideoPlayBinding
+import com.zp.z_file.type.ZFileVideoType
 
 internal class ZFileVideoPlayActivity : ZFileActivity() {
 
@@ -22,6 +23,11 @@ internal class ZFileVideoPlayActivity : ZFileActivity() {
     override fun init(savedInstanceState: Bundle?) {
         setStatusBarTransparent()
         val videoPath = intent.getStringExtra("videoFilePath") ?: ""
+        val type = ZFileTypeManage.getTypeManager().getFileType(videoPath)
+        if (type is ZFileVideoType) {
+            vb.videoPlayer.sizeType = type.getVideoSizeType()
+            vb.videoImg.scaleType = type.getImageScaleType()
+        }
         ZFileTypeManage.getTypeManager().loadingFile(videoPath, vb.videoImg)
         vb.videoPlayerButton.setOnClickListener { v ->
             vb.videoPlayer.videoPath = videoPath

@@ -49,9 +49,9 @@ fun ZFileDsl.fileLoade(block: () -> ZFileLoadListener) {
 }
 
 /**
- * 设置 [ZQWFileLoadListener] 配置 自定义 QQ or WeChat 文件获取
+ * 设置 [ZFileQWLoadListener] 配置 自定义 QQ or WeChat 文件获取
  */
-fun ZFileDsl.qwLoade(block: () -> ZQWFileLoadListener) {
+fun ZFileDsl.qwLoade(block: () -> ZFileQWLoadListener) {
     setQwLoad(block)
 }
 
@@ -150,7 +150,7 @@ class ZFileDsl internal constructor(private var fragmentOrActivity: Any) {
         getZFileHelp().setFileLoadListener(fileLoadBlock())
     }
 
-    internal fun setQwLoad(qwLoadBlock: () -> ZQWFileLoadListener) {
+    internal fun setQwLoad(qwLoadBlock: () -> ZFileQWLoadListener) {
         getZFileHelp().setQWFileLoadListener(qwLoadBlock())
     }
 

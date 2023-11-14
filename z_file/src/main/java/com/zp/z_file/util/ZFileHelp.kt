@@ -3,6 +3,7 @@ package com.zp.z_file.util
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.common.ZFileTypeManage
 import com.zp.z_file.content.getFileType
+import com.zp.z_file.content.isDataOrObbPath
 import com.zp.z_file.content.toFile
 import java.io.File
 import java.util.*
@@ -40,4 +41,10 @@ object ZFileHelp {
     fun getFormatFileDate(file: File): String =
         ZFileOtherUtil.getFormatFileDate(file.lastModified())
 
+
+    /**
+     * 判断当前文件 是否在 Android/data 或 Android/obb 目录下（仅在Android 11及以上版本可用）
+     */
+    @JvmStatic
+    fun isDataOrObbPathFor11(filePath: String) = filePath.isDataOrObbPath()
 }

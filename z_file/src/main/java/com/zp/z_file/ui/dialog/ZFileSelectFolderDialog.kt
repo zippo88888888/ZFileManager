@@ -40,7 +40,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     /** 返回当前的路径 */
-    private fun getThisFilePath() = if (backList.isEmpty()) null else backList[backList.size - 1]
+    private fun getThisFilePath() = if (backList.isEmpty()) null else backList.last()
 
     override fun getContentView() = R.layout.dialog_zfile_select_folder
 
@@ -54,7 +54,7 @@ internal class ZFileSelectFolderDialog : ZFileManageDialog() {
     }
 
     override fun createDialog(savedInstanceState: Bundle?) =
-        Dialog(context!!, R.style.ZFile_Select_Folder_Dialog).apply {
+        Dialog(requireContext(), R.style.ZFile_Select_Folder_Dialog).apply {
             window?.setGravity(Gravity.BOTTOM)
         }
 

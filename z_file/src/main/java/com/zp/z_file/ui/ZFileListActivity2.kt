@@ -3,8 +3,12 @@ package com.zp.z_file.ui
 import android.os.Bundle
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileActivity
-import com.zp.z_file.content.*
+import com.zp.z_file.content.FILE_START_PATH_KEY
+import com.zp.z_file.content.ZFILE_FRAGMENT_TAG
+import com.zp.z_file.content.ZFileBean
+import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.listener.ZFragmentListener
+import com.zp.z_file.util.ZFileUtil
 
 internal class ZFileListActivity2 : ZFileActivity() {
 
@@ -41,10 +45,16 @@ internal class ZFileListActivity2 : ZFileActivity() {
         super.onDestroy()
     }
 
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, R.anim.zfile_out_bottom)
+    }
+
     private var mListener: ZFragmentListener? = object : ZFragmentListener() {
 
         override fun selectResult(selectList: MutableList<ZFileBean>?) {
-            getZFileHelp().setResult(this@ZFileListActivity2, selectList)
+            ZFileUtil.toResult(this@ZFileListActivity2, selectList)
+//            getZFileHelp().setResult(this@ZFileListActivity2, selectList)
         }
 
     }

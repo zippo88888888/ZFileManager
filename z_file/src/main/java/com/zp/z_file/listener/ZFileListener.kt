@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Environment
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -59,7 +58,7 @@ interface ZFileSelectResultListener {
 }
 
 /**
- * 完全自定义 获取文件数据
+ * 完全自定义 获取文件数据 （可通过 [File.toZFileBean] 自动转换数据）
  */
 interface ZFileLoadListener {
 
@@ -109,7 +108,7 @@ abstract class ZFragmentListener {
 /**
  * 完全自定义 QQ、WeChat 获取
  */
-abstract class ZQWFileLoadListener {
+abstract class ZFileQWLoadListener {
 
     /**
      * 获取标题
@@ -336,7 +335,7 @@ open class ZFileClickListener {
 }
 
 /**
- * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请重写该类的相关方法）
+ * 文件操作（默认不支持对于文件夹的操作，如果需要对于文件夹的操作，请实现该类的相关方法）
  * 耗时的文件操作建议放在 非 UI线程中
  */
 open class ZFileOperateListener {
@@ -461,14 +460,14 @@ open class ZFileFolderBadgeHintListener {
     /**
      * 说明文字大小
      */
-    open fun hintTextSize(): Float {
-        return 12f
+    open fun hintTextSize(folderPath: String): Float {
+        return 11f
     }
 
     /**
      * 说明文字颜色
      */
-    open fun hintTextColor(): Int {
+    open fun hintTextColor(folderPath: String): Int {
         return R.color.zfile_bbbbb9
     }
 
@@ -582,9 +581,6 @@ open class ZFileSAFListener {
  * 其他操作相关
  */
 open class ZFileOtherListener {
-
-    protected val MATCH_PARENT = FrameLayout.LayoutParams.MATCH_PARENT
-    protected val WRAP_CONTENT = FrameLayout.LayoutParams.WRAP_CONTENT
 
     /**
      * 耗时的文件操作（如复制、移动文件等） 展示的 Dialog

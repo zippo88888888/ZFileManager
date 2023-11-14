@@ -35,8 +35,6 @@
         android:id="@+id/zfile_list_pathRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/zfile_default_divider_padding"
-        android:paddingEnd="@dimen/zfile_default_divider_padding"
         tools:itemCount="1"
         tools:listitem="@layout/item_zfile_path" />
 
@@ -53,7 +51,7 @@
                 android:id="@+id/zfile_list_listRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:itemCount="15"
+                tools:itemCount="10"
                 tools:listitem="@layout/item_zfile_list_folder" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

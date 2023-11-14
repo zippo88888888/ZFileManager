@@ -6,6 +6,7 @@
 
     <color name="green">#2c832e</color>
     <color name="black">#000000</color>
+    <color name="red">#ec1d1d</color>
 
     <!-- 重写该属性 即可实现主题颜色自定义 -->
     <!--<color name="zfile_base_color">@color/green</color>-->

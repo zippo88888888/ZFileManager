@@ -21,7 +21,6 @@ import com.zp.z_file.content.*
 import com.zp.z_file.databinding.ActivityZfileQwBinding
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFilePermissionUtil
-import com.zp.z_file.util.ZFileQWUtil
 import com.zp.z_file.util.ZFileUtil
 
 internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener {
@@ -62,7 +61,7 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
         setPermissionState(View.GONE)
         hasPermission = true
         vb.zfileQwViewPager.addOnPageChangeListener(this)
-//        vb.zfileQwTabLayout.setupWithViewPager( vb.zfileQwViewPager)
+//        vb.zfileQwTabLayout.setupWithViewPager(vb.zfileQwViewPager)
         vb.zfileQwItemView.setupWithViewPager(vb.zfileQwViewPager)
 
         vpAdapter = ZFileQWAdapter(type, isManage, this, supportFragmentManager)
@@ -85,12 +84,12 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                 selectArray.remove(item.filePath)
             }
         }
-        setBarTitle("已选中${selectArray.size}个文件")
+        setBarTitle(this getBarTitle selectArray.size)
         isManage = true
         getMenu().isVisible = true
     }
 
-    private fun getMenu() =  vb.zfileQwToolBar.menu.findItem(R.id.menu_zfile_qw_down)
+    private fun getMenu() = vb.zfileQwToolBar.menu.findItem(R.id.menu_zfile_qw_down)
 
     private fun menuItemClick(menu: MenuItem?): Boolean {
         if (!hasPermission) {
@@ -203,6 +202,11 @@ internal class ZFileQWActivity : ZFileActivity(), ViewPager.OnPageChangeListener
                 vb.zfileQwCenterTitle.text = title
             }
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, R.anim.zfile_out_bottom)
     }
 
     override fun onDestroy() {

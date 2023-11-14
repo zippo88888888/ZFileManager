@@ -67,17 +67,7 @@ class ZFileListFragment : Fragment() {
 
     var zFragmentListener: ZFragmentListener? = null
 
-    private val titleArray by lazy {
-        if (getZFileConfig().longClickOperateTitles.isNullOrEmpty()) {
-            arrayOf(
-                ZFileConfiguration.RENAME,
-                ZFileConfiguration.COPY,
-                ZFileConfiguration.MOVE,
-                ZFileConfiguration.DELETE,
-                ZFileConfiguration.INFO
-            )
-        } else getZFileConfig().longClickOperateTitles
-    }
+    private var operateTitles: Array<String>? = null
 
     private val backList by lazy {
         ArrayList<String>()
@@ -87,7 +77,7 @@ class ZFileListFragment : Fragment() {
     private var sequenceSelectId = R.id.zfile_sequence_asc // 顺序选中的ID
 
     /** 返回当前的路径 */
-    private fun getThisFilePath() = if (backList.isEmpty()) null else backList[backList.size - 1]
+    private fun getThisFilePath() = if (backList.isEmpty()) null else backList.last()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -101,14 +91,14 @@ class ZFileListFragment : Fragment() {
     companion object {
 
         /**
-         * 获取 [ZFileListFragment] 实例
+         * 获取 [ZFileListFragment] 实例 有效
          */
         @JvmStatic
         fun newInstance(): ZFileListFragment {
             val startPath = getZFileConfig().filePath
             if (startPath == ZFileConfiguration.QQ || startPath == ZFileConfiguration.WECHAT) {
                 throw ZFileException(
-                    "startPath must be real path or empty, if you want use \" qq \" or \" wechat \", " +
+                    "\"startPath\" must be valid path or isNullOrEmpty, if you want use \" qq \" or \" wechat \", " +
                             "please use \" getZFileHelp().start() \""
                 )
             }
@@ -176,6 +166,33 @@ class ZFileListFragment : Fragment() {
         setMenuVis()
     }
 
+    /**
+     * 确定操作
+     */
+    fun down() {
+        val list = fileListAdapter?.selectData
+        if (list.isNullOrEmpty()) {
+            setBarTitle(getZFileConfig().title)
+            fileListAdapter?.isManage = false
+            barShow = false
+            setMenuState()
+            getZFileHelp().getFileClickListener().emptyDataDownClick()
+        } else {
+            if (zFragmentListener == null) {
+                /*mActivity.setResult(ZFILE_RESULT_CODE, Intent().apply {
+                    putParcelableArrayListExtra(
+                        ZFILE_SELECT_DATA_KEY,
+                        list as java.util.ArrayList<out Parcelable>
+                    )
+                })
+                mActivity.finish()*/
+                ZFileUtil.toResult(mActivity, list)
+            } else {
+                zFragmentListener?.selectResult(list)
+            }
+        }
+    }
+
     private fun menuItemClick(menu: MenuItem?): Boolean {
         if (!hasPermission) {
             ZFileLog.e("no permission")
@@ -183,29 +200,7 @@ class ZFileListFragment : Fragment() {
             return true
         }
         when (menu?.itemId) {
-            R.id.menu_zfile_down -> {
-                val list = fileListAdapter?.selectData
-                if (list.isNullOrEmpty()) {
-                    setBarTitle(requireContext() getStringById R.string.zfile_title)
-                    fileListAdapter?.isManage = false
-                    barShow = false
-                    setMenuState()
-                    getZFileHelp().getFileClickListener().emptyDataDownClick()
-                } else {
-                    if (zFragmentListener == null) {
-                        /*mActivity.setResult(ZFILE_RESULT_CODE, Intent().apply {
-                            putParcelableArrayListExtra(
-                                ZFILE_SELECT_DATA_KEY,
-                                list as java.util.ArrayList<out Parcelable>
-                            )
-                        })
-                        mActivity.finish()*/
-                        getZFileHelp().setResult(mActivity, list)
-                    } else {
-                        zFragmentListener?.selectResult(list)
-                    }
-                }
-            }
+            R.id.menu_zfile_down -> down()
             R.id.menu_zfile_px -> showSortDialog()
             R.id.menu_zfile_show -> {
                 menu.isChecked = true
@@ -228,15 +223,15 @@ class ZFileListFragment : Fragment() {
         rootPath = specifyPath ?: ""
         backList.add(rootPath)
         nowPath = rootPath
-        vb?.zfileListToolBar?.apply {
-            if (getZFileConfig().showBackIcon) setNavigationIcon(R.drawable.zfile_back) else navigationIcon = null
-            inflateMenu(R.menu.zfile_list_menu)
+        vb?.zfileListToolBar?.let {
+            if (getZFileConfig().showBackIcon) it.setNavigationIcon(R.drawable.zfile_back) else it.navigationIcon = null
+            it.inflateMenu(R.menu.zfile_list_menu)
             setMenuVis()
-            setOnMenuItemClickListener { menu -> menuItemClick(menu) }
-            setNavigationOnClickListener { back() }
+            it.setOnMenuItemClickListener { menu -> menuItemClick(menu) }
+            it.setNavigationOnClickListener { back() }
         }
         setHiddenState()
-        setBarTitle(requireContext() getStringById R.string.zfile_title)
+        setBarTitle(getZFileConfig().title)
         initViewStub()
         callPermission()
     }
@@ -260,10 +255,10 @@ class ZFileListFragment : Fragment() {
 
             override fun addItem(position: Int, t: ZFilePathBean) {
                 var hasData = false
-                getDatas().forEach forEach@{
+                for (it in getDatas()) {
                     if (it.filePath == t.filePath) {
                         hasData = true
-                        return@forEach
+                        break
                     }
                 }
                 if (!(hasData || t.filePath == SD_ROOT)) {
@@ -336,10 +331,10 @@ class ZFileListFragment : Fragment() {
             changeListener = { isManage, size ->
                 if (isManage) {
                     if (barShow) {
-                        setBarTitle("已选中${size}个文件")
+                        setBarTitle(this getBarTitle size)
                     } else {
                         barShow = true
-                        setBarTitle("已选中0个文件")
+                        setBarTitle(this getBarTitle 0)
                         setMenuState()
                     }
                 }
@@ -392,13 +387,27 @@ class ZFileListFragment : Fragment() {
             } else {
                 vb?.zfileListRefreshLayout?.isRefreshing = false
                 fileListAdapter?.setDatas(this)
+                vb?.zfileListListRecyclerView?.scrollToPosition(0)
                 setEmptyState(View.GONE)
                 setDoState(View.GONE)
             }
         }
     }
 
+    private fun initOperateTitles() {
+        operateTitles = if (getZFileConfig().longClickOperateTitles.isNullOrEmpty()) {
+            arrayOf(
+                ZFileConfiguration.RENAME,
+                ZFileConfiguration.COPY,
+                ZFileConfiguration.MOVE,
+                ZFileConfiguration.DELETE,
+                ZFileConfiguration.INFO
+            )
+        } else getZFileConfig().longClickOperateTitles
+    }
+
     private fun showSelectDialog(index: Int, item: ZFileBean): Boolean {
+        initOperateTitles()
         if (item.filePath.isDataOrObbPath()) {
             AlertDialog.Builder(requireContext()).apply {
                 setTitle(R.string.zfile_saf_error)
@@ -411,7 +420,7 @@ class ZFileListFragment : Fragment() {
         }
         AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.zfile_select)
-            setItems(titleArray) { dialog, which ->
+            setItems(operateTitles) { dialog, which ->
                 jumpByWhich(item, which, index)
                 dialog.dismiss()
             }
@@ -426,7 +435,7 @@ class ZFileListFragment : Fragment() {
     }
 
     private fun jumpByWhich(item: ZFileBean, which: Int, index: Int) {
-        when (titleArray!![which]) {
+        when (operateTitles!![which]) {
             ZFileConfiguration.RENAME -> {
                 getZFileHelp().getFileOperateListener()
                     .renameFile(item.filePath, requireContext()) { isSuccess, newName ->
@@ -446,9 +455,9 @@ class ZFileListFragment : Fragment() {
             }
             ZFileConfiguration.COPY, ZFileConfiguration.MOVE -> {
                 mActivity.checkFragmentByTag(TAG)
-                ZFileSelectFolderDialog.newInstance(titleArray!![which]).apply {
+                ZFileSelectFolderDialog.newInstance(operateTitles!![which]).apply {
                     selectFolder = {
-                        doSth(item, this, titleArray!![which], index)
+                        doSth(item, this, operateTitles!![which], index)
                     }
                 }.show(mActivity.supportFragmentManager, TAG)
             }
@@ -457,9 +466,9 @@ class ZFileListFragment : Fragment() {
                 requireContext()
             ) {
                 if (this) {
-                    fileListAdapter?.remove(index, nullBlock = {
+                    fileListAdapter?.remove(index) {
                         setEmptyState(if (it) View.VISIBLE else View.GONE)
-                    })
+                    }
                     ZFileLog.i("文件删除成功")
                 } else {
                     ZFileLog.i("文件删除失败")
@@ -540,7 +549,7 @@ class ZFileListFragment : Fragment() {
         val path = getThisFilePath()
         if (path == rootPath || path.isNullOrEmpty()) { // 根目录
             if (barShow) {  // 存在编辑状态
-                setBarTitle(requireContext() getStringById R.string.zfile_title)
+                setBarTitle(getZFileConfig().title)
                 fileListAdapter?.isManage = false
                 barShow = false
                 setMenuState()
@@ -658,7 +667,11 @@ class ZFileListFragment : Fragment() {
     }
 
     fun observer(isSuccess: Boolean) {
-        if (isSuccess) getData(nowPath)
+        if (isSuccess) refreshData()
+    }
+
+    fun refreshData() {
+        getData(nowPath)
     }
 
     private fun setBarTitle(title: String) {
@@ -744,7 +757,7 @@ class ZFileListFragment : Fragment() {
     private fun setDoState(viewState: Int) {
         if (doView == null) {
             doView = vb?.zfileListDoStub?.inflate()
-            val btn = doView?. findViewById<View>(R.id.zfile_do_btn)
+            val btn = doView?.findViewById<View>(R.id.zfile_do_btn)
             if (btn == null) {
                 ZFileLog.e(PERMISSION_FAILED_TITLE2)
                 throw ZFileException(PERMISSION_FAILED_TITLE2_2)

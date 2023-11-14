@@ -87,8 +87,8 @@ internal object ZFileQWUtil {
      */
     fun getQWFileData(type: Int, filePathArray: MutableList<String>, filterArray: Array<String>): MutableList<ZFileBean> {
         val listArrayList = arrayListOf<File>()
-        filePathArray.forEach {
-            val file = it.toFile()
+        for (filePath in filePathArray) {
+            val file = filePath.toFile()
             if (file.exists()) {
                 val listFiles = file.listFiles(ZFileQWFilter(filterArray, type == ZFILE_QW_OTHER))
                 if (listFiles != null && listFiles.isNotEmpty()) {
@@ -97,16 +97,16 @@ internal object ZFileQWUtil {
             }
         }
         val list = ArrayList<ZFileBean>()
-        listArrayList.forEach {
-            if (!it.isHidden) {
+        for (item in listArrayList) {
+            if (!item.isHidden) {
                 val bean = ZFileBean(
-                    it.name,
-                    it.isFile,
-                    it.path,
-                    ZFileOtherUtil.getFormatFileDate(it.lastModified()),
-                    it.lastModified().toString(),
-                    ZFileOtherUtil.getFileSize(it.length()),
-                    it.length()
+                    item.name,
+                    item.isFile,
+                    item.path,
+                    ZFileOtherUtil.getFormatFileDate(item.lastModified()),
+                    item.lastModified().toString(),
+                    ZFileOtherUtil.getFileSize(item.length()),
+                    item.length()
                 )
                 list.add(bean)
             }

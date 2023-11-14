@@ -4,7 +4,6 @@ import com.zp.z_file.content.JSON
 import com.zp.z_file.content.TXT
 import com.zp.z_file.content.XML
 import com.zp.z_file.listener.ZFileTypeListener
-import com.zp.z_file.type.ZFileVideoType
 import com.zp.z_file.util.ZFileHelp
 import com.zp.zfile_manager.content.Content
 
@@ -14,7 +13,7 @@ class MyFileTypeListener : ZFileTypeListener() {
         when (ZFileHelp.getFileTypeBySuffix(filePath)) {
             TXT, XML, JSON, "html" -> MyTxtType()
             Content.APK -> ApkType()
-            Content.MOV -> MovType()
+            Content.MOV, "webm" -> MovType()
             else -> super.getFileType(filePath)
         }
 }

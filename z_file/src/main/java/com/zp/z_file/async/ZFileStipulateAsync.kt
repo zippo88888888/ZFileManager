@@ -1,5 +1,6 @@
 package com.zp.z_file.async
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
@@ -9,7 +10,6 @@ import com.zp.z_file.util.ZFileOtherUtil
 
 /**
  * 根据特定条件 获取文件
- * ZFileAsyncImpl新的实现方式
  */
 open class ZFileStipulateAsync(
     context: Context,
@@ -29,6 +29,7 @@ open class ZFileStipulateAsync(
      */
     override fun doingWork(filterArray: Array<String>) = getLocalData(filterArray)
 
+    @SuppressLint("Range")
     private fun getLocalData(filterArray: Array<String>): MutableList<ZFileBean> {
         val list = arrayListOf<ZFileBean>()
         var cursor: Cursor? = null

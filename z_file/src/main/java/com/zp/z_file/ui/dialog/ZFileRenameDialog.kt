@@ -20,11 +20,15 @@ import com.zp.z_file.util.ZFileLog
 
 internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
 
+    private val hintStr by lazy {
+        getString(R.string.zfile_rename_hint)
+    }
+
     private var vb: DialogZfileRenameBinding? = null
 
     var reanameDown: (String.() -> Unit)? = null
     private var handler: Handler? = null
-    private var oldName = "请输入文件名称"
+    private var oldName = ""
 
     companion object {
 
@@ -49,7 +53,7 @@ internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
     override fun getContentView() = R.layout.dialog_zfile_rename
 
     override fun init(savedInstanceState: Bundle?) {
-        oldName = arguments?.getString("oldName") ?: "请输入文件名称"
+        oldName = arguments?.getString("oldName") ?: hintStr
         handler = Handler(Looper.myLooper()!!)
         vb?.zfileDialogRenameEdit?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
@@ -73,11 +77,10 @@ internal class ZFileRenameDialog : ZFileManageDialog(), Runnable {
         } else {
             if (oldName == newName) {
                 ZFileLog.e("相同名字，不执行重命名操作")
-                dismiss()
             } else {
                 reanameDown?.invoke(newName)
-                dismiss()
             }
+            dismiss()
         }
     }
 

@@ -10,9 +10,12 @@ import com.zp.z_file.content.*
 import com.zp.z_file.dsl.result
 import com.zp.z_file.listener.*
 import com.zp.z_file.ui.ZFileListActivity2
+import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.ui.ZFileProxyFragment
 import com.zp.z_file.ui.ZFileQWActivity
 import com.zp.z_file.util.ZFileLog
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class ZFileManageHelp {
 
@@ -55,9 +58,9 @@ class ZFileManageHelp {
     /**
      * QQ or WeChat 文件获取
      */
-    private var qwLoadListener: ZQWFileLoadListener? = null
+    private var qwLoadListener: ZFileQWLoadListener? = null
     internal fun getQWFileLoadListener() = qwLoadListener
-    fun setQWFileLoadListener(qwLoadListener: ZQWFileLoadListener?): ZFileManageHelp {
+    fun setQWFileLoadListener(qwLoadListener: ZFileQWLoadListener?): ZFileManageHelp {
         this.qwLoadListener = qwLoadListener
         return this
     }
@@ -152,10 +155,17 @@ class ZFileManageHelp {
         } else {
             this.path = path
         }
-        ZFileLog.i("当前正在查看文件列表的路径 ---> ${this.path}")
         return this
     }
     fun getCurrentPath() = path
+
+    private var poolExecutor: ExecutorService? = null
+    internal fun getPoolExecutor(): ExecutorService {
+        if (poolExecutor == null) {
+            poolExecutor = Executors.newSingleThreadExecutor()
+        }
+        return poolExecutor!!
+    }
 
     /**
      * 获取返回的数据
@@ -174,6 +184,7 @@ class ZFileManageHelp {
      * @param selectList MutableList<ZFileBean>?    选中的数据
      * @param finish Boolean    是否销毁页面 -> true：销毁页面；false：不销毁页面
      */
+    @Deprecated("请勿使用")
     @JvmOverloads
     fun setResult(
         activity: FragmentActivity,
@@ -192,7 +203,7 @@ class ZFileManageHelp {
     }
 
     /**
-     * 重置所有配置信息
+     * 重置所有
      * @param imageLoadReset Boolean  是否重置 [ZFileImageListener]
      */
     @JvmOverloads
@@ -208,6 +219,8 @@ class ZFileManageHelp {
         fileSAFListener = ZFileSAFListener()
         otherFileListener = null
         config = ZFileConfiguration()
+        poolExecutor?.shutdown()
+        poolExecutor = null
     }
 
     /**

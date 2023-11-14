@@ -21,9 +21,14 @@ import androidx.viewbinding.ViewBinding
 import com.zp.z_file.R
 import com.zp.z_file.common.ZFileManageDialog
 import com.zp.z_file.common.ZFileManageHelp
+import com.zp.z_file.listener.ZFileQWLoadListener
+import com.zp.z_file.listener.ZFragmentListener
 import com.zp.z_file.type.*
+import com.zp.z_file.ui.ZFileListFragment
 import com.zp.z_file.util.ZFileHelp
 import com.zp.z_file.util.ZFileLog
+import com.zp.z_file.util.ZFileOtherUtil
+import com.zp.z_file.util.ZFileUtil
 import java.io.File
 import java.util.*
 
@@ -102,7 +107,66 @@ typealias WordType = ZFileWordType
 typealias XlsType = ZFileXlsType
 @Deprecated("请使用 ZFileZipType")
 typealias ZipType = ZFileZipType
+@Deprecated("请使用 ZFileQWLoadListener")
+typealias ZQWFileLoadListener = ZFileQWLoadListener
 
+/**
+ * SD 卡根目录
+ */
+val SD_ROOT: String
+    get() {
+        return "/storage/emulated/0/"
+    }
+
+/**
+ * 将 [File] 转为 [ZFileBean]
+ */
+fun File.toZFileBean() = ZFileBean().apply {
+    fileName = name
+    isFile = this@toZFileBean.isFile
+    filePath = path
+    date = ZFileOtherUtil.getFormatFileDate(lastModified())
+    originalDate = lastModified().toString()
+    size = ZFileOtherUtil.getFileSize(length())
+    originaSize = length()
+    folderLength = ZFileUtil.getFolderLength(this@toZFileBean)
+    parent = this@toZFileBean.parent
+}
+
+/**
+ * 获取 [ZFileListFragment]
+ * @param fragmentTag String    Fragment Tag，默认为 [ZFileConfiguration.fragmentTag]
+ */
+fun FragmentActivity.getZFileListFragment(fragmentTag: String = getZFileConfig().fragmentTag): ZFileListFragment? {
+    return supportFragmentManager.findFragmentByTag(fragmentTag) as? ZFileListFragment
+}
+
+/**
+ * 在 [FragmentActivity] 中 [FragmentActivity.onCreate] 使用 --->>> 仅支持 [ZFileListFragment] 嵌套 [FragmentActivity] 中使用
+ */
+fun FragmentActivity.zfileInitAndStart(id: Int, zFragmentListener: ZFragmentListener?) {
+    val fragment = ZFileListFragment.newInstance()
+    fragment.zFragmentListener = zFragmentListener
+    supportFragmentManager.beginTransaction()
+        .add(id, fragment, getZFileConfig().fragmentTag)
+        .commit()
+}
+/**
+ * 在 [FragmentActivity] 中 [FragmentActivity.onResume] 使用 --->>> 仅支持 [ZFileListFragment] 嵌套 [FragmentActivity] 中使用
+ */
+fun FragmentActivity.zfileResume() {
+    getZFileListFragment()?.showPermissionDialog()
+}
+/**
+ * 在 [FragmentActivity] 中 [FragmentActivity.onBackPressed] 使用 --->>> 仅支持 [ZFileListFragment] 嵌套 [FragmentActivity] 中使用
+ */
+fun FragmentActivity.zfileBackPressed() {
+    getZFileListFragment()?.onBackPressed()
+}
+
+
+// inner ===========================================================================================
+// inner ===========================================================================================
 // inner ===========================================================================================
 
 internal const val I_NAME = "inflate"
@@ -154,7 +218,6 @@ internal fun Context.getSystemHeight(name: String, defType: String = "dimen") =
     resources.getDimensionPixelSize(
         resources.getIdentifier(name, defType, "android")
     )
-
 internal fun Context.getZDisplay(): IntArray {
     val array = IntArray(2)
     val dm = resources.displayMetrics
@@ -224,10 +287,8 @@ internal fun Context.toFileManagerPage() {
         val uri = Uri.parse("package:${packageName}")
         startActivity(Intent(action, uri))
     } catch (e: Exception) {
-        if (getZFileConfig().showLog) {
-            ZFileLog.e("无法跳转到指定App的【所有文件权限访问】页面，现跳转到列表页，需要用户手动寻找！")
-            e.printStackTrace()
-        }
+        ZFileLog.e("无法跳转到指定App的【所有文件权限访问】页面，现跳转到列表页，需要用户手动寻找！")
+        e.printStackTrace()
         startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
     }
 }
@@ -237,15 +298,21 @@ internal infix fun Context.getColorById(colorID: Int) = ContextCompat.getColor(t
 internal infix fun Context.getStringById(stringID: Int) = resources.getString(stringID)
 internal infix fun <E> Set<E>.indexOf(value: String): Boolean {
     var flag = false
-    forEach forEach@{
-        if ((it?.toString()?.indexOf(value) ?: -1) >= 0) {
+    for (it in this) {
+        if (it.toString().indexOf(value) >= 0) {
             flag = true
-            return@forEach
+            break
         }
     }
     return flag
 }
-
+internal infix fun Any.getBarTitle(size: Int) = try {
+    String.format(getZFileConfig().titleSelectedStr, size)
+} catch (e: Exception) {
+    e.printStackTrace()
+    ZFileLog.e("getZFileConfig().titleSelectedStr 格式错误，已使用默认值！")
+    "已选中%d个文件"
+}
 internal fun File.getFileType() = this.path.getFileType()
 internal fun String.getFileType() = this.run {
     substring(lastIndexOf(".") + 1, length)
@@ -263,13 +330,10 @@ internal infix fun String?.has(value: String?) : Boolean {
     if (this.isNullOrEmpty() || value.isNullOrEmpty()) return false
     return this.indexOf(value) != -1 || value.indexOf(this) != -1
 }
-internal fun String?.isDataOrObbPath(): Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        return this has SAF_DATA_PATH || this has SAF_OBB_PATH
-    } else {
-        return false
-    }
-}
+internal fun String?.isDataOrObbPath() =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) this has SAF_DATA_PATH || this has SAF_OBB_PATH
+    else false
+
 internal fun String.toUriNormalForSAF(): String {
     var path = this
     path = path.replace(SD_ROOT, "")
@@ -299,11 +363,13 @@ internal fun ArrayMap<String, ZFileBean>.toFileList(): MutableList<ZFileBean> {
 internal fun throwError(title: String) {
     ZFileException.throwConfigurationError(title)
 }
-internal val SD_ROOT: String
-    get() {
-//        return Environment.getExternalStorageDirectory().path
-        return "/storage/emulated/0/"
-    }
+internal fun async(block: () -> Unit) {
+    getZFileHelp().getPoolExecutor().execute(object : Thread() {
+        override fun run() {
+            block()
+        }
+    })
+}
 internal val emptyRes: Int
     get() {
         return if (getZFileConfig().resources.emptyRes == ZFILE_DEFAULT) R.drawable.ic_zfile_empty
@@ -326,8 +392,7 @@ internal inline fun <reified VB : ViewBinding> AppCompatActivity.inflate(): Lazy
     }
 }
 internal inline fun <reified VB : ViewBinding> binding(layoutInflater: LayoutInflater): VB =
-    (VB::class.java.getMethod(I_NAME, LayoutInflater::class.java)
-        .invoke(null, layoutInflater)) as VB
+    (VB::class.java.getMethod(I_NAME, LayoutInflater::class.java).invoke(null, layoutInflater)) as VB
 
 
 
